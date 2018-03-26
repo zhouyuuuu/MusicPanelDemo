@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MusicEditingPanelProject</string>
     <string name="todo">TODO</string>
-    <string name="tv_music">音乐</string>
-    <string name="tv_close">关闭</string>
-    <string name="tv_edit">编辑</string>
+    <string name="edit_music">音乐</string>
+    <string name="edit_close">关闭</string>
+    <string name="edit_edit">编辑</string>
 </resources>

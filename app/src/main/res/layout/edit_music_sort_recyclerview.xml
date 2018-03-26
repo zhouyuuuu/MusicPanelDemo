@@ -8,5 +8,5 @@
     android:paddingLeft="15.3dp"
     android:paddingRight="15.9dp"
     android:paddingStart="15.3dp"
-    android:textColor="@color/text_music_name_sort"
+    android:textColor="@color/edit_music_name_sort_text"
     android:textSize="13.1sp" />

@@ -1,5 +1,7 @@
 package com.example.administrator.musiceditingpanelproject.util;
 
+import com.example.administrator.musiceditingpanelproject.application.MusicEditingPanelApplication;
+
 /**
  * 版本工具类，用来比对音频当前版本是否符合条件
  * Edited by Administrator on 2018/3/25.
@@ -13,12 +15,13 @@ public class VersionUtil {
     /**
      * 当前版本要高于最低版本且低于最高版本
      *
-     * @param version    当前版本
      * @param minVersion 最低版本
      * @param maxVersion 最高版本
      * @return 当前版本是否符合条件
      */
-    public static boolean versionIsMatch(String version, String minVersion, String maxVersion) {
+    public static boolean versionIsMatch(String minVersion, String maxVersion) {
+        String version = MusicEditingPanelApplication.getVersion();
+        if (version == null) return false;
         String[] versionNumbers = version.split(DELIMITER);
         String[] minVersionNumbers = minVersion.split(DELIMITER);
         String[] maxVersionNumbers = maxVersion.split(DELIMITER);

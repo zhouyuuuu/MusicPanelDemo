@@ -85,6 +85,10 @@ public class CacheUtil {
         }
     }
 
+    public static String getCacheFileAbsolutePath(String version, String name) {
+        return Environment.getExternalStorageDirectory() + CACHE_FOLDER + "/" + version + DELIMITER + name;
+    }
+
     /**
      * 删除缓存
      *

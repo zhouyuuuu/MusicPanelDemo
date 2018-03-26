@@ -15,7 +15,6 @@ import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  * ViewPager的适配器
@@ -52,7 +51,7 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
         if (allMusicBeans.size() % ITEM_COUNT > 0) mPageCount++;
         // 每6个MusicBean分为一页，每一页创建一个view
         for (int i = 0; i < mPageCount; i++) {
-            View view = mLayoutInflater.inflate(R.layout.viewpager_page, viewPager, false);
+            View view = mLayoutInflater.inflate(R.layout.edit_music_viewpager, viewPager, false);
             RecyclerView recyclerView = view.findViewById(R.id.rv_items);
             ArrayList<MusicBean> musicBeans = new ArrayList<>();
             // 分配1-6个Item

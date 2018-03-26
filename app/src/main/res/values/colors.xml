@@ -3,14 +3,14 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="bg_music_edit">#FF464B</color>
-    <color name="bg_music_item">#191919</color>
-    <color name="bg_music_panel">#131313</color>
-    <color name="bg_music_sort">#000000</color>
-    <color name="text_music_title">#666666</color>
-    <color name="text_music_close">#ffffff</color>
-    <color name="text_music_name_song">#848484</color>
-    <color name="text_music_name_sort">#fefefe</color>
-    <color name="bg_music_line">#2e2e2e</color>
-    <color name="text_music_name_author">#404040</color>
+    <color name="edit_music_edit_bg">#FF464B</color>
+    <color name="edit_music_item_bg">#191919</color>
+    <color name="edit_music_panel_bg">#131313</color>
+    <color name="edit_music_sort_bg">#000000</color>
+    <color name="edit_music_title_text">#666666</color>
+    <color name="edit_music_close_text">#ffffff</color>
+    <color name="edit_music_name_song_text">#848484</color>
+    <color name="edit_music_name_sort_text">#fefefe</color>
+    <color name="edit_music_line_bg">#2e2e2e</color>
+    <color name="edit_music_name_author_text">#404040</color>
 </resources>

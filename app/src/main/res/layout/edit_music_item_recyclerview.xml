@@ -6,7 +6,7 @@
     android:layout_marginLeft="2.7dp"
     android:layout_marginRight="2.7dp"
     android:layout_marginTop="5.5dp"
-    android:background="@color/bg_music_item">
+    android:background="@color/edit_music_item_bg">
 
     <TextView
         android:id="@+id/tv_song_name"
@@ -18,7 +18,7 @@
         android:layout_marginStart="6dp"
         android:layout_marginTop="11dp"
         android:lineSpacingExtra="0sp"
-        android:textColor="@color/text_music_name_song"
+        android:textColor="@color/edit_music_name_song_text"
         android:textSize="13.1sp"
         tools:text="You’re beautiful" />
 
@@ -32,11 +32,11 @@
         android:layout_marginStart="5.5dp"
         android:layout_marginTop="44.9dp"
         android:lineSpacingExtra="0sp"
-        android:textColor="@color/text_music_name_author"
+        android:textColor="@color/edit_music_name_author_text"
         android:textSize="13.1sp"
         tools:text="James Blunt" />
 
-    <com.example.administrator.musiceditingpanelproject.customview.DownloadIconView
+    <com.example.administrator.musiceditingpanelproject.widget.DownloadIconView
         android:id="@+id/download_view"
         android:layout_width="19.7dp"
         android:layout_height="19.7dp"
@@ -45,7 +45,7 @@
         android:layout_alignParentRight="true"
         android:layout_margin="3.3dp" />
 
-    <com.example.administrator.musiceditingpanelproject.customview.IndeterminateProgressBar
+    <com.example.administrator.musiceditingpanelproject.widget.IndeterminateProgressBar
         android:id="@+id/indeterminate_progress_bar"
         android:layout_width="19.7dp"
         android:layout_height="19.7dp"
@@ -53,21 +53,15 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_margin="3.3dp" />
-    
-    <View
-        android:id="@+id/v_frame"
-        android:background="@mipmap/frame_selected"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 
     <TextView
         android:gravity="center"
-        android:background="@drawable/shape_rectangle_round"
+        android:background="@drawable/edit_btn_edit_bg"
         android:layout_centerInParent="true"
         android:id="@+id/tv_edit"
-        android:text="@string/tv_edit"
+        android:text="@string/edit_edit"
         android:textSize="13.1dp"
-        android:textColor="@color/text_music_close"
+        android:textColor="@color/edit_music_close_text"
         android:layout_width="54.8dp"
         android:layout_height="22dp" />
 </RelativeLayout>

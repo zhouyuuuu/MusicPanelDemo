@@ -1,5 +1,6 @@
 package com.example.administrator.musiceditingpanelproject.adapter;
 
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,12 +11,10 @@ import android.widget.TextView;
 import com.example.administrator.musiceditingpanelproject.R;
 import com.example.administrator.musiceditingpanelproject.application.MusicEditingPanelApplication;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
-import com.example.administrator.musiceditingpanelproject.customview.DownloadIconView;
-import com.example.administrator.musiceditingpanelproject.customview.IndeterminateProgressBar;
-import com.example.administrator.musiceditingpanelproject.util.CacheUtil;
+import com.example.administrator.musiceditingpanelproject.widget.DownloadIconView;
+import com.example.administrator.musiceditingpanelproject.widget.IndeterminateProgressBar;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  * ViewPager中音频列表RecyclerView的适配器
@@ -47,14 +46,13 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
     @NonNull
     @Override
     public MusicListRecyclerViewAdapter.ItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = mLayoutInflater.inflate(R.layout.recyclerview_music_item, parent, false);
+        View v = mLayoutInflater.inflate(R.layout.edit_music_item_recyclerview, parent, false);
         return new ItemHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final MusicListRecyclerViewAdapter.ItemHolder holder, final int position) {
         MusicBean musicBean = mMusicBeans.get(position);
-        // 每次都先将控件初始化，避免View复用携带了之前的数据
         switch (musicBean.getState()){
             case MusicBean.STATE_UNDOWNLOADED:
                 holder.showUndownloadedState();
@@ -111,7 +109,6 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
         private TextView tvAuthorName;
         private IndeterminateProgressBar indeterminateProgressBar;
         private DownloadIconView downloadIconView;
-        private View vFrame;
         private TextView tvEdit;
 
         ItemHolder(View itemView) {
@@ -120,7 +117,6 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
             tvAuthorName = itemView.findViewById(R.id.tv_author_name);
             indeterminateProgressBar = itemView.findViewById(R.id.indeterminate_progress_bar);
             downloadIconView = itemView.findViewById(R.id.download_view);
-            vFrame = itemView.findViewById(R.id.v_frame);
             tvEdit = itemView.findViewById(R.id.tv_edit);
         }
 
@@ -128,12 +124,12 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
          * 展示编辑状态
          */
         public void showEditState() {
+            itemView.setBackgroundResource(R.mipmap.edit_music_item_selected_bg);
             tvSongName.setTextColor(COLOR_SONG_NAME_DOWNLOADED);
             indeterminateProgressBar.setVisibility(View.GONE);
             downloadIconView.setVisibility(View.GONE);
             tvAuthorName.setVisibility(View.GONE);
             tvSongName.setVisibility(View.GONE);
-            vFrame.setVisibility(View.VISIBLE);
             tvEdit.setVisibility(View.VISIBLE);
         }
 
@@ -141,12 +137,12 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
          * 展示未下载状态
          */
         public void showUndownloadedState() {
+            itemView.setBackgroundResource(R.color.edit_music_item_bg);
             tvSongName.setTextColor(COLOR_SONG_NAME_UNDOWNLOADED);
             indeterminateProgressBar.setVisibility(View.GONE);
             downloadIconView.setVisibility(View.VISIBLE);
             tvAuthorName.setVisibility(View.VISIBLE);
             tvSongName.setVisibility(View.VISIBLE);
-            vFrame.setVisibility(View.GONE);
             tvEdit.setVisibility(View.GONE);
         }
 
@@ -154,12 +150,12 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
          * 展示下载中状态
          */
         public void showDownloadingState() {
+            itemView.setBackgroundResource(R.color.edit_music_item_bg);
             tvSongName.setTextColor(COLOR_SONG_NAME_UNDOWNLOADED);
             indeterminateProgressBar.setVisibility(View.VISIBLE);
             downloadIconView.setVisibility(View.GONE);
             tvAuthorName.setVisibility(View.VISIBLE);
             tvSongName.setVisibility(View.VISIBLE);
-            vFrame.setVisibility(View.GONE);
             tvEdit.setVisibility(View.GONE);
         }
 
@@ -167,12 +163,12 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
          * 展示已下载状态
          */
         public void showDownloadedState() {
+            itemView.setBackgroundResource(R.color.edit_music_item_bg);
             tvSongName.setTextColor(COLOR_SONG_NAME_DOWNLOADED);
             indeterminateProgressBar.setVisibility(View.GONE);
             downloadIconView.setVisibility(View.GONE);
             tvAuthorName.setVisibility(View.VISIBLE);
             tvSongName.setVisibility(View.VISIBLE);
-            vFrame.setVisibility(View.GONE);
             tvEdit.setVisibility(View.GONE);
         }
 

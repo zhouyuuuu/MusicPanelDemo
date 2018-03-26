@@ -37,7 +37,7 @@ public class MusicSortRecyclerViewAdapter extends RecyclerView.Adapter<MusicSort
     @NonNull
     @Override
     public SortHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = mLayoutInflater.inflate(R.layout.recyclerview_sort_item, parent, false);
+        View v = mLayoutInflater.inflate(R.layout.edit_music_sort_recyclerview, parent, false);
         return new SortHolder(v);
     }
 
@@ -93,7 +93,7 @@ public class MusicSortRecyclerViewAdapter extends RecyclerView.Adapter<MusicSort
         }
 
         public void showClickedState() {
-            textView.setBackgroundResource(R.color.bg_music_panel);
+            textView.setBackgroundResource(R.color.edit_music_panel_bg);
         }
     }
 }

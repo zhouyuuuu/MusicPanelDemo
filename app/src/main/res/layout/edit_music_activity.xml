@@ -16,7 +16,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:background="@color/bg_music_sort"
+        android:background="@color/edit_music_sort_bg"
         android:contentDescription="@string/todo"
         android:padding="13.1dp"
         android:src="@mipmap/icon_delete" />
@@ -28,7 +28,7 @@
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@id/iv_delete"
         android:layout_toStartOf="@id/iv_delete"
-        android:background="@color/bg_music_sort"
+        android:background="@color/edit_music_sort_bg"
         android:overScrollMode="never" />
 
     <RelativeLayout
@@ -37,19 +37,19 @@
         android:layout_height="match_parent"
         android:layout_above="@id/rv_sort">
 
-        <com.example.administrator.musiceditingpanelproject.customview.PageIndicator
+        <com.example.administrator.musiceditingpanelproject.widget.PageIndicator
             android:id="@+id/page_indicator"
             android:layout_width="match_parent"
             android:layout_height="21.9dp"
             android:layout_alignParentBottom="true"
-            android:background="@color/bg_music_panel" />
+            android:background="@color/edit_music_panel_bg" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/vp_items"
             android:layout_width="match_parent"
             android:layout_height="175.4dp"
             android:layout_above="@id/page_indicator"
-            android:background="@color/bg_music_panel"
+            android:background="@color/edit_music_panel_bg"
             android:overScrollMode="never" />
 
         <View
@@ -57,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="0.6dp"
             android:layout_above="@id/vp_items"
-            android:background="@color/bg_music_line" />
+            android:background="@color/edit_music_line_bg" />
 
         <TextView
             android:id="@+id/tv_title"
@@ -65,10 +65,10 @@
             android:layout_height="48.8dp"
             android:layout_above="@id/v_line"
             android:layout_centerHorizontal="true"
-            android:background="@color/bg_music_panel"
+            android:background="@color/edit_music_panel_bg"
             android:gravity="center"
-            android:text="@string/tv_music"
-            android:textColor="@color/text_music_title"
+            android:text="@string/edit_music"
+            android:textColor="@color/edit_music_title_text"
             android:textSize="15.3sp" />
 
         <TextView
@@ -82,8 +82,8 @@
             android:gravity="center"
             android:paddingLeft="16.4dp"
             android:paddingRight="16.4dp"
-            android:text="@string/tv_close"
-            android:textColor="@color/text_music_close"
+            android:text="@string/edit_close"
+            android:textColor="@color/edit_music_close_text"
             android:textSize="15.3sp" />
 
     </RelativeLayout>
