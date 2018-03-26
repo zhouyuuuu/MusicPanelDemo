@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/todo" />
+
+    <ImageView
+        android:id="@+id/iv_delete"
+        android:layout_width="48.2dp"
+        android:layout_height="48.2dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="@color/bg_music_sort"
+        android:contentDescription="@string/todo"
+        android:padding="13.1dp"
+        android:src="@mipmap/icon_delete" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_sort"
+        android:layout_width="match_parent"
+        android:layout_height="48.2dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/iv_delete"
+        android:layout_toStartOf="@id/iv_delete"
+        android:background="@color/bg_music_sort"
+        android:overScrollMode="never" />
+
+    <RelativeLayout
+        android:id="@+id/rl_panel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/rv_sort">
+
+        <com.example.administrator.musiceditingpanelproject.customview.PageIndicator
+            android:id="@+id/page_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="21.9dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/bg_music_panel" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_items"
+            android:layout_width="match_parent"
+            android:layout_height="175.4dp"
+            android:layout_above="@id/page_indicator"
+            android:background="@color/bg_music_panel"
+            android:overScrollMode="never" />
+
+        <View
+            android:id="@+id/v_line"
+            android:layout_width="match_parent"
+            android:layout_height="0.6dp"
+            android:layout_above="@id/vp_items"
+            android:background="@color/bg_music_line" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="48.8dp"
+            android:layout_above="@id/v_line"
+            android:layout_centerHorizontal="true"
+            android:background="@color/bg_music_panel"
+            android:gravity="center"
+            android:text="@string/tv_music"
+            android:textColor="@color/text_music_title"
+            android:textSize="15.3sp" />
+
+        <TextView
+            android:id="@+id/tv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="48.8dp"
+            android:layout_above="@id/v_line"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:paddingLeft="16.4dp"
+            android:paddingRight="16.4dp"
+            android:text="@string/tv_close"
+            android:textColor="@color/text_music_close"
+            android:textSize="15.3sp" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

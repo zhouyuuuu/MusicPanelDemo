@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="bg_music_edit">#FF464B</color>
+    <color name="bg_music_item">#191919</color>
+    <color name="bg_music_panel">#131313</color>
+    <color name="bg_music_sort">#000000</color>
+    <color name="text_music_title">#666666</color>
+    <color name="text_music_close">#ffffff</color>
+    <color name="text_music_name_song">#848484</color>
+    <color name="text_music_name_sort">#fefefe</color>
+    <color name="bg_music_line">#2e2e2e</color>
+    <color name="text_music_name_author">#404040</color>
+</resources>
