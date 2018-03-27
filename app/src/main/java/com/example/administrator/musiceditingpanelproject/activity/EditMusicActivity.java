@@ -1,8 +1,5 @@
 package com.example.administrator.musiceditingpanelproject.activity;
 
-import android.media.AsyncPlayer;
-import android.media.AudioManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -21,23 +18,22 @@ import com.example.administrator.musiceditingpanelproject.adapter.MusicSortRecyc
 import com.example.administrator.musiceditingpanelproject.application.MusicEditingPanelApplication;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
+import com.example.administrator.musiceditingpanelproject.presenter.EditMusicPanelManager;
+import com.example.administrator.musiceditingpanelproject.presenter.IMusicManager;
+import com.example.administrator.musiceditingpanelproject.view.IEditMusicPanel;
 import com.example.administrator.musiceditingpanelproject.widget.PageIndicator;
-import com.example.administrator.musiceditingpanelproject.util.CacheUtil;
-import com.example.administrator.musiceditingpanelproject.util.VersionUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class EditMusicActivity extends AppCompatActivity implements View.OnClickListener
         , MusicPageViewPagerAdapter.MusicItemClickListener
         , MusicSortRecyclerViewAdapter.ItemClickListener
-        , ViewPager.OnPageChangeListener {
+        , ViewPager.OnPageChangeListener
+        , IEditMusicPanel{
 
     // 未选中状态
     private static final int STATE_UNSELECTED = -1;
-    // 播放器tag
-    private static final String TAG_ASYNCPLAYER = "tag_AsyncPlayer";
     // 音频信息分组列表
     private ArrayList<MusicGroup> mMusicGroups;
     // 每个分类名对应一个ViewPagerAdapter
@@ -54,8 +50,6 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     private TextView mTvClose;
     // 删除按钮
     private ImageView mIvDelete;
-    // 异步音乐播放器
-    private AsyncPlayer mAsyncPlayer;
     // 下面分类名被选中的分类在RecyclerView中的position，如果是-1，就是没有分类被选中，保存该变量方便取消其被选中状态
     private int mSelectedMusicSortPositionInSortList = STATE_UNSELECTED;
     // 编辑板中最近一次被点击的Item的MusicBean
@@ -70,6 +64,10 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     private int mSelectedMusicBeanPositionInPage = STATE_UNSELECTED;
     // 编辑板中最近一次被选中的Item的MusicBean
     private MusicBean mSelectedMusicBeanInMusicGroup = null;
+    //
+    private MusicSortRecyclerViewAdapter mMusicSortRecyclerViewAdapter;
+    //
+    private IMusicManager iMusicManager;
 
     /**
      * 顾名思义
@@ -87,10 +85,8 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      * 顾名思义
      */
     private void initData() {
-        mMusicGroups = createFalseData();
-        filterInvisibleMusicBean(mMusicGroups);
-        checkMusicBeanState(mMusicGroups);
-        mAsyncPlayer = new AsyncPlayer(TAG_ASYNCPLAYER);
+        iMusicManager = new EditMusicPanelManager(this);
+        mMusicGroups = new ArrayList<>();
         mMusicPageAdapterHashMap = new HashMap<>();
         mTvClose.setOnClickListener(this);
         mIvDelete.setOnClickListener(this);
@@ -98,46 +94,11 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerViewMusicSort.setLayoutManager(mLinearLayoutManager);
         // RecyclerView设置Adapter
-        MusicSortRecyclerViewAdapter mMusicSortRecyclerViewAdapter = new MusicSortRecyclerViewAdapter(mMusicGroups);
+        mMusicSortRecyclerViewAdapter = new MusicSortRecyclerViewAdapter(mMusicGroups);
         mMusicSortRecyclerViewAdapter.setItemClickListener(this);
         mRecyclerViewMusicSort.setAdapter(mMusicSortRecyclerViewAdapter);
         // ViewPager滑页监听
         mViewPagerMusicPage.addOnPageChangeListener(this);
-    }
-
-
-    // TODO:这边应该由MODEL去处理
-    /**
-     * 过滤不可见音频信息
-     * @param musicGroups 音频信息分组列表
-     */
-    private void filterInvisibleMusicBean(ArrayList<MusicGroup> musicGroups){
-        for (MusicGroup musicGroup:musicGroups) {
-            ArrayList<MusicBean> musicBeans = musicGroup.getMusicBeans();
-            for (int i=musicBeans.size()-1;i>=0;i--){
-                MusicBean musicBean = musicBeans.get(i);
-                if (!VersionUtil.versionIsMatch(musicBean.getMinVisibleVersion(),musicBean.getMaxVisibleVersion())){
-                    musicBeans.remove(i);
-                }
-            }
-        }
-    }
-
-    // TODO:这边应该由MODEL去处理
-    /**
-     * 检查音频信息分组列表中音频信息的状态，如音频信息存在缓存，则将state改为已下载
-     * @param musicGroups 音频信息分组列表
-     */
-    private void checkMusicBeanState(ArrayList<MusicGroup> musicGroups){
-        HashSet<String> mCacheFileNameSet = CacheUtil.getAllCacheFileName();
-        if (mCacheFileNameSet == null) return;
-        for (MusicGroup musicGroup:musicGroups) {
-            for (MusicBean musicBean:musicGroup.getMusicBeans()) {
-                if (mCacheFileNameSet.contains(CacheUtil.getCacheFilename(musicBean.getVersion(),CacheUtil.getFileName(musicBean.getUrl())))){
-                    musicBean.setState(MusicBean.STATE_DOWNLOADED);
-                }
-            }
-        }
     }
 
     @Override
@@ -146,11 +107,24 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.edit_music_activity);
         initView();
         initData();
+        iMusicManager.refreshMusicEditPanel();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        iMusicManager.stopMusic();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        iMusicManager.replayMusic();
     }
 
     /**
@@ -165,7 +139,8 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 mRlPanel.setVisibility(View.GONE);
                 break;
             case R.id.iv_delete:
-                setSelectedItemUnselected(MusicBean.STATE_UNDOWNLOADED);
+                iMusicManager.deleteMusic(mSelectedMusicBeanInMusicGroup,(MusicListRecyclerViewAdapter.ItemHolder) mMusicPageAdapterHashMap.get(mSelectedMusicBeanSort).getRecyclerViews().get(mSelectedMusicBeanPageInMusicGroup).findViewHolderForAdapterPosition(mSelectedMusicBeanPositionInPage));
+
                 break;
             default:
                 break;
@@ -183,35 +158,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         mClickedMusicBeanInMusicGroup = musicBean;
         switch (musicBean.getState()){
             case MusicBean.STATE_UNDOWNLOADED:
-                holder.showDownloadingState();
-                musicBean.setState(MusicBean.STATE_DOWNLOADING);
-                // TODO 这边应该由MODEL去处理
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(3000);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    holder.showDownloadedState();
-                                    musicBean.setState(MusicBean.STATE_DOWNLOADED);
-                                    if (musicBean == mClickedMusicBeanInMusicGroup) {
-                                        holder.showEditState();
-                                        musicBean.setState(MusicBean.STATE_EDIT);
-                                        setSelectedItemUnselected(MusicBean.STATE_DOWNLOADED);
-                                        mSelectedMusicBeanSort = sort;
-                                        mSelectedMusicBeanPositionInPage = position;
-                                        mSelectedMusicBeanPageInMusicGroup = pageIndex;
-                                        mSelectedMusicBeanInMusicGroup = musicBean;
-                                    }
-                                }
-                            });
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+                iMusicManager.downloadMusic(musicBean,holder,sort,pageIndex,position);
                 break;
             case MusicBean.STATE_DOWNLOADING:
                 break;
@@ -223,8 +170,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 mSelectedMusicBeanPositionInPage = position;
                 mSelectedMusicBeanPageInMusicGroup = pageIndex;
                 mSelectedMusicBeanInMusicGroup = musicBean;
-                // TODO 这边应该由MODEL去处理
-                mAsyncPlayer.play(MusicEditingPanelApplication.getApplication(), Uri.parse(CacheUtil.getCacheFileAbsolutePath(musicBean.getVersion(),CacheUtil.getFileName(musicBean.getUrl()))), true, AudioManager.STREAM_MUSIC);
+                iMusicManager.playMusic(musicBean);
                 break;
             case MusicBean.STATE_EDIT:
                 Toast.makeText(this,"编辑",Toast.LENGTH_SHORT).show();
@@ -324,40 +270,81 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-    /**
-     * 假数据
-     */
-    private ArrayList<MusicGroup> createFalseData() {
-        ArrayList<MusicGroup> musicGroups = new ArrayList<>();
-        musicGroups.add(createFalseMusicGroup("iTunes", 6));
-        musicGroups.add(createFalseMusicGroup("欢乐", 9));
-        musicGroups.add(createFalseMusicGroup("节奏", 10));
-        musicGroups.add(createFalseMusicGroup("电影感", 16));
-        musicGroups.add(createFalseMusicGroup("轻音乐", 3));
-        return musicGroups;
+    @Override
+    public void musicBeanStateChangedCallback(MusicListRecyclerViewAdapter.ItemHolder holder, MusicBean musicBean) {
+        switch (musicBean.getState()){
+            case MusicBean.STATE_UNDOWNLOADED:
+                holder.showUndownloadedState();
+                break;
+            case MusicBean.STATE_DOWNLOADING:
+                holder.showDownloadingState();
+                break;
+            case MusicBean.STATE_DOWNLOADED:
+                holder.showDownloadedState();
+                break;
+            case MusicBean.STATE_EDIT:
+                holder.showEditState();
+                break;
+            default:
+                break;
+        }
     }
 
-    /**
-     * 假音频分组
-     */
-    private MusicGroup createFalseMusicGroup(String type, int num) {
-        MusicGroup musicGroup = new MusicGroup();
-        musicGroup.setSortName(type);
-        ArrayList<MusicBean> musicBeans = new ArrayList<>();
-        for (int i = 0; i < num; i++) {
-            MusicBean musicBean = new MusicBean();
-            musicBean.setTime("2000");
-            musicBean.setVersion("1.1");
-            musicBean.setAuthorName("James Blunt");
-            musicBean.setId(String.valueOf(i));
-            musicBean.setName("You're Beautiful");
-            musicBean.setMinVisibleVersion("1.2");
-            musicBean.setMaxVisibleVersion("1.4");
-            musicBean.setUrl("https://material.storage.mixvvideo.com/1521601330799.gif");
-            musicBeans.add(musicBean);
-        }
-        musicGroup.setMusicBeans(musicBeans);
-        return musicGroup;
+    @Override
+    public void musicGroupListLoadedCallback(ArrayList<MusicGroup> musicGroups) {
+        mMusicGroups.clear();
+        mMusicGroups.addAll(musicGroups);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mMusicSortRecyclerViewAdapter.notifyDataSetChanged();
+            }
+        });
     }
+
+    @Override
+    public void musicGroupListDataLoadedFailedCallback() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MusicEditingPanelApplication.getApplication(),"拉取列表失败",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void musicFileDataLoadedCallback(MusicBean musicBean, MusicListRecyclerViewAdapter.ItemHolder itemHolder,String sort,int page,int position) {
+        if (musicBean == mClickedMusicBeanInMusicGroup) {
+            setSelectedItemUnselected(MusicBean.STATE_DOWNLOADED);
+            itemHolder.showEditState();
+            musicBean.setState(MusicBean.STATE_EDIT);
+            mSelectedMusicBeanSort = sort;
+            mSelectedMusicBeanPositionInPage = position;
+            mSelectedMusicBeanPageInMusicGroup = page;
+            mSelectedMusicBeanInMusicGroup = musicBean;
+            iMusicManager.playMusic(musicBean);
+        }
+    }
+
+    @Override
+    public void musicFileDataLoadedFailedCallback(MusicBean musicBean) {
+        Toast.makeText(this,"下载音频失败",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void musicFileDataDeletedCallback(MusicBean musicBean) {
+        Toast.makeText(this,"删除成功",Toast.LENGTH_SHORT).show();
+        mSelectedMusicBeanPageInMusicGroup = STATE_UNSELECTED;
+        mSelectedMusicBeanPositionInPage = STATE_UNSELECTED;
+        mSelectedMusicBeanSort = null;
+        mSelectedMusicBeanInMusicGroup = null;
+    }
+
+    @Override
+    public void musicFileDataDeletedFailedCallback(MusicBean musicBean) {
+        Toast.makeText(this,"删除失败",Toast.LENGTH_SHORT).show();
+    }
+
+
 
 }

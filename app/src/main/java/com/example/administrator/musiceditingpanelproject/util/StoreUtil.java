@@ -23,7 +23,7 @@ import java.util.HashSet;
  * Edited by Administrator on 2018/3/25.
  */
 
-public class CacheUtil {
+public class StoreUtil {
 
     // 分隔符
     private static final String DELIMITER = "@#";
@@ -47,7 +47,7 @@ public class CacheUtil {
      * @param musicGroups 音频信息组列表
      */
     public static void sortOutCache(ArrayList<MusicGroup> musicGroups) {
-        HashSet<String> cacheFileNameSet = new HashSet<>();
+        HashSet<String> cacheFileNameSet = new HashSet<>(musicGroups.size());
         // 遍历musicGroups中所有MusicBean将对应的version+"@#"+filename丢进HashSet中
         for (MusicGroup musicGroup : musicGroups) {
             ArrayList<MusicBean> musicBeans = musicGroup.getMusicBeans();
@@ -84,7 +84,7 @@ public class CacheUtil {
     }
 
     /**
-     * 寻找musicBean有没有对应的
+     * 寻找有没有对应的缓存文件
      *
      * @param version  版本号
      * @param filename 文件名
@@ -100,10 +100,10 @@ public class CacheUtil {
      * 获得所有缓存文件名，用HashSet便于访问
      */
     public static HashSet<String> getAllCacheFileName() {
-        HashSet<String> hashSet = new HashSet<>();
         File folder = new File(getCacheFolderDir());
         if (!folder.exists() || !folder.isDirectory()) return null;
         String[] filenames = folder.list();
+        HashSet<String> hashSet = new HashSet<>(filenames.length);
         hashSet.addAll(Arrays.asList(filenames));
         return hashSet;
     }
@@ -118,7 +118,7 @@ public class CacheUtil {
      * @return 是否成功
      */
     public static boolean cacheMusicFile(byte[] musicByte, String version, String filename) {
-        File file = new File(getCacheFileAbsolutePath(version, filename));
+        File file = new File(getCacheFileAbsolutePathTemp(version, filename));
 //        File file = new File(MusicEditingPanelApplication.getApplication().getCacheDir().getAbsolutePath(), filename);
         // 如果存在文件，但是删不掉
         if (file.exists() && !file.delete()) {
@@ -131,7 +131,13 @@ public class CacheUtil {
             bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
             bufferedOutputStream.write(musicByte);
             bufferedOutputStream.flush();
-            return true;
+            File renameFile = new File(getCacheFileAbsolutePath(version,filename));
+            if (!renameFile.exists()) {
+                file.renameTo(renameFile);
+                return true;
+            }else {
+                return false;
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return false;
@@ -256,8 +262,16 @@ public class CacheUtil {
         return version + DELIMITER + filename;
     }
 
+    private static String getTempCacheFilename(String version, String filename) {
+        return version + DELIMITER + filename + ".temp";
+    }
+
     public static String getCacheFileAbsolutePath(String version, String filename) {
         return getCacheFolderDir() + "/" + getCacheFilename(version, filename);
+    }
+
+    private static String getCacheFileAbsolutePathTemp(String version, String filename) {
+        return getCacheFolderDir() + "/" + getTempCacheFilename(version, filename);
     }
 
     private static String getCacheFolderDir() {

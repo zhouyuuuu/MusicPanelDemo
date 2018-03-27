@@ -5,6 +5,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Path;
+import retrofit2.http.Streaming;
 
 /**
  * Retrofit接口，获取音频数据
@@ -29,6 +30,7 @@ public interface MusicRequest {
      * @return ResponseBody
      */
     @Headers({"lang:Chinese", "platform:android", "version:1.13.0", "deviceid:imei"})
+    @Streaming
     @GET("{filename}")
     Call<ResponseBody> getMusicFile(@Path("filename") String filename);
 
