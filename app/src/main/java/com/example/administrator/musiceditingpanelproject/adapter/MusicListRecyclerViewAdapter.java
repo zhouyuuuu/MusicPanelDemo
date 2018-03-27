@@ -22,10 +22,6 @@ import java.util.ArrayList;
  */
 
 public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicListRecyclerViewAdapter.ItemHolder> {
-    // 歌名白色
-    private static final int COLOR_SONG_NAME_DOWNLOADED = 0xffffffff;
-    // 歌名灰色
-    private static final int COLOR_SONG_NAME_UNDOWNLOADED = 0xff848484;
     // 展示的音频信息组
     private final ArrayList<MusicBean> mMusicBeans;
     // 布局加载器，作为全局变量就不用每次都去调用from方法，降低ViewHolder创建效率
@@ -125,7 +121,7 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
          */
         public void showEditState() {
             itemView.setBackgroundResource(R.mipmap.edit_music_item_selected_bg);
-            tvSongName.setTextColor(COLOR_SONG_NAME_DOWNLOADED);
+            tvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_downloaded));
             indeterminateProgressBar.setVisibility(View.GONE);
             downloadIconView.setVisibility(View.GONE);
             tvAuthorName.setVisibility(View.GONE);
@@ -138,7 +134,7 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
          */
         public void showUndownloadedState() {
             itemView.setBackgroundResource(R.color.edit_music_item_bg);
-            tvSongName.setTextColor(COLOR_SONG_NAME_UNDOWNLOADED);
+            tvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_undownloaded));
             indeterminateProgressBar.setVisibility(View.GONE);
             downloadIconView.setVisibility(View.VISIBLE);
             tvAuthorName.setVisibility(View.VISIBLE);
@@ -151,7 +147,7 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
          */
         public void showDownloadingState() {
             itemView.setBackgroundResource(R.color.edit_music_item_bg);
-            tvSongName.setTextColor(COLOR_SONG_NAME_UNDOWNLOADED);
+            tvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_undownloaded));
             indeterminateProgressBar.setVisibility(View.VISIBLE);
             downloadIconView.setVisibility(View.GONE);
             tvAuthorName.setVisibility(View.VISIBLE);
@@ -164,7 +160,7 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
          */
         public void showDownloadedState() {
             itemView.setBackgroundResource(R.color.edit_music_item_bg);
-            tvSongName.setTextColor(COLOR_SONG_NAME_DOWNLOADED);
+            tvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_downloaded));
             indeterminateProgressBar.setVisibility(View.GONE);
             downloadIconView.setVisibility(View.GONE);
             tvAuthorName.setVisibility(View.VISIBLE);

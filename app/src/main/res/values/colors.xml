@@ -9,7 +9,8 @@
     <color name="edit_music_sort_bg">#000000</color>
     <color name="edit_music_title_text">#666666</color>
     <color name="edit_music_close_text">#ffffff</color>
-    <color name="edit_music_name_song_text">#848484</color>
+    <color name="edit_music_name_song_text_downloaded">#848484</color>
+    <color name="edit_music_name_song_text_undownloaded">#848484</color>
     <color name="edit_music_name_sort_text">#fefefe</color>
     <color name="edit_music_line_bg">#2e2e2e</color>
     <color name="edit_music_name_author_text">#404040</color>

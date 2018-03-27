@@ -1,6 +1,8 @@
 package com.example.administrator.musiceditingpanelproject.util;
 
 
+import android.support.annotation.NonNull;
+
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
 import com.example.administrator.musiceditingpanelproject.retrofit.MusicRequest;
@@ -27,7 +29,7 @@ public class NetUtil {
     // 测试环境host
     private static final String URL_TEST = "http://dev.mixvvideo.com/";
     // 正式环境host
-    private static final String URL_OFFICIAL = "https://material.storage.mixvvideo.com/";
+    private static final String URL_OFFICIAL = "https://www.mixvvideo.com/";
 
     /**
      * 获得音频信息组列表
@@ -64,7 +66,7 @@ public class NetUtil {
      * @param url 网络url
      * @return 文件名
      */
-    private static String getFileName(String url) {
+    private static String getFileName(@NonNull String url) {
         // “/”为分隔符
         String[] strings = url.split("/");
         if (strings.length == 0) {
@@ -72,6 +74,19 @@ public class NetUtil {
         }
         // 返回最后一个string
         return strings[strings.length - 1];
+    }
+
+    /**
+     * 分割出网络url中的BaseUrl
+     *
+     * @param url 网络url
+     * @return BaseUrl
+     */
+    private static String getBaseUrl(@NonNull String url) {
+        StringBuilder stringBuilder = new StringBuilder(url);
+        String filename = getFileName(url);
+        stringBuilder.delete(url.length()-filename.length(),url.length());
+        return stringBuilder.toString();
     }
 
     /**
@@ -83,7 +98,7 @@ public class NetUtil {
     public static byte[] loadMusicFile(MusicBean musicBean) {
         String filename = getFileName(musicBean.getUrl());
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URL_OFFICIAL)
+                .baseUrl(getBaseUrl(musicBean.getUrl()))
                 .build();
         MusicRequest musicRequest = retrofit.create(MusicRequest.class);
         Call<ResponseBody> call = musicRequest.getMusicFile(filename);
@@ -108,7 +123,7 @@ public class NetUtil {
     /**
      * 把Json解析成为音频信息组列表，这个是根据文档提供的格式来解析
      *
-     * @param response Json的String
+     * @param response 服务器返回音频列表的Json的String
      * @return 音频信息组列表
      */
     private static ArrayList<MusicGroup> parseResponseToMusicTypeLists(String response) {
@@ -151,7 +166,7 @@ public class NetUtil {
     /**
      * 把Json解析成为音频信息组列表，这个是根据实际返回的格式来解析
      *
-     * @param response Json的String
+     * @param response 服务器返回音频列表的Json的String
      * @return 音频信息组列表
      */
     private static ArrayList<MusicGroup> parseResponseToMusicTypeLists2(String response) {

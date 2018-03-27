@@ -18,7 +18,7 @@
         android:layout_marginStart="6dp"
         android:layout_marginTop="11dp"
         android:lineSpacingExtra="0sp"
-        android:textColor="@color/edit_music_name_song_text"
+        android:textColor="@color/edit_music_name_song_text_undownloaded"
         android:textSize="13.1sp"
         tools:text="You’re beautiful" />
 

@@ -1,4 +1,4 @@
-package com.example.administrator.musiceditingpanelproject;
+package com.example.administrator.musiceditingpanelproject.activity;
 
 import android.media.AsyncPlayer;
 import android.media.AudioManager;
@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.administrator.musiceditingpanelproject.R;
 import com.example.administrator.musiceditingpanelproject.adapter.MusicListRecyclerViewAdapter;
 import com.example.administrator.musiceditingpanelproject.adapter.MusicPageViewPagerAdapter;
 import com.example.administrator.musiceditingpanelproject.adapter.MusicSortRecyclerViewAdapter;
@@ -104,6 +105,8 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         mViewPagerMusicPage.addOnPageChangeListener(this);
     }
 
+
+    // TODO:这边应该由MODEL去处理
     /**
      * 过滤不可见音频信息
      * @param musicGroups 音频信息分组列表
@@ -120,6 +123,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    // TODO:这边应该由MODEL去处理
     /**
      * 检查音频信息分组列表中音频信息的状态，如音频信息存在缓存，则将state改为已下载
      * @param musicGroups 音频信息分组列表
@@ -129,7 +133,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         if (mCacheFileNameSet == null) return;
         for (MusicGroup musicGroup:musicGroups) {
             for (MusicBean musicBean:musicGroup.getMusicBeans()) {
-                if (mCacheFileNameSet.contains(CacheUtil.convertNameToFilename(musicBean.getVersion(),CacheUtil.getFileName(musicBean.getUrl())))){
+                if (mCacheFileNameSet.contains(CacheUtil.getCacheFilename(musicBean.getVersion(),CacheUtil.getFileName(musicBean.getUrl())))){
                     musicBean.setState(MusicBean.STATE_DOWNLOADED);
                 }
             }
@@ -181,6 +185,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
             case MusicBean.STATE_UNDOWNLOADED:
                 holder.showDownloadingState();
                 musicBean.setState(MusicBean.STATE_DOWNLOADING);
+                // TODO 这边应该由MODEL去处理
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -214,11 +219,12 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 setSelectedItemUnselected(MusicBean.STATE_DOWNLOADED);
                 holder.showEditState();
                 musicBean.setState(MusicBean.STATE_EDIT);
-                mAsyncPlayer.play(MusicEditingPanelApplication.getApplication(), Uri.parse(CacheUtil.getCacheFileAbsolutePath(musicBean.getVersion(),CacheUtil.getFileName(musicBean.getUrl()))), true, AudioManager.STREAM_MUSIC);
                 mSelectedMusicBeanSort = sort;
                 mSelectedMusicBeanPositionInPage = position;
                 mSelectedMusicBeanPageInMusicGroup = pageIndex;
                 mSelectedMusicBeanInMusicGroup = musicBean;
+                // TODO 这边应该由MODEL去处理
+                mAsyncPlayer.play(MusicEditingPanelApplication.getApplication(), Uri.parse(CacheUtil.getCacheFileAbsolutePath(musicBean.getVersion(),CacheUtil.getFileName(musicBean.getUrl()))), true, AudioManager.STREAM_MUSIC);
                 break;
             case MusicBean.STATE_EDIT:
                 Toast.makeText(this,"编辑",Toast.LENGTH_SHORT).show();

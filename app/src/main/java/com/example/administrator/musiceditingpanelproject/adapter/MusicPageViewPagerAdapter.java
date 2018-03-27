@@ -24,13 +24,13 @@ import java.util.ArrayList;
 public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicListRecyclerViewAdapter.ItemClickListener {
 
     // 默认每页的音频信息数目为6
-    private static final int ITEM_COUNT = 6;
+    private static final int ITEM_COUNT_PER_PAGE = 6;
     // Item列数
     private static final int SPAN_COUNT = 3;
     // 音频信息分组
     private MusicGroup mMusicGroup;
     // 总页数
-    private int mPageCount = 0;
+    private int mPageCount;
     // 每页对应的View
     private ArrayList<View> mViews;
     // 每页对应的RecyclerView
@@ -47,15 +47,14 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
         // 拿到所有的musicBean
         ArrayList<MusicBean> allMusicBeans = musicGroup.getMusicBeans();
         // 计算总页数
-        mPageCount = allMusicBeans.size() / ITEM_COUNT;
-        if (allMusicBeans.size() % ITEM_COUNT > 0) mPageCount++;
+        mPageCount = calculatePageCount(allMusicBeans.size());
         // 每6个MusicBean分为一页，每一页创建一个view
         for (int i = 0; i < mPageCount; i++) {
             View view = mLayoutInflater.inflate(R.layout.edit_music_viewpager, viewPager, false);
             RecyclerView recyclerView = view.findViewById(R.id.rv_items);
             ArrayList<MusicBean> musicBeans = new ArrayList<>();
             // 分配1-6个Item
-            for (int j = i * ITEM_COUNT; j < (i + 1) * ITEM_COUNT; j++) {
+            for (int j = i * ITEM_COUNT_PER_PAGE; j < (i + 1) * ITEM_COUNT_PER_PAGE; j++) {
                 if (j >= allMusicBeans.size()) break;
                 musicBeans.add(allMusicBeans.get(j));
             }
@@ -66,6 +65,12 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
             mRecyclerViews.add(recyclerView);
             mViews.add(view);
         }
+    }
+
+    private int calculatePageCount(int allItemCount){
+        int pageCount = allItemCount / ITEM_COUNT_PER_PAGE;
+        if (allItemCount % ITEM_COUNT_PER_PAGE > 0) pageCount++;
+        return pageCount;
     }
 
     public int getPageCount() {
