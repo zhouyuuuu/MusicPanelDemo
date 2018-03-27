@@ -12,9 +12,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.administrator.musiceditingpanelproject.R;
-import com.example.administrator.musiceditingpanelproject.adapter.MusicListRecyclerViewAdapter;
+import com.example.administrator.musiceditingpanelproject.adapter.MusicListRecyclerViewAdapter.ItemHolder;
 import com.example.administrator.musiceditingpanelproject.adapter.MusicPageViewPagerAdapter;
 import com.example.administrator.musiceditingpanelproject.adapter.MusicSortRecyclerViewAdapter;
+import com.example.administrator.musiceditingpanelproject.adapter.MusicSortRecyclerViewAdapter.SortHolder;
 import com.example.administrator.musiceditingpanelproject.application.MusicEditingPanelApplication;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
@@ -30,8 +31,10 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         , MusicPageViewPagerAdapter.MusicItemClickListener
         , MusicSortRecyclerViewAdapter.ItemClickListener
         , ViewPager.OnPageChangeListener
-        , IEditMusicPanel{
+        , IEditMusicPanel {
 
+    // 每帧绘画时间
+    private static final int TIME_PER_FRAME = 100;
     // 未选中状态
     private static final int STATE_UNSELECTED = -1;
     // 音频信息分组列表
@@ -64,13 +67,34 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     private int mSelectedMusicBeanPositionInPage = STATE_UNSELECTED;
     // 编辑板中最近一次被选中的Item的MusicBean
     private MusicBean mSelectedMusicBeanInMusicGroup = null;
-    //
+    // 分组列表适配器
     private MusicSortRecyclerViewAdapter mMusicSortRecyclerViewAdapter;
-    //
+    // 音频管理者
     private IMusicManager iMusicManager;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.edit_music_activity);
+        initView();
+        initData();
+        iMusicManager.refreshMusicEditPanel();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        iMusicManager.stopMusic();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        iMusicManager.replayMusic();
+    }
+
     /**
-     * 顾名思义
+     * 初始化视图
      */
     private void initView() {
         mViewPagerMusicPage = findViewById(R.id.vp_items);
@@ -82,7 +106,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     }
 
     /**
-     * 顾名思义
+     * 初始化数据
      */
     private void initData() {
         iMusicManager = new EditMusicPanelManager(this);
@@ -101,32 +125,6 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         mViewPagerMusicPage.addOnPageChangeListener(this);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.edit_music_activity);
-        initView();
-        initData();
-        iMusicManager.refreshMusicEditPanel();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        iMusicManager.stopMusic();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        iMusicManager.replayMusic();
-    }
-
     /**
      * 编辑面板中按钮（关闭、删除）点击事件回调
      */
@@ -134,13 +132,17 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_close:
-                ((MusicSortRecyclerViewAdapter.SortHolder) mRecyclerViewMusicSort.findViewHolderForAdapterPosition(mSelectedMusicSortPositionInSortList)).showUnClickedState();
+                ((SortHolder) mRecyclerViewMusicSort.findViewHolderForAdapterPosition(mSelectedMusicSortPositionInSortList)).showUnClickedState();
                 mSelectedMusicSortPositionInSortList = STATE_UNSELECTED;
                 mRlPanel.setVisibility(View.GONE);
                 break;
             case R.id.iv_delete:
-                iMusicManager.deleteMusic(mSelectedMusicBeanInMusicGroup,(MusicListRecyclerViewAdapter.ItemHolder) mMusicPageAdapterHashMap.get(mSelectedMusicBeanSort).getRecyclerViews().get(mSelectedMusicBeanPageInMusicGroup).findViewHolderForAdapterPosition(mSelectedMusicBeanPositionInPage));
-
+                ItemHolder itemHolder = (ItemHolder) mMusicPageAdapterHashMap
+                        .get(mSelectedMusicBeanSort)
+                        .getRecyclerViews()
+                        .get(mSelectedMusicBeanPageInMusicGroup)
+                        .findViewHolderForAdapterPosition(mSelectedMusicBeanPositionInPage);
+                iMusicManager.deleteMusic(mSelectedMusicBeanInMusicGroup, itemHolder);
                 break;
             default:
                 break;
@@ -154,11 +156,11 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      * @param holder   holder
      */
     @Override
-    public void onMusicItemClicked(final int position, final MusicListRecyclerViewAdapter.ItemHolder holder, final MusicBean musicBean, final int pageIndex, final String sort) {
+    public void onMusicItemClicked(final int position, final ItemHolder holder, final MusicBean musicBean, final int pageIndex, final String sort) {
         mClickedMusicBeanInMusicGroup = musicBean;
-        switch (musicBean.getState()){
+        switch (musicBean.getState()) {
             case MusicBean.STATE_UNDOWNLOADED:
-                iMusicManager.downloadMusic(musicBean,holder,sort,pageIndex,position);
+                iMusicManager.downloadMusic(musicBean, holder, sort, pageIndex, position);
                 break;
             case MusicBean.STATE_DOWNLOADING:
                 break;
@@ -173,7 +175,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 iMusicManager.playMusic(musicBean);
                 break;
             case MusicBean.STATE_EDIT:
-                Toast.makeText(this,"编辑",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "编辑", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;
@@ -184,9 +186,16 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      * 将被选中的Item设为未被选中
      */
     private void setSelectedItemUnselected(int state) {
-        if (mSelectedMusicBeanPageInMusicGroup != STATE_UNSELECTED && mSelectedMusicBeanPositionInPage != STATE_UNSELECTED && mSelectedMusicBeanSort != null && mSelectedMusicBeanInMusicGroup!=null) {
-            MusicListRecyclerViewAdapter.ItemHolder holder = (MusicListRecyclerViewAdapter.ItemHolder) mMusicPageAdapterHashMap.get(mSelectedMusicBeanSort).getRecyclerViews().get(mSelectedMusicBeanPageInMusicGroup).findViewHolderForAdapterPosition(mSelectedMusicBeanPositionInPage);
-            switch (state){
+        if (mSelectedMusicBeanPageInMusicGroup != STATE_UNSELECTED
+                && mSelectedMusicBeanPositionInPage != STATE_UNSELECTED
+                && mSelectedMusicBeanSort != null
+                && mSelectedMusicBeanInMusicGroup != null) {
+            ItemHolder holder = (ItemHolder) mMusicPageAdapterHashMap
+                    .get(mSelectedMusicBeanSort)
+                    .getRecyclerViews()
+                    .get(mSelectedMusicBeanPageInMusicGroup)
+                    .findViewHolderForAdapterPosition(mSelectedMusicBeanPositionInPage);
+            switch (state) {
                 case MusicBean.STATE_UNDOWNLOADED:
                     holder.showUndownloadedState();
                     break;
@@ -203,6 +212,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                     break;
             }
             mSelectedMusicBeanInMusicGroup.setState(state);
+            // 清楚选中信息
             mSelectedMusicBeanPageInMusicGroup = STATE_UNSELECTED;
             mSelectedMusicBeanPositionInPage = STATE_UNSELECTED;
             mSelectedMusicBeanSort = null;
@@ -218,11 +228,11 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      * @param holder   holder
      */
     @Override
-    public void OnItemClick(int position, MusicSortRecyclerViewAdapter.SortHolder holder) {
+    public void OnItemClick(int position, SortHolder holder) {
         // 如果mClickedMusicSortPositionInSortList不等于STATE_UNSELECTED说明有其他分类被选中
         if (mSelectedMusicSortPositionInSortList != STATE_UNSELECTED) {
             // 将其置为非选中状态
-            ((MusicSortRecyclerViewAdapter.SortHolder) mRecyclerViewMusicSort.findViewHolderForAdapterPosition(mSelectedMusicSortPositionInSortList)).showUnClickedState();
+            ((SortHolder) mRecyclerViewMusicSort.findViewHolderForAdapterPosition(mSelectedMusicSortPositionInSortList)).showUnClickedState();
         }
         // 将目前点击的position设置给mClickedMusicSortPositionInSortList
         mSelectedMusicSortPositionInSortList = position;
@@ -246,13 +256,6 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         mPageIndicator.setTotalPages(musicPageViewPagerAdapter.getPageCount());
     }
 
-    /**
-     * ViewPager的滑动回调
-     */
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
 
     /**
      * ViewPager的滑页回调
@@ -263,16 +266,14 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     }
 
     /**
-     * ViewPager的滑动状态回调
+     * musicBean状态改变回调，面板Item显示对应的状态
+     *
+     * @param holder    对应View的Holder
+     * @param musicBean 音频信息
      */
     @Override
-    public void onPageScrollStateChanged(int state) {
-
-    }
-
-    @Override
-    public void musicBeanStateChangedCallback(MusicListRecyclerViewAdapter.ItemHolder holder, MusicBean musicBean) {
-        switch (musicBean.getState()){
+    public void musicBeanStateChangedCallback(ItemHolder holder, MusicBean musicBean) {
+        switch (musicBean.getState()) {
             case MusicBean.STATE_UNDOWNLOADED:
                 holder.showUndownloadedState();
                 break;
@@ -290,6 +291,12 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    /**
+     * 加载列表成功，刷新分类列表和中间的ViewPager，选中分类列表的第一项，必须延迟100毫秒等带下一帧绘制完成才能获取到holder
+     * 绘制1帧大概16毫秒，用100毫秒怕机子卡了，且100毫秒延迟并不明显
+     *
+     * @param musicGroups 音频信息分组列表
+     */
     @Override
     public void musicGroupListLoadedCallback(ArrayList<MusicGroup> musicGroups) {
         mMusicGroups.clear();
@@ -298,22 +305,60 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void run() {
                 mMusicSortRecyclerViewAdapter.notifyDataSetChanged();
+                // 将目前点击的position设置给mClickedMusicSortPositionInSortList
+                mSelectedMusicSortPositionInSortList = 0;
+                // 显示编辑面板
+                mRlPanel.setVisibility(View.VISIBLE);
+                // 分类对应的musicGroup
+                MusicGroup musicGroup = mMusicGroups.get(0);
+                // HashSet中找找有没有对应的ViewPagerAdapter
+                MusicPageViewPagerAdapter musicPageViewPagerAdapter = mMusicPageAdapterHashMap.get(musicGroup.getSortName());
+                // 如果没有就新建一个Adapter丢进HashSet中，分类名为key
+                if (musicPageViewPagerAdapter == null) {
+                    musicPageViewPagerAdapter = new MusicPageViewPagerAdapter(mViewPagerMusicPage, musicGroup);
+                    musicPageViewPagerAdapter.setMusicItemClickListener(EditMusicActivity.this);
+                    mMusicPageAdapterHashMap.put(musicGroup.getSortName(), musicPageViewPagerAdapter);
+                }
+                // 设置Adapter
+                mViewPagerMusicPage.setAdapter(musicPageViewPagerAdapter);
+                // 更新页码指示器
+                mPageIndicator.setTotalPages(musicPageViewPagerAdapter.getPageCount());
+                mIvDelete.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        SortHolder holder = (SortHolder) mRecyclerViewMusicSort.findViewHolderForAdapterPosition(mSelectedMusicSortPositionInSortList);
+                        // 置为选中状态
+                        holder.showClickedState();
+                    }
+                }, TIME_PER_FRAME);
             }
         });
     }
 
+    /**
+     * 加载列表失败弹出消息
+     */
     @Override
     public void musicGroupListDataLoadedFailedCallback() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(MusicEditingPanelApplication.getApplication(),"拉取列表失败",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MusicEditingPanelApplication.getApplication(), "拉取列表失败", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    /**
+     * 加载文件成功回调，如果musicBean是最近点击的musicBean则将其选中，记录选中的分页分类位置，清楚上一个选中项的选中状态，然后播放音乐
+     *
+     * @param musicBean  音频信息
+     * @param itemHolder 对应View的Holder
+     * @param sort       分类
+     * @param page       分页
+     * @param position   位置
+     */
     @Override
-    public void musicFileDataLoadedCallback(MusicBean musicBean, MusicListRecyclerViewAdapter.ItemHolder itemHolder,String sort,int page,int position) {
+    public void musicFileDataLoadedCallback(MusicBean musicBean, ItemHolder itemHolder, String sort, int page, int position) {
         if (musicBean == mClickedMusicBeanInMusicGroup) {
             setSelectedItemUnselected(MusicBean.STATE_DOWNLOADED);
             itemHolder.showEditState();
@@ -326,25 +371,58 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    /**
+     * 下载失败回调，弹出消息
+     *
+     * @param musicBean 音频信息
+     */
     @Override
     public void musicFileDataLoadedFailedCallback(MusicBean musicBean) {
-        Toast.makeText(this,"下载音频失败",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "下载音频失败", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * 删除成功回调，弹出消息
+     *
+     * @param musicBean 音频信息
+     */
     @Override
     public void musicFileDataDeletedCallback(MusicBean musicBean) {
-        Toast.makeText(this,"删除成功",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show();
         mSelectedMusicBeanPageInMusicGroup = STATE_UNSELECTED;
         mSelectedMusicBeanPositionInPage = STATE_UNSELECTED;
         mSelectedMusicBeanSort = null;
         mSelectedMusicBeanInMusicGroup = null;
     }
 
+    /**
+     * 删除失败回掉，弹出消息
+     *
+     * @param musicBean 音频信息
+     */
     @Override
     public void musicFileDataDeletedFailedCallback(MusicBean musicBean) {
-        Toast.makeText(this,"删除失败",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "删除失败", Toast.LENGTH_SHORT).show();
+        mSelectedMusicBeanPageInMusicGroup = STATE_UNSELECTED;
+        mSelectedMusicBeanPositionInPage = STATE_UNSELECTED;
+        mSelectedMusicBeanSort = null;
+        mSelectedMusicBeanInMusicGroup = null;
     }
 
 
+    /**
+     * ViewPager的滑动状态回调
+     */
+    @Override
+    public void onPageScrollStateChanged(int state) {
 
+    }
+
+    /**
+     * ViewPager的滑动回调
+     */
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
 }

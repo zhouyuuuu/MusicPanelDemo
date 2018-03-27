@@ -14,6 +14,11 @@ public class MusicEditingPanelApplication extends Application {
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
 
+    /**
+     * 获得App的Context
+     *
+     * @return 上下文
+     */
     public static Context getApplication() {
         return mContext;
     }

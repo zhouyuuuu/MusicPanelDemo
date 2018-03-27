@@ -1,35 +1,66 @@
 package com.example.administrator.musiceditingpanelproject.view;
 
-import com.example.administrator.musiceditingpanelproject.adapter.MusicListRecyclerViewAdapter;
+import com.example.administrator.musiceditingpanelproject.adapter.MusicListRecyclerViewAdapter.ItemHolder;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
 
 import java.util.ArrayList;
 
 /**
+ * 音频编辑面板接口
  * Edited by Administrator on 2018/3/27.
  */
 
 public interface IEditMusicPanel {
-    void musicBeanStateChangedCallback(MusicListRecyclerViewAdapter.ItemHolder holder, MusicBean musicBean);
+    /**
+     * musicBean的状态改变了，同步回调
+     *
+     * @param holder    对应View的Holder
+     * @param musicBean 音频信息
+     */
+    void musicBeanStateChangedCallback(ItemHolder holder, MusicBean musicBean);
 
     /**
-     * 这个方法会被异步回调
+     * 音频信息分组列表加载成功，这个方法会被异步回调
      *
      * @param musicGroups 音频信息分组列表
      */
     void musicGroupListLoadedCallback(ArrayList<MusicGroup> musicGroups);
 
     /**
-     * 这个方法会被异步回调
+     * 音频信息分组列表加载失败，这个方法会被异步回调
      */
     void musicGroupListDataLoadedFailedCallback();
 
-    void musicFileDataLoadedCallback(MusicBean musicBean, MusicListRecyclerViewAdapter.ItemHolder itemHolder,String sort,int page,int position);
+    /**
+     * 音乐文件下载成功回调，同步
+     *
+     * @param musicBean  音频信息
+     * @param itemHolder 对应View的Holder
+     * @param sort       分类
+     * @param page       分页
+     * @param position   位置
+     */
+    void musicFileDataLoadedCallback(MusicBean musicBean, ItemHolder itemHolder, String sort, int page, int position);
 
+    /**
+     * 音乐文件下载失败回调，同步
+     *
+     * @param musicBean 音频信息
+     */
     void musicFileDataLoadedFailedCallback(MusicBean musicBean);
 
+    /**
+     * 音乐文件删除成功回调，同步
+     *
+     * @param musicBean 音频信息
+     */
     void musicFileDataDeletedCallback(MusicBean musicBean);
 
+    /**
+     * 音乐文件删除失败回调，同步
+     *
+     * @param musicBean 音频信息
+     */
     void musicFileDataDeletedFailedCallback(MusicBean musicBean);
 }
