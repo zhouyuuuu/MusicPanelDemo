@@ -1,68 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/dp_111.5"
-    android:layout_height="@dimen/dp_70"
-    android:layout_marginLeft="@dimen/dp_2.5"
-    android:layout_marginRight="@dimen/dp_2.5"
-    android:layout_marginTop="@dimen/dp_5"
+    android:layout_width="@dimen/edit_music_item_rl_width"
+    android:layout_height="@dimen/edit_music_item_rl_height"
+    android:layout_marginEnd="@dimen/edit_music_item_rl_margin_right"
+    android:layout_marginLeft="@dimen/edit_music_item_rl_margin_left"
+    android:layout_marginRight="@dimen/edit_music_item_rl_margin_right"
+    android:layout_marginStart="@dimen/edit_music_item_rl_margin_left"
+    android:layout_marginTop="@dimen/edit_music_item_rl_margin_top"
     android:background="@color/edit_music_item_bg">
 
     <TextView
         android:id="@+id/tv_song_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/dp_5.5"
-        android:layout_marginLeft="@dimen/dp_5.5"
-        android:layout_marginRight="@dimen/dp_5.5"
-        android:layout_marginStart="@dimen/dp_5.5"
-        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginEnd="@dimen/edit_music_item_song_tv_margin_right"
+        android:layout_marginLeft="@dimen/edit_music_item_song_tv_margin_left"
+        android:layout_marginRight="@dimen/edit_music_item_song_tv_margin_right"
+        android:layout_marginStart="@dimen/edit_music_item_song_tv_margin_left"
+        android:layout_marginTop="@dimen/edit_music_item_song_tv_margin_top"
         android:lineSpacingExtra="0sp"
         android:textColor="@color/edit_music_name_song_text_undownloaded"
-        android:textSize="@dimen/sp_12"
+        android:textSize="@dimen/edit_music_item_song_tv_textsize"
         tools:text="You’re beautiful" />
 
     <TextView
         android:id="@+id/tv_author_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/dp_24"
-        android:layout_marginLeft="@dimen/dp_24"
-        android:layout_marginRight="@dimen/dp_5.5"
-        android:layout_marginStart="@dimen/dp_5"
-        android:layout_marginTop="@dimen/dp_41"
+        android:layout_marginEnd="@dimen/edit_music_item_author_tv_margin_right"
+        android:layout_marginLeft="@dimen/edit_music_item_author_tv_margin_left"
+        android:layout_marginRight="@dimen/edit_music_item_author_tv_margin_right"
+        android:layout_marginStart="@dimen/edit_music_item_author_tv_margin_left"
+        android:layout_marginTop="@dimen/edit_music_item_author_tv_margin_top"
         android:lineSpacingExtra="0sp"
         android:textColor="@color/edit_music_name_author_text"
-        android:textSize="@dimen/sp_12"
+        android:textSize="@dimen/edit_music_item_author_tv_textsize"
         tools:text="James Blunt" />
 
     <com.example.administrator.musiceditingpanelproject.widget.DownloadIconView
         android:id="@+id/download_view"
-        android:layout_width="@dimen/dp_18"
-        android:layout_height="@dimen/dp_18"
+        android:layout_width="@dimen/edit_music_item_downloadview_width"
+        android:layout_height="@dimen/edit_music_item_downloadview_height"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="@dimen/dp_3" />
+        android:layout_margin="@dimen/edit_music_item_downloadview_margin" />
 
     <com.example.administrator.musiceditingpanelproject.widget.IndeterminateProgressBar
         android:id="@+id/indeterminate_progress_bar"
-        android:layout_width="@dimen/dp_18"
-        android:layout_height="@dimen/dp_18"
+        android:layout_width="@dimen/edit_music_item_progressbar_width"
+        android:layout_height="@dimen/edit_music_item_progressbar_height"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="@dimen/dp_3" />
+        android:layout_margin="@dimen/edit_music_item_progressbar_margin" />
 
     <TextView
-        android:gravity="center"
-        android:background="@drawable/edit_btn_edit_bg"
-        android:layout_centerInParent="true"
         android:id="@+id/tv_edit"
+        android:layout_width="@dimen/edit_music_item_edit_tv_width"
+        android:layout_height="@dimen/edit_music_item_edit_tv_height"
+        android:layout_centerInParent="true"
+        android:background="@drawable/edit_btn_edit_bg"
+        android:gravity="center"
         android:text="@string/edit_edit"
-        android:textSize="@dimen/sp_12"
         android:textColor="@color/edit_music_close_text"
-        android:layout_width="@dimen/dp_50"
-        android:layout_height="@dimen/dp_20" />
+        android:textSize="@dimen/edit_music_item_edit_tv_textsize" />
 </RelativeLayout>
 

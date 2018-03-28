@@ -11,20 +11,20 @@
 
     <ImageView
         android:id="@+id/iv_delete"
-        android:layout_width="@dimen/dp_44"
-        android:layout_height="@dimen/dp_44"
+        android:layout_width="@dimen/edit_music_delete_btn_weight"
+        android:layout_height="@dimen/edit_music_delete_btn_height"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:background="@color/edit_music_sort_bg"
         android:contentDescription="@string/todo"
-        android:padding="@dimen/dp_12"
-        android:src="@mipmap/icon_delete" />
+        android:padding="@dimen/edit_music_delete_btn_padding"
+        android:src="@mipmap/edit_music_btn_delete" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_sort"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_44"
+        android:layout_height="@dimen/edit_music_sort_rv_height"
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@id/iv_delete"
         android:layout_toStartOf="@id/iv_delete"
@@ -40,14 +40,14 @@
         <com.example.administrator.musiceditingpanelproject.widget.PageIndicator
             android:id="@+id/page_indicator"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_20"
+            android:layout_height="@dimen/edit_music_page_indicator_height"
             android:layout_alignParentBottom="true"
             android:background="@color/edit_music_panel_bg" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/vp_items"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_160"
+            android:layout_height="@dimen/edit_music_vp_height"
             android:layout_above="@id/page_indicator"
             android:background="@color/edit_music_panel_bg"
             android:overScrollMode="never" />
@@ -55,36 +55,38 @@
         <View
             android:id="@+id/v_line"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_0.5"
+            android:layout_height="@dimen/edit_music_v_line_height"
             android:layout_above="@id/vp_items"
             android:background="@color/edit_music_line_bg" />
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_44.5"
+            android:layout_height="@dimen/edit_music_title_tv_height"
             android:layout_above="@id/v_line"
             android:layout_centerHorizontal="true"
             android:background="@color/edit_music_panel_bg"
             android:gravity="center"
             android:text="@string/edit_music"
             android:textColor="@color/edit_music_title_text"
-            android:textSize="@dimen/sp_14" />
+            android:textSize="@dimen/edit_music_title_tv_textsize" />
 
         <TextView
             android:id="@+id/tv_close"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/dp_44.5"
+            android:layout_height="@dimen/edit_music_close_tv_height"
             android:layout_above="@id/v_line"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:paddingLeft="@dimen/dp_15"
-            android:paddingRight="@dimen/dp_15"
+            android:paddingLeft="@dimen/edit_music_close_tv_padding_left"
+            android:paddingRight="@dimen/edit_music_close_tv_padding_right"
             android:text="@string/edit_close"
             android:textColor="@color/edit_music_close_text"
-            android:textSize="@dimen/sp_14" />
+            android:textSize="@dimen/edit_music_close_tv_textsize"
+            android:paddingEnd="@dimen/edit_music_close_tv_padding_right"
+            android:paddingStart="@dimen/edit_music_close_tv_padding_left" />
 
     </RelativeLayout>
 

@@ -3,10 +3,12 @@
     <words>
       <w>asyncplayer</w>
       <w>deviceid</w>
+      <w>downloadview</w>
       <w>imei</w>
       <w>maxversion</w>
       <w>minversion</w>
       <w>musiceditingpanelproject</w>
+      <w>textsize</w>
       <w>undownloaded</w>
     </words>
   </dictionary>

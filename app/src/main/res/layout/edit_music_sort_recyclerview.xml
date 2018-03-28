@@ -2,11 +2,11 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tv_sort"
     android:layout_width="wrap_content"
-    android:layout_height="@dimen/dp_44"
+    android:layout_height="@dimen/edit_music_sort_tv_height"
     android:gravity="center_vertical"
-    android:paddingEnd="@dimen/dp_14.5"
-    android:paddingLeft="@dimen/dp_14.5"
-    android:paddingRight="@dimen/dp_14.5"
-    android:paddingStart="@dimen/dp_14.5"
+    android:paddingEnd="@dimen/edit_music_sort_tv_padding_right"
+    android:paddingLeft="@dimen/edit_music_sort_tv_padding_left"
+    android:paddingRight="@dimen/edit_music_sort_tv_padding_right"
+    android:paddingStart="@dimen/edit_music_sort_tv_padding_left"
     android:textColor="@color/edit_music_name_sort_text"
-    android:textSize="@dimen/sp_12" />
+    android:textSize="@dimen/edit_music_sort_tv_textsize" />
