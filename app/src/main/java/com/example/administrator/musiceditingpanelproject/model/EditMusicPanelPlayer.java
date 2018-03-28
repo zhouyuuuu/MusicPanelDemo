@@ -1,12 +1,10 @@
 package com.example.administrator.musiceditingpanelproject.model;
 
-import android.media.AsyncPlayer;
-import android.media.AudioManager;
-import android.net.Uri;
-
-import com.example.administrator.musiceditingpanelproject.application.MusicEditingPanelApplication;
+import android.media.MediaPlayer;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.util.StoreUtil;
+
+import java.io.IOException;
 
 /**
  * Edited by Administrator on 2018/3/27.
@@ -14,15 +12,22 @@ import com.example.administrator.musiceditingpanelproject.util.StoreUtil;
 
 public class EditMusicPanelPlayer implements IMusicPlayer {
 
-    // TAG
-    private static final String TAG = "AsyncPlayer";
-    // 异步播放器
-    private AsyncPlayer mAsyncPlayer;
-    // 当前播放的Uri
-    private Uri mCurrentUri = null;
+    private MediaPlayer mMediaPlayer;
 
     public EditMusicPanelPlayer() {
-        this.mAsyncPlayer = new AsyncPlayer(TAG);
+        this.mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mMediaPlayer.start();
+            }
+        });
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mMediaPlayer.reset();
+            }
+        });
     }
 
     /**
@@ -33,25 +38,39 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
     @Override
     public void playMusic(MusicBean musicBean) {
         String cachePath = StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), StoreUtil.getFileName(musicBean.getUrl()));
-        mCurrentUri = Uri.parse(cachePath);
-        mAsyncPlayer.play(MusicEditingPanelApplication.getApplication(), mCurrentUri, false, AudioManager.STREAM_MUSIC);
-    }
-
-    /**
-     * 停止音乐
-     */
-    @Override
-    public void stopMusic() {
-        mAsyncPlayer.stop();
-    }
-
-    /**
-     * 重播音乐
-     */
-    @Override
-    public void replayMusic() {
-        if (mCurrentUri != null) {
-            mAsyncPlayer.play(MusicEditingPanelApplication.getApplication(), mCurrentUri, false, AudioManager.STREAM_MUSIC);
+        mMediaPlayer.reset();
+        try {
+            mMediaPlayer.setDataSource(cachePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
         }
+        mMediaPlayer.prepareAsync();
+    }
+
+    /**
+     * 暂停音乐
+     */
+    @Override
+    public void pauseMusic() {
+        mMediaPlayer.pause();
+    }
+
+    /**
+     * 继续音乐
+     */
+    @Override
+    public void restartMusic() {
+        mMediaPlayer.start();
+    }
+
+    /**
+     * 停止播放器
+     */
+    @Override
+    public void stopPlayer() {
+        mMediaPlayer.stop();
+        mMediaPlayer.reset();
+        mMediaPlayer.release();
     }
 }

@@ -77,18 +77,19 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onStop() {
         super.onStop();
-        iMusicManager.stopMusic();
+        iMusicManager.pauseMusic();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        iMusicManager.replayMusic();
+        iMusicManager.restartMusic();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        iMusicManager.stopPlayer();
         iMusicManager.stopLoadingMusic();
     }
 

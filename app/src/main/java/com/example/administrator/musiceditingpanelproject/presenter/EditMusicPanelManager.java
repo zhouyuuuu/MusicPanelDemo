@@ -159,16 +159,21 @@ public class EditMusicPanelManager implements IMusicManager {
      * 停止音乐
      */
     @Override
-    public void stopMusic() {
-        iMusicPlayer.stopMusic();
+    public void pauseMusic() {
+        iMusicPlayer.pauseMusic();
     }
 
     /**
      * 重播音乐
      */
     @Override
-    public void replayMusic() {
-        iMusicPlayer.replayMusic();
+    public void restartMusic() {
+        iMusicPlayer.restartMusic();
+    }
+
+    @Override
+    public void stopPlayer() {
+        iMusicPlayer.stopPlayer();
     }
 
 }

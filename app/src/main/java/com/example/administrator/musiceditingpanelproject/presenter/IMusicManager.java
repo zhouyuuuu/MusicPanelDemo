@@ -83,13 +83,18 @@ public interface IMusicManager {
     void playMusic(MusicBean musicBean);
 
     /**
-     * 停止音乐
+     * 暂停音乐
      */
-    void stopMusic();
+    void pauseMusic();
 
     /**
      * 重播音乐
      */
-    void replayMusic();
+    void restartMusic();
+
+    /**
+     * 停止播放器
+     */
+    void stopPlayer();
 
 }
