@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicListRecyclerViewAdapter.ItemClickListener {
 
     // 默认每页的音频信息数目为6
-    private static final int ITEM_COUNT_PER_PAGE = 6;
+    public static final int ITEM_COUNT_PER_PAGE = 6;
     // Item列数
     private static final int SPAN_COUNT = 3;
     // 音频信息分组

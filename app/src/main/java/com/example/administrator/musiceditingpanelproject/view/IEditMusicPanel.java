@@ -1,6 +1,5 @@
 package com.example.administrator.musiceditingpanelproject.view;
 
-import com.example.administrator.musiceditingpanelproject.adapter.MusicListRecyclerViewAdapter.ItemHolder;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
 
@@ -15,10 +14,9 @@ public interface IEditMusicPanel {
     /**
      * musicBean的状态改变了，同步回调
      *
-     * @param holder    对应View的Holder
      * @param musicBean 音频信息
      */
-    void musicBeanStateChangedCallback(ItemHolder holder, MusicBean musicBean);
+    void musicBeanStateChangedCallback(MusicBean musicBean);
 
     /**
      * 音频信息分组列表加载成功，这个方法会被异步回调
@@ -36,12 +34,8 @@ public interface IEditMusicPanel {
      * 音乐文件下载成功回调，同步
      *
      * @param musicBean  音频信息
-     * @param itemHolder 对应View的Holder
-     * @param sort       分类
-     * @param page       分页
-     * @param position   位置
      */
-    void musicFileDataLoadedCallback(MusicBean musicBean, ItemHolder itemHolder, String sort, int page, int position);
+    void musicFileDataLoadedCallback(MusicBean musicBean);
 
     /**
      * 音乐文件下载失败回调，同步

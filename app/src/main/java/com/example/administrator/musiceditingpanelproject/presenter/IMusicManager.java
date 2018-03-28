@@ -1,6 +1,5 @@
 package com.example.administrator.musiceditingpanelproject.presenter;
 
-import com.example.administrator.musiceditingpanelproject.adapter.MusicListRecyclerViewAdapter.ItemHolder;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
 
@@ -33,54 +32,43 @@ public interface IMusicManager {
      * 下载音频文件
      *
      * @param musicBean  音频信息
-     * @param itemHolder 对应View的Holder
-     * @param sort       分类
-     * @param page       分页
-     * @param position   位置
      */
-    void downloadMusic(MusicBean musicBean, ItemHolder itemHolder, String sort, int page, int position);
+    void downloadMusic(MusicBean musicBean);
 
     /**
      * 下载音频文件成功回调
      *
      * @param musicBean  音频信息
-     * @param itemHolder 对应View的Holder
-     * @param sort       分类
-     * @param page       分页
-     * @param position   位置
      */
-    void musicFileDataLoadedCallback(MusicBean musicBean, ItemHolder itemHolder, String sort, int page, int position);
+    void musicFileDataLoadedCallback(MusicBean musicBean);
 
     /**
      * 下载音频文件失败回调
      *
      * @param musicBean  音频信息
-     * @param itemHolder 对应View的Holder
      */
-    void musicFileDataLoadedFailedCallback(MusicBean musicBean, ItemHolder itemHolder);
+    void musicFileDataLoadedFailedCallback(MusicBean musicBean);
 
     /**
      * 删除音频文件
      *
      * @param musicBean  音频信息
-     * @param itemHolder 对应View的Holder
      */
-    void deleteMusic(MusicBean musicBean, ItemHolder itemHolder);
+    void deleteMusic(MusicBean musicBean);
 
     /**
      * 删除音频文件成功回调
      *
      * @param musicBean  音频信息
-     * @param itemHolder 对应View的Holder
      */
-    void musicFileDataDeletedCallback(MusicBean musicBean, ItemHolder itemHolder);
+    void musicFileDataDeletedCallback(MusicBean musicBean);
 
     /**
      * 删除音频文件失败回调
      *
      * @param musicBean 音频信息
      */
-    void musicFileDataDeletedFailedCallback(MusicBean musicBean, ItemHolder itemHolder);
+    void musicFileDataDeletedFailedCallback(MusicBean musicBean);
 
     /**
      * 播放音乐

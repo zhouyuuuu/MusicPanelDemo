@@ -1,13 +1,11 @@
 package com.example.administrator.musiceditingpanelproject.presenter;
 
-import com.example.administrator.musiceditingpanelproject.adapter.MusicListRecyclerViewAdapter.ItemHolder;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
 import com.example.administrator.musiceditingpanelproject.model.EditMusicPanelLoader;
 import com.example.administrator.musiceditingpanelproject.model.EditMusicPanelPlayer;
 import com.example.administrator.musiceditingpanelproject.model.IMusicLoader;
 import com.example.administrator.musiceditingpanelproject.model.IMusicPlayer;
-import com.example.administrator.musiceditingpanelproject.util.BindUtil;
 import com.example.administrator.musiceditingpanelproject.view.IEditMusicPanel;
 
 import java.lang.ref.WeakReference;
@@ -60,56 +58,42 @@ public class EditMusicPanelManager implements IMusicManager {
     }
 
     /**
-     * 下载音频文件，将View和url绑定起来，将musicBean设为下载中，更新View
+     * 下载音频文件
      *
      * @param musicBean  音频信息
-     * @param itemHolder 对应View的Holder
-     * @param sort       分类
-     * @param page       分页
-     * @param position   位置
      */
     @Override
-    public void downloadMusic(MusicBean musicBean, ItemHolder itemHolder, String sort, int page, int position) {
-        BindUtil.bindUrlAndView(itemHolder.itemView, musicBean.getUrl());
+    public void downloadMusic(MusicBean musicBean) {
         musicBean.setState(MusicBean.STATE_DOWNLOADING);
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
-        iEditMusicPanel.musicBeanStateChangedCallback(itemHolder, musicBean);
-        iMusicLoader.loadMusicFileData(musicBean, itemHolder, sort, page, position);
+        iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
+        iMusicLoader.loadMusicFileData(musicBean);
     }
 
     /**
      * 下载音频文件成功回调，判断是否url与View有绑定关系，没有则说明View被别的url重用了，则不通知面板进行更新
      *
      * @param musicBean  音频信息
-     * @param itemHolder 对应View的Holder
-     * @param sort       分类
-     * @param page       分页
-     * @param position   位置
      */
     @Override
-    public void musicFileDataLoadedCallback(MusicBean musicBean, ItemHolder itemHolder, String sort, int page, int position) {
+    public void musicFileDataLoadedCallback(MusicBean musicBean) {
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
-        if (BindUtil.isBound(itemHolder.itemView, musicBean.getUrl())) {
-            iEditMusicPanel.musicBeanStateChangedCallback(itemHolder, musicBean);
-            iEditMusicPanel.musicFileDataLoadedCallback(musicBean, itemHolder, sort, page, position);
-        }
+        iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
+        iEditMusicPanel.musicFileDataLoadedCallback(musicBean);
     }
 
     /**
      * 下载音频文件失败回调
      *
      * @param musicBean  音频信息
-     * @param itemHolder 对应View的Holder
      */
     @Override
-    public void musicFileDataLoadedFailedCallback(MusicBean musicBean, ItemHolder itemHolder) {
+    public void musicFileDataLoadedFailedCallback(MusicBean musicBean) {
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
-        if (BindUtil.isBound(itemHolder.itemView, musicBean.getUrl())) {
-            iEditMusicPanel.musicBeanStateChangedCallback(itemHolder, musicBean);
-        }
+        iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
         iEditMusicPanel.musicFileDataLoadedFailedCallback(musicBean);
     }
 
@@ -117,27 +101,22 @@ public class EditMusicPanelManager implements IMusicManager {
      * 删除音频文件
      *
      * @param musicBean  音频信息
-     * @param itemHolder 对应View的Holder
      */
     @Override
-    public void deleteMusic(MusicBean musicBean, ItemHolder itemHolder) {
-        BindUtil.bindUrlAndView(itemHolder.itemView, musicBean.getUrl());
-        iMusicLoader.deleteMusicFile(musicBean, itemHolder);
+    public void deleteMusic(MusicBean musicBean) {
+        iMusicLoader.deleteMusicFile(musicBean);
     }
 
     /**
      * 删除音频文件成功回调
      *
      * @param musicBean  音频信息
-     * @param itemHolder 对应View的Holder
      */
     @Override
-    public void musicFileDataDeletedCallback(MusicBean musicBean, ItemHolder itemHolder) {
+    public void musicFileDataDeletedCallback(MusicBean musicBean) {
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
-        if (BindUtil.isBound(itemHolder.itemView, musicBean.getUrl())) {
-            iEditMusicPanel.musicBeanStateChangedCallback(itemHolder, musicBean);
-        }
+        iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
         iEditMusicPanel.musicFileDataDeletedCallback(musicBean);
     }
 
@@ -147,12 +126,10 @@ public class EditMusicPanelManager implements IMusicManager {
      * @param musicBean 音频信息
      */
     @Override
-    public void musicFileDataDeletedFailedCallback(MusicBean musicBean, ItemHolder itemHolder) {
+    public void musicFileDataDeletedFailedCallback(MusicBean musicBean) {
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
-        if (BindUtil.isBound(itemHolder.itemView, musicBean.getUrl())) {
-            iEditMusicPanel.musicBeanStateChangedCallback(itemHolder, musicBean);
-        }
+        iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
         iEditMusicPanel.musicFileDataDeletedFailedCallback(musicBean);
     }
 

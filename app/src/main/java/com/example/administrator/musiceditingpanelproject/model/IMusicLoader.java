@@ -1,6 +1,5 @@
 package com.example.administrator.musiceditingpanelproject.model;
 
-import com.example.administrator.musiceditingpanelproject.adapter.MusicListRecyclerViewAdapter.ItemHolder;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 
 /**
@@ -18,18 +17,13 @@ public interface IMusicLoader {
      * 加载音频文件
      *
      * @param musicBean  音频信息
-     * @param itemHolder 对应View的Holder
-     * @param sort       分类
-     * @param page       第几页
-     * @param position   第几个
      */
-    void loadMusicFileData(MusicBean musicBean, ItemHolder itemHolder, String sort, int page, int position);
+    void loadMusicFileData(MusicBean musicBean);
 
     /**
      * 删除音频文件
      *
      * @param musicBean  音频信息
-     * @param itemHolder 对应View的Holder
      */
-    void deleteMusicFile(MusicBean musicBean, ItemHolder itemHolder);
+    void deleteMusicFile(MusicBean musicBean);
 }
