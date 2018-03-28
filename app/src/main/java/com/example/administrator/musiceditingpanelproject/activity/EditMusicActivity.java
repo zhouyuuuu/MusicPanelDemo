@@ -228,34 +228,38 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      * @param musicBean 音频信息
      */
     @Override
-    public void musicBeanStateChangedCallback(MusicBean musicBean) {
-        int page;
-        int position;
-        String sort;
-        for (MusicGroup musicGroup:mMusicGroups) {
-            ArrayList<MusicBean> musicBeans = musicGroup.getMusicBeans();
-            for (int i=0;i<musicBeans.size();i++){
-                if (musicBeans.get(i) == musicBean){
-                    sort = musicGroup.getSortName();
-                    page = i/ MusicPageViewPagerAdapter.ITEM_COUNT_PER_PAGE;
-                    position = i%MusicPageViewPagerAdapter.ITEM_COUNT_PER_PAGE;
-                    if (musicBean.getState() == MusicBean.STATE_EDIT){
-                        mSelectedMusicBean = musicBean;
-                        iMusicManager.playMusic(musicBean);
+    public void musicBeanStateChangedCallback(final MusicBean musicBean) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                int page;
+                int position;
+                String sort;
+                for (MusicGroup musicGroup:mMusicGroups) {
+                    ArrayList<MusicBean> musicBeans = musicGroup.getMusicBeans();
+                    for (int i=0;i<musicBeans.size();i++){
+                        if (musicBeans.get(i) == musicBean){
+                            sort = musicGroup.getSortName();
+                            page = i/ MusicPageViewPagerAdapter.ITEM_COUNT_PER_PAGE;
+                            position = i%MusicPageViewPagerAdapter.ITEM_COUNT_PER_PAGE;
+                            if (musicBean.getState() == MusicBean.STATE_EDIT){
+                                mSelectedMusicBean = musicBean;
+                                iMusicManager.playMusic(musicBean);
+                            }
+                            ItemHolder holder = (ItemHolder) mMusicPageAdapterHashMap
+                                    .get(sort)
+                                    .getRecyclerViews()
+                                    .get(page)
+                                    .findViewHolderForAdapterPosition(position);
+                            if (holder != null) {
+                                freshHolder(musicBean,holder);
+                            }
+                            return;
+                        }
                     }
-                    ItemHolder holder = (ItemHolder) mMusicPageAdapterHashMap
-                            .get(sort)
-                            .getRecyclerViews()
-                            .get(page)
-                            .findViewHolderForAdapterPosition(position);
-                    if (holder != null) {
-                        freshHolder(musicBean,holder);
-                    }
-                    return;
                 }
             }
-        }
-
+        });
     }
 
     /**
@@ -265,12 +269,12 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      * @param musicGroups 音频信息分组列表
      */
     @Override
-    public void musicGroupListLoadedCallback(ArrayList<MusicGroup> musicGroups) {
-        mMusicGroups.clear();
-        mMusicGroups.addAll(musicGroups);
+    public void musicGroupListLoadedCallback(final ArrayList<MusicGroup> musicGroups) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mMusicGroups.clear();
+                mMusicGroups.addAll(musicGroups);
                 mMusicSortRecyclerViewAdapter.notifyDataSetChanged();
                 // 将目前点击的position设置给mClickedMusicSortPositionInSortList
                 mSelectedMusicSortPositionInSortList = 0;
@@ -321,12 +325,17 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      * @param musicBean  音频信息
      */
     @Override
-    public void musicFileDataLoadedCallback(MusicBean musicBean) {
-        if (musicBean == mClickedMusicBeanInMusicGroup) {
-            setSelectedItemUnselected(MusicBean.STATE_DOWNLOADED);
-            musicBean.setState(MusicBean.STATE_EDIT);
-            musicBeanStateChangedCallback(musicBean);
-        }
+    public void musicFileDataLoadedCallback(final MusicBean musicBean) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (musicBean == mClickedMusicBeanInMusicGroup) {
+                    setSelectedItemUnselected(MusicBean.STATE_DOWNLOADED);
+                    musicBean.setState(MusicBean.STATE_EDIT);
+                    musicBeanStateChangedCallback(musicBean);
+                }
+            }
+        });
     }
 
     /**
@@ -336,7 +345,12 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      */
     @Override
     public void musicFileDataLoadedFailedCallback(MusicBean musicBean) {
-        Toast.makeText(this, "下载音频失败", Toast.LENGTH_SHORT).show();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MusicEditingPanelApplication.getApplication(), "下载音频失败", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**
@@ -346,8 +360,13 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      */
     @Override
     public void musicFileDataDeletedCallback(MusicBean musicBean) {
-        Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show();
-        mSelectedMusicBean = null;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MusicEditingPanelApplication.getApplication(), "删除成功", Toast.LENGTH_SHORT).show();
+                mSelectedMusicBean = null;
+            }
+        });
     }
 
     /**
@@ -357,8 +376,13 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      */
     @Override
     public void musicFileDataDeletedFailedCallback(MusicBean musicBean) {
-        Toast.makeText(this, "删除失败", Toast.LENGTH_SHORT).show();
-        mSelectedMusicBean = null;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MusicEditingPanelApplication.getApplication(), "删除失败", Toast.LENGTH_SHORT).show();
+                mSelectedMusicBean = null;
+            }
+        });
     }
 
     /**
