@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="122.2dp"
-    android:layout_height="76.7dp"
-    android:layout_marginLeft="2.7dp"
-    android:layout_marginRight="2.7dp"
-    android:layout_marginTop="5.5dp"
+    android:layout_width="@dimen/dp_111.5"
+    android:layout_height="@dimen/dp_70"
+    android:layout_marginLeft="@dimen/dp_2.5"
+    android:layout_marginRight="@dimen/dp_2.5"
+    android:layout_marginTop="@dimen/dp_5"
     android:background="@color/edit_music_item_bg">
 
     <TextView
         android:id="@+id/tv_song_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="11dp"
+        android:layout_marginEnd="@dimen/dp_5.5"
+        android:layout_marginLeft="@dimen/dp_5.5"
+        android:layout_marginRight="@dimen/dp_5.5"
+        android:layout_marginStart="@dimen/dp_5.5"
+        android:layout_marginTop="@dimen/dp_10"
         android:lineSpacingExtra="0sp"
         android:textColor="@color/edit_music_name_song_text_undownloaded"
-        android:textSize="13.1sp"
+        android:textSize="@dimen/sp_12"
         tools:text="You’re beautiful" />
 
     <TextView
         android:id="@+id/tv_author_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="26.3dp"
-        android:layout_marginLeft="26.3dp"
-        android:layout_marginRight="6dp"
-        android:layout_marginStart="5.5dp"
-        android:layout_marginTop="44.9dp"
+        android:layout_marginEnd="@dimen/dp_24"
+        android:layout_marginLeft="@dimen/dp_24"
+        android:layout_marginRight="@dimen/dp_5.5"
+        android:layout_marginStart="@dimen/dp_5"
+        android:layout_marginTop="@dimen/dp_41"
         android:lineSpacingExtra="0sp"
         android:textColor="@color/edit_music_name_author_text"
-        android:textSize="13.1sp"
+        android:textSize="@dimen/sp_12"
         tools:text="James Blunt" />
 
     <com.example.administrator.musiceditingpanelproject.widget.DownloadIconView
         android:id="@+id/download_view"
-        android:layout_width="19.7dp"
-        android:layout_height="19.7dp"
+        android:layout_width="@dimen/dp_18"
+        android:layout_height="@dimen/dp_18"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="3.3dp" />
+        android:layout_margin="@dimen/dp_3" />
 
     <com.example.administrator.musiceditingpanelproject.widget.IndeterminateProgressBar
         android:id="@+id/indeterminate_progress_bar"
-        android:layout_width="19.7dp"
-        android:layout_height="19.7dp"
+        android:layout_width="@dimen/dp_18"
+        android:layout_height="@dimen/dp_18"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="3.3dp" />
+        android:layout_margin="@dimen/dp_3" />
 
     <TextView
         android:gravity="center"
@@ -60,9 +60,9 @@
         android:layout_centerInParent="true"
         android:id="@+id/tv_edit"
         android:text="@string/edit_edit"
-        android:textSize="13.1dp"
+        android:textSize="@dimen/sp_12"
         android:textColor="@color/edit_music_close_text"
-        android:layout_width="54.8dp"
-        android:layout_height="22dp" />
+        android:layout_width="@dimen/dp_50"
+        android:layout_height="@dimen/dp_20" />
 </RelativeLayout>
 

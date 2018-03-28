@@ -9,5 +9,5 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:overScrollMode="never"
-        android:paddingTop="11dp" />
+        android:paddingTop="@dimen/dp_10" />
 </FrameLayout>
