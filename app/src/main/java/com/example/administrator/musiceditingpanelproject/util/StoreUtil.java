@@ -62,7 +62,7 @@ public class StoreUtil {
         // 获得该文件夹内的所有文件
         File[] files = folder.listFiles();
         for (File file : files) {
-            if (!file.isFile()) break;
+            if (!file.isFile()) continue;
             // 在HashSet中找是否存在该文件名
             if (!cacheFileNameSet.contains(file.getName())) {
                 file.delete();

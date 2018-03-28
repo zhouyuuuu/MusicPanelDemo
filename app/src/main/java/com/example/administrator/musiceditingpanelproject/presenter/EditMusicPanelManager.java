@@ -78,6 +78,7 @@ public class EditMusicPanelManager implements IMusicManager {
      */
     @Override
     public void musicFileDataLoadedCallback(MusicBean musicBean) {
+        musicBean.setState(MusicBean.STATE_DOWNLOADED);
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
         iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
@@ -91,6 +92,7 @@ public class EditMusicPanelManager implements IMusicManager {
      */
     @Override
     public void musicFileDataLoadedFailedCallback(MusicBean musicBean) {
+        musicBean.setState(MusicBean.STATE_UNDOWNLOADED);
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
         iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
@@ -114,6 +116,7 @@ public class EditMusicPanelManager implements IMusicManager {
      */
     @Override
     public void musicFileDataDeletedCallback(MusicBean musicBean) {
+        musicBean.setState(MusicBean.STATE_UNDOWNLOADED);
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
         iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
@@ -127,10 +130,19 @@ public class EditMusicPanelManager implements IMusicManager {
      */
     @Override
     public void musicFileDataDeletedFailedCallback(MusicBean musicBean) {
+        musicBean.setState(MusicBean.STATE_DOWNLOADED);
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
         iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
         iEditMusicPanel.musicFileDataDeletedFailedCallback(musicBean);
+    }
+
+    /**
+     * 暂停加载音乐
+     */
+    @Override
+    public void stopLoadingMusic() {
+        iMusicLoader.stopLoading();
     }
 
     /**

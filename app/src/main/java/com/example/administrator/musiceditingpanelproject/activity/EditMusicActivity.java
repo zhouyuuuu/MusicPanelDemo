@@ -21,6 +21,7 @@ import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
 import com.example.administrator.musiceditingpanelproject.presenter.EditMusicPanelManager;
 import com.example.administrator.musiceditingpanelproject.presenter.IMusicManager;
+import com.example.administrator.musiceditingpanelproject.util.StoreUtil;
 import com.example.administrator.musiceditingpanelproject.view.IEditMusicPanel;
 import com.example.administrator.musiceditingpanelproject.widget.PageIndicator;
 
@@ -83,6 +84,12 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     protected void onRestart() {
         super.onRestart();
         iMusicManager.replayMusic();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        iMusicManager.stopLoadingMusic();
     }
 
     /**
@@ -152,6 +159,11 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
             case MusicBean.STATE_DOWNLOADING:
                 break;
             case MusicBean.STATE_DOWNLOADED:
+                // 防止运行期间文件被删除
+                if (StoreUtil.findCacheFile(musicBean.getVersion(),StoreUtil.getFileName(musicBean.getUrl())) == null){
+                    iMusicManager.downloadMusic(musicBean);
+                    break;
+                }
                 setSelectedItemUnselected(MusicBean.STATE_DOWNLOADED);
                 holder.showEditState();
                 musicBean.setState(MusicBean.STATE_EDIT);
@@ -175,7 +187,6 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
             musicBeanStateChangedCallback(mSelectedMusicBean);
             mSelectedMusicBean = null;
         }
-
     }
 
     /**
@@ -223,7 +234,9 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     }
 
     /**
-     * musicBean状态改变回调，面板Item显示对应的状态
+     * musicBean状态改变回调
+     * 先确定MusicBean的位置(这边遍历找位置以防止有添加和删除Item的操作导致位置变化)，然后拿到对应的holder进行更新,如果为空，则不需要更新，因为再次显示时RecyclerView会重新刷新View
+     * 如果musicBean是最近点击的musicBean则将其选中，清除上一个选中项的选中状态，然后播放音乐
      *
      * @param musicBean 音频信息
      */
@@ -252,7 +265,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                                     .get(page)
                                     .findViewHolderForAdapterPosition(position);
                             if (holder != null) {
-                                freshHolder(musicBean,holder);
+                                refreshHolder(musicBean,holder);
                             }
                             return;
                         }
@@ -320,7 +333,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     }
 
     /**
-     * 加载文件成功回调，如果musicBean是最近点击的musicBean则将其选中，记录选中的分页分类位置，清楚上一个选中项的选中状态，然后播放音乐
+     * 文件下载成功回调
      *
      * @param musicBean  音频信息
      */
@@ -330,7 +343,9 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void run() {
                 if (musicBean == mClickedMusicBeanInMusicGroup) {
+                    // 之前选中的项状态设置为已下载
                     setSelectedItemUnselected(MusicBean.STATE_DOWNLOADED);
+                    // 当前musicBean设置为编辑状态
                     musicBean.setState(MusicBean.STATE_EDIT);
                     musicBeanStateChangedCallback(musicBean);
                 }
@@ -386,10 +401,10 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     }
 
     /**
-     * 确定MusicBean的位置，然后拿到对应的holder进行更新,如果为空，则不需要更新，因为再次显示时RecyclerView会重新刷新View
+     * 刷新holder的状态
      * @param musicBean 音频信息
      */
-    private void freshHolder(MusicBean musicBean,ItemHolder holder){
+    private void refreshHolder(MusicBean musicBean, ItemHolder holder){
         switch (musicBean.getState()) {
             case MusicBean.STATE_UNDOWNLOADED:
                 holder.showUndownloadedState();

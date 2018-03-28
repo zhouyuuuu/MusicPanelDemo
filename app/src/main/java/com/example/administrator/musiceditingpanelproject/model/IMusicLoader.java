@@ -26,4 +26,9 @@ public interface IMusicLoader {
      * @param musicBean  音频信息
      */
     void deleteMusicFile(MusicBean musicBean);
+
+    /**
+     * 停止加载
+     */
+    void stopLoading();
 }

@@ -71,6 +71,11 @@ public interface IMusicManager {
     void musicFileDataDeletedFailedCallback(MusicBean musicBean);
 
     /**
+     * 停止加载音乐
+     */
+    void stopLoadingMusic();
+
+    /**
      * 播放音乐
      *
      * @param musicBean 音频信息
