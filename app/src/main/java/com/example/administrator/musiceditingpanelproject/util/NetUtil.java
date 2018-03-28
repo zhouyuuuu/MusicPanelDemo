@@ -53,7 +53,7 @@ public class NetUtil {
         ResponseBody responseBody = response.body();
         if (responseBody == null) return null;
         try {
-            musicGroups = parseResponseToMusicTypeLists2(responseBody.string());
+            musicGroups = parseResponseToMusicTypeListsForTesting(responseBody.string());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -164,12 +164,12 @@ public class NetUtil {
     }
 
     /**
-     * 把Json解析成为音频信息组列表，这个是根据实际返回的格式来解析
+     * 解析目前服务器返回的假数据
      *
      * @param response 服务器返回音频列表的Json的String
      * @return 音频信息组列表
      */
-    private static ArrayList<MusicGroup> parseResponseToMusicTypeLists2(String response) {
+    private static ArrayList<MusicGroup> parseResponseToMusicTypeListsForTesting(String response) {
         ArrayList<MusicGroup> musicGroups = new ArrayList<>();
         JSONObject jsonObject;
         try {
