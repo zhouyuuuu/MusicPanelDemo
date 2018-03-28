@@ -53,7 +53,7 @@ public class NetUtil {
         ResponseBody responseBody = response.body();
         if (responseBody == null) return null;
         try {
-            musicGroups = parseResponseToMusicTypeListsForTesting(responseBody.string());
+            musicGroups = parseResponseToMusicGroupsForTesting(responseBody.string());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -126,7 +126,7 @@ public class NetUtil {
      * @param response 服务器返回音频列表的Json的String
      * @return 音频信息组列表
      */
-    private static ArrayList<MusicGroup> parseResponseToMusicTypeLists(String response) {
+    private static ArrayList<MusicGroup> parseResponseToMusicGroups(String response) {
         ArrayList<MusicGroup> musicGroups = new ArrayList<>();
         JSONObject jsonObject;
         try {
@@ -169,7 +169,7 @@ public class NetUtil {
      * @param response 服务器返回音频列表的Json的String
      * @return 音频信息组列表
      */
-    private static ArrayList<MusicGroup> parseResponseToMusicTypeListsForTesting(String response) {
+    private static ArrayList<MusicGroup> parseResponseToMusicGroupsForTesting(String response) {
         ArrayList<MusicGroup> musicGroups = new ArrayList<>();
         JSONObject jsonObject;
         try {

@@ -13,7 +13,7 @@
     <dimen name="edit_music_item_song_tv_margin_top">10dp</dimen>
     <dimen name="edit_music_item_song_tv_textsize">12sp</dimen>
     <dimen name="edit_music_item_author_tv_margin_right">24dp</dimen>
-    <dimen name="edit_music_item_author_tv_margin_left">24dp</dimen>
+    <dimen name="edit_music_item_author_tv_margin_left">5.5dp</dimen>
     <dimen name="edit_music_item_author_tv_margin_top">41dp</dimen>
     <dimen name="edit_music_item_author_tv_textsize">12sp</dimen>
     <dimen name="edit_music_item_downloadview_width">18dp</dimen>

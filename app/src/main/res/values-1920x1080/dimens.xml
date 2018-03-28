@@ -13,7 +13,7 @@
     <dimen name="edit_music_item_song_tv_margin_top">28.9px</dimen>
     <dimen name="edit_music_item_song_tv_textsize">12sp</dimen>
     <dimen name="edit_music_item_author_tv_margin_right">69px</dimen>
-    <dimen name="edit_music_item_author_tv_margin_left">69px</dimen>
+    <dimen name="edit_music_item_author_tv_margin_left">14.4px</dimen>
     <dimen name="edit_music_item_author_tv_margin_top">117.9px</dimen>
     <dimen name="edit_music_item_author_tv_textsize">34.4px</dimen>
     <dimen name="edit_music_item_downloadview_width">51.7px</dimen>
