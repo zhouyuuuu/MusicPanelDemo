@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="@color/edit_music_space_bg"
     android:layout_height="match_parent">
 
     <ImageView
@@ -32,9 +33,10 @@
         android:overScrollMode="never" />
 
     <RelativeLayout
+        android:visibility="gone"
         android:id="@+id/rl_panel"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@id/rv_sort">
 
         <com.example.administrator.musiceditingpanelproject.widget.PageIndicator
@@ -89,5 +91,16 @@
             android:paddingStart="@dimen/edit_music_close_tv_padding_left" />
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_retry"
+        android:visibility="gone"
+        android:drawableTop="@mipmap/retry"
+        android:textSize="12sp"
+        android:textColor="#ffffff"
+        android:layout_centerInParent="true"
+        android:text="@string/edit_retry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

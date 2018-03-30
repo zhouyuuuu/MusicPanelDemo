@@ -67,6 +67,11 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
         }
     }
 
+    /**
+     * 计算总共多少页
+     * @param allItemCount Item总数
+     * @return 页数
+     */
     private int calculatePageCount(int allItemCount){
         int pageCount = allItemCount / ITEM_COUNT_PER_PAGE;
         if (allItemCount % ITEM_COUNT_PER_PAGE > 0) pageCount++;

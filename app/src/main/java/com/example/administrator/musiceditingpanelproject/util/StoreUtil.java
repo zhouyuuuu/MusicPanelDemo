@@ -2,6 +2,7 @@ package com.example.administrator.musiceditingpanelproject.util;
 
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.example.administrator.musiceditingpanelproject.application.MusicEditingPanelApplication;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * 缓存工具类，用于缓存音乐列表、缓存音乐文件、读取音乐列表、整理缓存、删除缓存
  * Edited by Administrator on 2018/3/25.
@@ -35,7 +38,7 @@ public class StoreUtil {
     // 缓存音乐列表文件夹名
     private static final String CACHE_LIST_FOLDER = "/MusicListCache";
     // 缓存音乐列表文件名
-    private static final String CACHE_LIST_FILE = "ListCache";
+    private static final String CACHE_LIST_FILE = "/ListCache";
 
     /**
      * 整理缓存
@@ -116,25 +119,24 @@ public class StoreUtil {
      * 缓存音频列表
      *
      * @param musicGroups 音频信息组列表
-     * @return 是否成功
      */
-    public static boolean cacheMusicList(ArrayList<MusicGroup> musicGroups) {
+    public static void cacheMusicList(ArrayList<MusicGroup> musicGroups) {
         File folder = new File(getListCacheFolderDir());
         // 如果不存在也不能创建路径
         if (!folder.exists() && !folder.mkdir()) {
-            return false;
+            return;
         }
         File file = new File(getListCacheFileAbsolutePath());
         if (file.exists()) {
             // 如果删除不了
             if (!file.delete()) {
-                return false;
+                return;
             }
         } else {
             try {
                 // 如果创建不了文件
                 if (!file.createNewFile()) {
-                    return false;
+                    return;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -148,13 +150,10 @@ public class StoreUtil {
             objectOutputStream = new ObjectOutputStream(bufferedOutputStream);
             objectOutputStream.writeObject(musicGroups);
             objectOutputStream.flush();
-            return true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return false;
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         } finally {
             if (objectOutputStream != null) {
                 try {
@@ -178,7 +177,7 @@ public class StoreUtil {
         if (!file.exists()) {
             return null;
         }
-        // 缓存
+        // 读序列化缓存
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
@@ -244,6 +243,6 @@ public class StoreUtil {
     }
 
     private static String getListCacheFileAbsolutePath() {
-        return getListCacheFolderDir() + "/" + CACHE_LIST_FILE;
+        return getListCacheFolderDir() + CACHE_LIST_FILE;
     }
 }

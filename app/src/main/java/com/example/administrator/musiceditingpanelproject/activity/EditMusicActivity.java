@@ -64,6 +64,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     private MusicSortRecyclerViewAdapter mMusicSortRecyclerViewAdapter;
     // 音频管理者
     private IMusicManager iMusicManager;
+    private TextView mTvRetry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         mRlPanel = findViewById(R.id.rl_panel);
         mTvClose = findViewById(R.id.tv_close);
         mIvDelete = findViewById(R.id.iv_delete);
+        mTvRetry = findViewById(R.id.tv_retry);
     }
 
     /**
@@ -120,6 +122,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         // RecyclerView设置Adapter
         mMusicSortRecyclerViewAdapter = new MusicSortRecyclerViewAdapter(mMusicGroups);
         mMusicSortRecyclerViewAdapter.setItemClickListener(this);
+        mTvRetry.setOnClickListener(this);
         mRecyclerViewMusicSort.setAdapter(mMusicSortRecyclerViewAdapter);
         // ViewPager滑页监听
         mViewPagerMusicPage.addOnPageChangeListener(this);
@@ -132,13 +135,20 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_close:
-                ((SortHolder) mRecyclerViewMusicSort.findViewHolderForAdapterPosition(mSelectedMusicSortPositionInSortList)).showUnClickedState();
-                mSelectedMusicSortPositionInSortList = STATE_UNSELECTED;
+                SortHolder sortHolder = (SortHolder) mRecyclerViewMusicSort.findViewHolderForAdapterPosition(mSelectedMusicSortPositionInSortList);
+                if (sortHolder != null){
+                    sortHolder.showUnClickedState();
+                    mSelectedMusicSortPositionInSortList = STATE_UNSELECTED;
+                }
                 mRlPanel.setVisibility(View.GONE);
                 break;
             case R.id.iv_delete:
                 iMusicManager.deleteMusic(mSelectedMusicBean);
                 iMusicManager.stopPlayer();
+                break;
+            case R.id.tv_retry:
+                mTvRetry.setVisibility(View.GONE);
+                iMusicManager.refreshMusicEditPanel();
                 break;
             default:
                 break;
@@ -301,6 +311,8 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 mMusicGroups.clear();
                 mMusicGroups.addAll(musicGroups);
                 mMusicSortRecyclerViewAdapter.notifyDataSetChanged();
+                // 显示编辑面板
+                mRlPanel.setVisibility(View.VISIBLE);
                 // 将目前点击的position设置给mClickedMusicSortPositionInSortList
                 mSelectedMusicSortPositionInSortList = 0;
                 // 显示编辑面板
@@ -340,7 +352,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(MusicEditingPanelApplication.getApplication(), "拉取列表失败", Toast.LENGTH_SHORT).show();
+                mTvRetry.setVisibility(View.VISIBLE);
             }
         });
     }

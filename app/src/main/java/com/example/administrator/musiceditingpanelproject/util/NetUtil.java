@@ -34,6 +34,10 @@ public class NetUtil {
     private static final String URL_TEST = "http://dev.mixvvideo.com/";
     // 正式环境host
     private static final String URL_OFFICIAL = "https://www.mixvvideo.com/";
+    // range超出返回错误代码
+    private static final int ERROR_CODE_RANGE_ILLEGAL = 416;
+    // 缓存区大小
+    private static final int BUFFER_SIZE = 1024;
 
     /**
      * 获得音频信息组列表
@@ -81,7 +85,7 @@ public class NetUtil {
     }
 
     /**
-     * 分割出网络url中的BaseUrl
+     * 分割出网络url中文件名之前的字符串
      *
      * @param url 网络url
      * @return BaseUrl
@@ -106,12 +110,15 @@ public class NetUtil {
                 .baseUrl(getBaseUrl(musicBean.getUrl()))
                 .build();
         MusicRequest musicRequest = retrofit.create(MusicRequest.class);
+        // 先用临时文件名，来区分下载中文件和下载完成文件
         String tempFilePath = StoreUtil.getCacheFileAbsolutePathTemp(musicBean.getVersion(), filename);
         File tempFile = new File(tempFilePath);
+        // 创建文件夹
         File cacheFolderPath = new File(StoreUtil.getCacheFolderDir());
         if (!cacheFolderPath.exists()){
             cacheFolderPath.mkdir();
         }
+        // 创建文件夹
         File musicFileCacheFolderPath = new File(StoreUtil.getCacheMusicFileFolder());
         if (!musicFileCacheFolderPath.exists()){
             musicFileCacheFolderPath.mkdir();
@@ -121,25 +128,30 @@ public class NetUtil {
         BufferedInputStream bufferedInputStream = null;
         try {
             randomAccessFile = new RandomAccessFile(tempFile, "rw");
+            // 从tempFile.length()位置开始写
             randomAccessFile.seek(tempFile.length());
             String range = "bytes=" + tempFile.length() + "-";
+            // 从range开始获取
             call = musicRequest.getMusicFileWithRange(range, filename);
             if (isPaused.get()) return false;
             Response<ResponseBody> response = call.execute();
             if (response == null) return false;
-            if (response.code() == 416) {
+            // 如果是416，则说明range越界了，原因是文件已经下载好了，只是没有改名误认为没下载好
+            if (response.code() == ERROR_CODE_RANGE_ILLEGAL) {
+                // 改名
                 return renameCacheFile(tempFile, StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), filename));
             }
             if (!response.isSuccessful()) return false;
             ResponseBody responseBody = response.body();
             if (responseBody == null) return false;
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[BUFFER_SIZE];
             InputStream inputStream = responseBody.byteStream();
             bufferedInputStream = new BufferedInputStream(inputStream);
             int len;
             while (!isPaused.get() && (len = bufferedInputStream.read(buffer)) != -1) {
                 randomAccessFile.write(buffer, 0, len);
             }
+            // 如果是暂停，返回false，如果不是暂停，判断是否重命名成功，成功返回true，否则false，改名用于区分下载中的文件和下载完成的文件
             return !isPaused.get() && renameCacheFile(tempFile, StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), filename));
         } catch (IOException e) {
             e.printStackTrace();
@@ -162,6 +174,12 @@ public class NetUtil {
         }
     }
 
+    /**
+     * 重命名文件
+     * @param file 文件
+     * @param rename 名
+     * @return 成功失败
+     */
     private static boolean renameCacheFile(File file, String rename) {
         File renameFile = new File(rename);
         if (!renameFile.exists()) {

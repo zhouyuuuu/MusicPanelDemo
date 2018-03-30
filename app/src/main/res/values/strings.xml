@@ -6,4 +6,5 @@
     <string name="edit_play">播放</string>
     <string name="edit_pause">暂停</string>
     <string name="launch">启动</string>
+    <string name="edit_retry">数据加载不出来了，点我重试一下~</string>
 </resources>

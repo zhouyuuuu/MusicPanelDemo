@@ -14,4 +14,5 @@
     <color name="edit_music_name_sort_text">#fefefe</color>
     <color name="edit_music_line_bg">#2e2e2e</color>
     <color name="edit_music_name_author_text">#404040</color>
+    <color name="edit_music_space_bg">#000000</color>
 </resources>

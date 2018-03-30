@@ -64,10 +64,12 @@ public class EditMusicPanelManager implements IMusicManager {
      */
     @Override
     public void downloadMusic(MusicBean musicBean) {
+        // 先让View设置为下载中
         musicBean.setState(MusicBean.STATE_DOWNLOADING);
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
         iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
+        // 让loader去下载
         iMusicLoader.loadMusicFileData(musicBean);
     }
 
@@ -78,10 +80,12 @@ public class EditMusicPanelManager implements IMusicManager {
      */
     @Override
     public void musicFileDataLoadedCallback(MusicBean musicBean) {
+        // 设置为下载完成
         musicBean.setState(MusicBean.STATE_DOWNLOADED);
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
         iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
+        // 下载成功回调，让View去处理下载完成的Bean哪个要播放音乐
         iEditMusicPanel.musicFileDataLoadedCallback(musicBean);
     }
 
@@ -92,20 +96,31 @@ public class EditMusicPanelManager implements IMusicManager {
      */
     @Override
     public void musicFileDataLoadedFailedCallback(MusicBean musicBean) {
+        // 更新View为未下载
         musicBean.setState(MusicBean.STATE_UNDOWNLOADED);
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
         iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
+        // 通知有任务失败
         iEditMusicPanel.musicFileDataLoadedFailedCallback(musicBean);
     }
 
+    /**
+     * 暂停下载
+     * @param musicBean  音频信息
+     */
     @Override
     public void pauseDownloadMusic(MusicBean musicBean) {
         iMusicLoader.pauseLoading(musicBean);
     }
 
+    /**
+     * 暂停的回调
+     * @param musicBean  音频信息
+     */
     @Override
     public void musicFileLoadingPausedCallback(MusicBean musicBean) {
+        // View设置为暂停
         musicBean.setState(MusicBean.STATE_DOWNLOAD_PAUSED);
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
@@ -129,10 +144,12 @@ public class EditMusicPanelManager implements IMusicManager {
      */
     @Override
     public void musicFileDataDeletedCallback(MusicBean musicBean) {
+        // 设置为未下载状态
         musicBean.setState(MusicBean.STATE_UNDOWNLOADED);
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
         iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
+        // 删除成功
         iEditMusicPanel.musicFileDataDeletedCallback(musicBean);
     }
 
@@ -143,10 +160,12 @@ public class EditMusicPanelManager implements IMusicManager {
      */
     @Override
     public void musicFileDataDeletedFailedCallback(MusicBean musicBean) {
+        // 删除失败所以文件还在，设置为已下载状态
         musicBean.setState(MusicBean.STATE_DOWNLOADED);
         IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
         if (iEditMusicPanel == null) return;
         iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
+        // 删除失败
         iEditMusicPanel.musicFileDataDeletedFailedCallback(musicBean);
     }
 

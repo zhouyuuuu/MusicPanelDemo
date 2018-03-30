@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.example.administrator.musiceditingpanelproject.R;
 
+import java.io.File;
+
 /**
  * Edited by Administrator on 2018/3/28.
  */
@@ -21,6 +23,9 @@ public class LaunchActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.launch_activity);
         TextView mTvLaunch = findViewById(R.id.tv_launch);
         mTvLaunch.setOnClickListener(this);
+        File file = new File(getExternalCacheDir()+"MusicListCache/ListCache");
+        if (file.exists())
+            file.delete();
     }
 
     @Override
