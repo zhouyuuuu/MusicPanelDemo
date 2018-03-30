@@ -115,7 +115,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
             musicBean.setName("ヤキモチ");
             musicBean.setMinVisibleVersion("1.2");
             musicBean.setMaxVisibleVersion("1.4");
-            musicBean.setUrl("https://material.storage.mixvvideo.com/1521601330799.gif");
+            musicBean.setUrl("http://dldir1.qq.com/weixin/android/weixin665android1280.apk");
             musicBeans.add(musicBean);
         }
         musicGroup.setMusicBeans(musicBeans);
@@ -172,11 +172,11 @@ public class EditMusicPanelLoader implements IMusicLoader {
      */
     private static class LoadMusicGroupListRunnable extends BaseLoadRunnable {
 
-        AtomicBoolean mIsLoadingMusicGroupList;
+        AtomicBoolean isLoadingMusicGroupList;
 
         LoadMusicGroupListRunnable(int priority, WeakReference<IMusicManager> iMusicManagerWeakReference, AtomicBoolean isLoadingMusicGroupList) {
             super(priority, iMusicManagerWeakReference);
-            this.mIsLoadingMusicGroupList = isLoadingMusicGroupList;
+            this.isLoadingMusicGroupList = isLoadingMusicGroupList;
         }
 
         @Override
@@ -193,7 +193,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
                     if (iMusicManager != null) {
                         iMusicManager.musicGroupListDataLoadedFailedCallback();
                     }
-                    mIsLoadingMusicGroupList.compareAndSet(true,false);
+                    isLoadingMusicGroupList.compareAndSet(true,false);
                     return;
                 }
             }
@@ -210,7 +210,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
             StoreUtil.cacheMusicList(musicGroups);
             // 清理掉不存在于列表中的音乐文件
             StoreUtil.sortOutCache(musicGroups);
-            mIsLoadingMusicGroupList.compareAndSet(true,false);
+            isLoadingMusicGroupList.compareAndSet(true,false);
         }
     }
 
@@ -242,9 +242,9 @@ public class EditMusicPanelLoader implements IMusicLoader {
                 return;
             }
             // 加载网络文件数据
-            byte[] musicBytes = NetUtil.loadMusicFile(mMusicBean);
+            boolean isSuccessful = NetUtil.loadMusicFile(mMusicBean);
             // 如果数据为空，或者存储文件失败
-            if (musicBytes == null || !StoreUtil.cacheMusicFile(musicBytes, mMusicBean.getVersion(), StoreUtil.getFileName(mMusicBean.getUrl()))) {
+            if (!isSuccessful) {
                 // 回调下载失败
                 final IMusicManager iMusicManager = iMusicManagerWeakReference.get();
                 if (iMusicManager == null) return;
@@ -266,32 +266,32 @@ public class EditMusicPanelLoader implements IMusicLoader {
      */
     private static class DeleteMusicFileRunnable extends BaseLoadRunnable {
 
-        MusicBean mMusicBean;
+        MusicBean musicBean;
         final HashSet<MusicBean> mDeletingMusicBeanSet;
 
         DeleteMusicFileRunnable(int priority, WeakReference<IMusicManager> iMusicManagerWeakReference, MusicBean musicBean, HashSet<MusicBean> deletingMusicBeanSet) {
             super(priority, iMusicManagerWeakReference);
-            this.mMusicBean = musicBean;
+            this.musicBean = musicBean;
             this.mDeletingMusicBeanSet = deletingMusicBeanSet;
         }
 
         @Override
         void call() {
             // 是否删除成功
-            boolean deleted = StoreUtil.deleteCache(mMusicBean.getVersion(), StoreUtil.getFileName(mMusicBean.getUrl()));
+            boolean deleted = StoreUtil.deleteCache(musicBean.getVersion(), StoreUtil.getFileName(musicBean.getUrl()));
             if (deleted) {
                 // 回调删除成功
                 final IMusicManager iMusicManager = iMusicManagerWeakReference.get();
                 if (iMusicManager == null) return;
-                iMusicManager.musicFileDataDeletedCallback(mMusicBean);
+                iMusicManager.musicFileDataDeletedCallback(musicBean);
             } else {
                 // 回掉删除失败
                 final IMusicManager iMusicManager = iMusicManagerWeakReference.get();
                 if (iMusicManager == null) return;
-                iMusicManager.musicFileDataDeletedFailedCallback(mMusicBean);
+                iMusicManager.musicFileDataDeletedFailedCallback(musicBean);
             }
             synchronized (mDeletingMusicBeanSet){
-                mDeletingMusicBeanSet.remove(mMusicBean);
+                mDeletingMusicBeanSet.remove(musicBean);
             }
         }
     }

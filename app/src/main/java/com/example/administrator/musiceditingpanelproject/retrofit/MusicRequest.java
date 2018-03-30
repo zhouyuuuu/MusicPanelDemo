@@ -3,6 +3,7 @@ package com.example.administrator.musiceditingpanelproject.retrofit;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.Path;
 import retrofit2.http.Streaming;
@@ -24,7 +25,7 @@ public interface MusicRequest {
     Call<ResponseBody> getMusicList();
 
     /**
-     * 获取音频文件
+     * 断点续传获取音频文件
      *
      * @param filename 文件名
      * @return ResponseBody
@@ -32,7 +33,7 @@ public interface MusicRequest {
     @Headers({"lang:Chinese", "platform:android", "version:1.13.0", "deviceid:imei"})
     @Streaming
     @GET("{filename}")
-    Call<ResponseBody> getMusicFile(@Path("filename") String filename);
+    Call<ResponseBody> getMusicFileWithRange(@Header("Range") String range, @Path("filename") String filename);
 
 
 }

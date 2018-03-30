@@ -277,8 +277,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     }
 
     /**
-     * 加载列表成功，刷新分类列表和中间的ViewPager，选中分类列表的第一项，必须延迟100毫秒等带下一帧绘制完成才能获取到holder
-     * 绘制1帧大概16毫秒，用100毫秒怕机子卡了，且100毫秒延迟并不明显
+     * 加载列表成功，刷新分类列表和中间的ViewPager，选中分类列表的第一项，
      *
      * @param musicGroups 音频信息分组列表
      */
@@ -308,6 +307,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 mViewPagerMusicPage.setAdapter(musicPageViewPagerAdapter);
                 // 更新页码指示器
                 mPageIndicator.setTotalPages(musicPageViewPagerAdapter.getPageCount());
+                // 必须延迟100毫秒等代下一帧绘制完成才能获取到holder，绘制1帧大概16毫秒，用100毫秒怕机子卡了，且100毫秒延迟并不明显
                 mIvDelete.postDelayed(new Runnable() {
                     @Override
                     public void run() {

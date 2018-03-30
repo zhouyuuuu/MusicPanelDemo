@@ -11,7 +11,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
@@ -85,39 +89,78 @@ public class NetUtil {
     private static String getBaseUrl(@NonNull String url) {
         StringBuilder stringBuilder = new StringBuilder(url);
         String filename = getFileName(url);
-        stringBuilder.delete(url.length()-filename.length(),url.length());
+        stringBuilder.delete(url.length() - filename.length(), url.length());
         return stringBuilder.toString();
     }
 
     /**
-     * 加载音频文件byte数组
+     * 加载音频文件，这边是边下载边存储，通过RandomAccessFile来断点续传，为防止意外程序意外中断，需要获取fileLength来作为断点位置
+     * 由于使用MappedByteBuffer无法获取准确的fileLength，且MappedByteBuffer提升的写入速率在下载总耗时中所占的比例很小，提升效果不明显，所以只使用RandomAccessFile即可
      *
      * @param musicBean 音频信息
-     * @return byte数组
+     * @return 是否下载成功
      */
-    public static byte[] loadMusicFile(MusicBean musicBean) {
+    public static boolean loadMusicFile(MusicBean musicBean) {
         String filename = getFileName(musicBean.getUrl());
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getBaseUrl(musicBean.getUrl()))
                 .build();
         MusicRequest musicRequest = retrofit.create(MusicRequest.class);
-        Call<ResponseBody> call = musicRequest.getMusicFile(filename);
-        Response<ResponseBody> response = null;
+        String tempFilePath = StoreUtil.getCacheFileAbsolutePathTemp(musicBean.getVersion(), filename);
+        File tempFile = new File(tempFilePath);
+        Call<ResponseBody> call;
+        RandomAccessFile randomAccessFile = null;
+        BufferedInputStream bufferedInputStream = null;
         try {
-            response = call.execute();
+            randomAccessFile = new RandomAccessFile(tempFile, "rw");
+            randomAccessFile.seek(tempFile.length());
+            String range = "bytes=" + tempFile.length() + "-";
+            call = musicRequest.getMusicFileWithRange(range, filename);
+            Response<ResponseBody> response = call.execute();
+            if (response == null) return false;
+            if (response.code() == 416) {
+                return renameCacheFile(tempFile,StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), filename));
+            }
+            if (!response.isSuccessful()) return false;
+            ResponseBody responseBody = response.body();
+            if (responseBody == null) return false;
+            byte[] buffer = new byte[1024];
+            InputStream inputStream = responseBody.byteStream();
+            bufferedInputStream = new BufferedInputStream(inputStream);
+            int len;
+            while ((len = bufferedInputStream.read(buffer)) != -1) {
+                randomAccessFile.write(buffer, 0, len);
+            }
+            return renameCacheFile(tempFile,StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), filename));
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
+        } finally {
+            if (randomAccessFile != null) {
+                try {
+                    randomAccessFile.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (bufferedInputStream != null) {
+                try {
+                    bufferedInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        if (response == null || !response.isSuccessful()) return null;
-        ResponseBody responseBody = response.body();
-        if (responseBody == null) return null;
-        byte[] musicByte = null;
-        try {
-            musicByte = responseBody.bytes();
-        } catch (IOException e) {
-            e.printStackTrace();
+    }
+
+    private static boolean renameCacheFile(File file,String rename){
+        File renameFile = new File(rename);
+        if (!renameFile.exists()) {
+            file.renameTo(renameFile);
+            return true;
+        } else {
+            return false;
         }
-        return musicByte;
     }
 
     /**
