@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#444444">
+    android:background="@color/launch_bg">
 
     <TextView
         android:id="@+id/tv_launch"
@@ -10,11 +10,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="20dp"
+        android:layout_margin="@dimen/launch_btn_margin"
         android:drawableEnd="@mipmap/load_more"
         android:drawableRight="@mipmap/load_more"
         android:text="@string/launch"
-        android:textColor="#ffffff"
-        android:textSize="18sp" />
+        android:textColor="@color/edit_music_name_sort_text"
+        android:textSize="@dimen/edit_music_sort_tv_textsize" />
 
 </RelativeLayout>

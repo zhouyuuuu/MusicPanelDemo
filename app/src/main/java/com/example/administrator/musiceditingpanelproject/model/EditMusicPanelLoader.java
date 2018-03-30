@@ -190,6 +190,11 @@ public class EditMusicPanelLoader implements IMusicLoader {
         if (mThreadPoolExecutor!=null){
             mThreadPoolExecutor.shutdownNow();
         }
+        synchronized (mLoadingMusicBeanMap){
+            for (LoadMusicFileRunnable loadMusicFileRunnable : mLoadingMusicBeanMap.values()) {
+                loadMusicFileRunnable.setIsPaused();
+            }
+        }
     }
 
     /**
