@@ -16,16 +16,23 @@ public interface IMusicLoader {
     /**
      * 加载音频文件
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     void loadMusicFileData(MusicBean musicBean);
 
     /**
      * 删除音频文件
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     void deleteMusicFile(MusicBean musicBean);
+
+    /**
+     * 暂停加载
+     *
+     * @param musicBean 音频信息
+     */
+    void pauseLoading(MusicBean musicBean);
 
     /**
      * 停止加载

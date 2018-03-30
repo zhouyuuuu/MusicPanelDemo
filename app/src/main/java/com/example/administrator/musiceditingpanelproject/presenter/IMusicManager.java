@@ -50,6 +50,20 @@ public interface IMusicManager {
     void musicFileDataLoadedFailedCallback(MusicBean musicBean);
 
     /**
+     * 暂停下载音频文件
+     *
+     * @param musicBean  音频信息
+     */
+    void pauseDownloadMusic(MusicBean musicBean);
+
+    /**
+     * 下载音频文件暂停回调
+     *
+     * @param musicBean  音频信息
+     */
+    void musicFileLoadingPausedCallback(MusicBean musicBean);
+
+    /**
      * 删除音频文件
      *
      * @param musicBean  音频信息

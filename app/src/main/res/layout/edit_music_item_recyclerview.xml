@@ -38,6 +38,15 @@
         android:textSize="@dimen/edit_music_item_author_tv_textsize"
         tools:text="James Blunt" />
 
+    <com.example.administrator.musiceditingpanelproject.widget.DownloadPausedIconView
+        android:id="@+id/download_paused_view"
+        android:layout_width="@dimen/edit_music_item_downloadview_width"
+        android:layout_height="@dimen/edit_music_item_downloadview_height"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/edit_music_item_downloadview_margin" />
+
     <com.example.administrator.musiceditingpanelproject.widget.DownloadIconView
         android:id="@+id/download_view"
         android:layout_width="@dimen/edit_music_item_downloadview_width"
@@ -63,8 +72,9 @@
         android:layout_centerInParent="true"
         android:background="@drawable/edit_btn_edit_bg"
         android:gravity="center"
-        android:text="@string/edit_edit"
+        android:text="@string/edit_play"
         android:textColor="@color/edit_music_close_text"
         android:textSize="@dimen/edit_music_item_edit_tv_textsize" />
+
 </RelativeLayout>
 

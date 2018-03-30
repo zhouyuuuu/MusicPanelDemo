@@ -138,6 +138,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.iv_delete:
                 iMusicManager.deleteMusic(mSelectedMusicBean);
+                iMusicManager.stopPlayer();
                 break;
             default:
                 break;
@@ -158,21 +159,32 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 iMusicManager.downloadMusic(musicBean);
                 break;
             case MusicBean.STATE_DOWNLOADING:
+                iMusicManager.pauseDownloadMusic(musicBean);
                 break;
             case MusicBean.STATE_DOWNLOADED:
                 // 防止运行期间文件被删除
-                if (StoreUtil.findCacheFile(musicBean.getVersion(),StoreUtil.getFileName(musicBean.getUrl())) == null){
+                if (StoreUtil.findCacheFile(musicBean.getVersion(), StoreUtil.getFileName(musicBean.getUrl())) == null) {
                     iMusicManager.downloadMusic(musicBean);
                     break;
                 }
                 setSelectedItemUnselected(MusicBean.STATE_DOWNLOADED);
-                holder.showEditState();
-                musicBean.setState(MusicBean.STATE_EDIT);
+                holder.showPlayingState();
+                musicBean.setState(MusicBean.STATE_PLAYING);
                 mSelectedMusicBean = musicBean;
                 iMusicManager.playMusic(musicBean);
                 break;
-            case MusicBean.STATE_EDIT:
-                Toast.makeText(this, "编辑", Toast.LENGTH_SHORT).show();
+            case MusicBean.STATE_PLAYING:
+                iMusicManager.pauseMusic();
+                musicBean.setState(MusicBean.STATE_PLAYING_PAUSED);
+                holder.showPlayingPausedState();
+                break;
+            case MusicBean.STATE_DOWNLOAD_PAUSED:
+                iMusicManager.downloadMusic(musicBean);
+                break;
+            case MusicBean.STATE_PLAYING_PAUSED:
+                iMusicManager.restartMusic();
+                musicBean.setState(MusicBean.STATE_PLAYING);
+                holder.showPlayingState();
                 break;
             default:
                 break;
@@ -249,14 +261,14 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 int page;
                 int position;
                 String sort;
-                for (MusicGroup musicGroup:mMusicGroups) {
+                for (MusicGroup musicGroup : mMusicGroups) {
                     ArrayList<MusicBean> musicBeans = musicGroup.getMusicBeans();
-                    for (int i=0;i<musicBeans.size();i++){
-                        if (musicBeans.get(i) == musicBean){
+                    for (int i = 0; i < musicBeans.size(); i++) {
+                        if (musicBeans.get(i) == musicBean) {
                             sort = musicGroup.getSortName();
-                            page = i/ MusicPageViewPagerAdapter.ITEM_COUNT_PER_PAGE;
-                            position = i%MusicPageViewPagerAdapter.ITEM_COUNT_PER_PAGE;
-                            if (musicBean.getState() == MusicBean.STATE_EDIT){
+                            page = i / MusicPageViewPagerAdapter.ITEM_COUNT_PER_PAGE;
+                            position = i % MusicPageViewPagerAdapter.ITEM_COUNT_PER_PAGE;
+                            if (musicBean.getState() == MusicBean.STATE_PLAYING) {
                                 mSelectedMusicBean = musicBean;
                                 iMusicManager.playMusic(musicBean);
                             }
@@ -266,7 +278,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                                     .get(page)
                                     .findViewHolderForAdapterPosition(position);
                             if (holder != null) {
-                                refreshHolder(musicBean,holder);
+                                refreshHolder(musicBean, holder);
                             }
                             return;
                         }
@@ -336,7 +348,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     /**
      * 文件下载成功回调
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     @Override
     public void musicFileDataLoadedCallback(final MusicBean musicBean) {
@@ -347,7 +359,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                     // 之前选中的项状态设置为已下载
                     setSelectedItemUnselected(MusicBean.STATE_DOWNLOADED);
                     // 当前musicBean设置为编辑状态
-                    musicBean.setState(MusicBean.STATE_EDIT);
+                    musicBean.setState(MusicBean.STATE_PLAYING);
                     musicBeanStateChangedCallback(musicBean);
                 }
             }
@@ -403,9 +415,10 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
 
     /**
      * 刷新holder的状态
+     *
      * @param musicBean 音频信息
      */
-    private void refreshHolder(MusicBean musicBean, ItemHolder holder){
+    private void refreshHolder(MusicBean musicBean, ItemHolder holder) {
         switch (musicBean.getState()) {
             case MusicBean.STATE_UNDOWNLOADED:
                 holder.showUndownloadedState();
@@ -416,8 +429,14 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
             case MusicBean.STATE_DOWNLOADED:
                 holder.showDownloadedState();
                 break;
-            case MusicBean.STATE_EDIT:
-                holder.showEditState();
+            case MusicBean.STATE_PLAYING:
+                holder.showPlayingState();
+                break;
+            case MusicBean.STATE_DOWNLOAD_PAUSED:
+                holder.showDownloadPausedState();
+                break;
+            case MusicBean.STATE_PLAYING_PAUSED:
+                holder.showPlayingPausedState();
                 break;
             default:
                 break;

@@ -3,6 +3,7 @@ package com.example.administrator.musiceditingpanelproject.util;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 
+import com.example.administrator.musiceditingpanelproject.application.MusicEditingPanelApplication;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
 
@@ -28,11 +29,13 @@ public class StoreUtil {
     // 分隔符
     private static final String DELIMITER = "@#";
     // 缓存文件夹名
-    private static final String CACHE_FOLDER = "/Shelter";
+    private static final String CACHE_FOLDER = "/MixVDownload";
+    // 缓存音乐文件文件夹名
+    private static final String CACHE_MUSIC_FILE_FOLDER = "/Music";
     // 缓存音乐列表文件夹名
-    private static final String CACHE_LIST_FOLDER = "/Shelter/ListCache";
+    private static final String CACHE_LIST_FOLDER = "/MusicListCache";
     // 缓存音乐列表文件名
-    private static final String CACHE_LIST_FILE = "cache";
+    private static final String CACHE_LIST_FILE = "ListCache";
 
     /**
      * 整理缓存
@@ -56,7 +59,7 @@ public class StoreUtil {
                 cacheFileNameSet.add(getTempCacheFilename(musicBean.getVersion(), getFileName(musicBean.getUrl())));
             }
         }
-        File folder = new File(getCacheFolderDir());
+        File folder = new File(getCacheMusicFileFolder());
         if (!folder.exists() && !folder.mkdir()) {
             return;
         }
@@ -101,7 +104,7 @@ public class StoreUtil {
      * 获得所有缓存文件名，用HashSet便于访问
      */
     public static HashSet<String> getAllCacheFileName() {
-        File folder = new File(getCacheFolderDir());
+        File folder = new File(getCacheMusicFileFolder());
         if (!folder.exists() || !folder.isDirectory()) return null;
         String[] filenames = folder.list();
         HashSet<String> hashSet = new HashSet<>(filenames.length);
@@ -216,24 +219,28 @@ public class StoreUtil {
         return version + DELIMITER + filename;
     }
 
-    private static String getTempCacheFilename(String version, String filename) {
+    public static String getTempCacheFilename(String version, String filename) {
         return version + DELIMITER + filename + ".temp";
     }
 
     public static String getCacheFileAbsolutePath(String version, String filename) {
-        return getCacheFolderDir() + "/" + getCacheFilename(version, filename);
+        return getCacheMusicFileFolder() + "/" + getCacheFilename(version, filename);
     }
 
     static String getCacheFileAbsolutePathTemp(String version, String filename) {
-        return getCacheFolderDir() + "/" + getTempCacheFilename(version, filename);
+        return getCacheMusicFileFolder() + "/" + getTempCacheFilename(version, filename);
     }
 
-    private static String getCacheFolderDir() {
+    static String getCacheFolderDir() {
         return Environment.getExternalStorageDirectory() + CACHE_FOLDER;
     }
 
+    static String getCacheMusicFileFolder() {
+        return Environment.getExternalStorageDirectory() + CACHE_FOLDER + CACHE_MUSIC_FILE_FOLDER;
+    }
+
     private static String getListCacheFolderDir() {
-        return Environment.getExternalStorageDirectory() + CACHE_LIST_FOLDER;
+        return MusicEditingPanelApplication.getApplication().getExternalCacheDir() + CACHE_LIST_FOLDER;
     }
 
     private static String getListCacheFileAbsolutePath() {

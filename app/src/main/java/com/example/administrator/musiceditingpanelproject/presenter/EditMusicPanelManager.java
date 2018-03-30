@@ -99,6 +99,19 @@ public class EditMusicPanelManager implements IMusicManager {
         iEditMusicPanel.musicFileDataLoadedFailedCallback(musicBean);
     }
 
+    @Override
+    public void pauseDownloadMusic(MusicBean musicBean) {
+        iMusicLoader.pauseLoading(musicBean);
+    }
+
+    @Override
+    public void musicFileLoadingPausedCallback(MusicBean musicBean) {
+        musicBean.setState(MusicBean.STATE_DOWNLOAD_PAUSED);
+        IEditMusicPanel iEditMusicPanel = iEditMusicPanelWeakReference.get();
+        if (iEditMusicPanel == null) return;
+        iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
+    }
+
     /**
      * 删除音频文件
      *

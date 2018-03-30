@@ -1,6 +1,5 @@
 package com.example.administrator.musiceditingpanelproject.util;
 
-
 import android.support.annotation.NonNull;
 
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
@@ -17,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -100,7 +100,7 @@ public class NetUtil {
      * @param musicBean 音频信息
      * @return 是否下载成功
      */
-    public static boolean loadMusicFile(MusicBean musicBean) {
+    public static boolean loadMusicFile(MusicBean musicBean, AtomicBoolean isPaused) {
         String filename = getFileName(musicBean.getUrl());
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getBaseUrl(musicBean.getUrl()))
@@ -108,6 +108,14 @@ public class NetUtil {
         MusicRequest musicRequest = retrofit.create(MusicRequest.class);
         String tempFilePath = StoreUtil.getCacheFileAbsolutePathTemp(musicBean.getVersion(), filename);
         File tempFile = new File(tempFilePath);
+        File cacheFolderPath = new File(StoreUtil.getCacheFolderDir());
+        if (!cacheFolderPath.exists()){
+            cacheFolderPath.mkdir();
+        }
+        File musicFileCacheFolderPath = new File(StoreUtil.getCacheMusicFileFolder());
+        if (!musicFileCacheFolderPath.exists()){
+            musicFileCacheFolderPath.mkdir();
+        }
         Call<ResponseBody> call;
         RandomAccessFile randomAccessFile = null;
         BufferedInputStream bufferedInputStream = null;
@@ -116,10 +124,11 @@ public class NetUtil {
             randomAccessFile.seek(tempFile.length());
             String range = "bytes=" + tempFile.length() + "-";
             call = musicRequest.getMusicFileWithRange(range, filename);
+            if (isPaused.get()) return false;
             Response<ResponseBody> response = call.execute();
             if (response == null) return false;
             if (response.code() == 416) {
-                return renameCacheFile(tempFile,StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), filename));
+                return renameCacheFile(tempFile, StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), filename));
             }
             if (!response.isSuccessful()) return false;
             ResponseBody responseBody = response.body();
@@ -128,10 +137,10 @@ public class NetUtil {
             InputStream inputStream = responseBody.byteStream();
             bufferedInputStream = new BufferedInputStream(inputStream);
             int len;
-            while ((len = bufferedInputStream.read(buffer)) != -1) {
+            while (!isPaused.get() && (len = bufferedInputStream.read(buffer)) != -1) {
                 randomAccessFile.write(buffer, 0, len);
             }
-            return renameCacheFile(tempFile,StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), filename));
+            return !isPaused.get() && renameCacheFile(tempFile, StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), filename));
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -153,7 +162,7 @@ public class NetUtil {
         }
     }
 
-    private static boolean renameCacheFile(File file,String rename){
+    private static boolean renameCacheFile(File file, String rename) {
         File renameFile = new File(rename);
         if (!renameFile.exists()) {
             file.renameTo(renameFile);

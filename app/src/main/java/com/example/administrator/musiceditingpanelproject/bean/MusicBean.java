@@ -7,8 +7,12 @@ import java.io.Serializable;
  */
 
 public class MusicBean implements Serializable {
-    // 编辑
-    public static final int STATE_EDIT = 3;
+    // 下载暂停
+    public static final int STATE_DOWNLOAD_PAUSED = 3;
+    // 播放
+    public static final int STATE_PLAYING = 4;
+    // 暂停播放
+    public static final int STATE_PLAYING_PAUSED = 5;
     // 下载中
     public static final int STATE_DOWNLOADING = 1;
     // 已下载
