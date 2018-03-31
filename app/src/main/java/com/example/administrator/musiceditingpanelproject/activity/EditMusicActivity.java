@@ -136,14 +136,17 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_close:
-                SortHolder sortHolder = (SortHolder) mRecyclerViewMusicSort.findViewHolderForAdapterPosition(mSelectedMusicSortPositionInSortList);
-                if (sortHolder != null){
-                    sortHolder.showUnClickedState();
-                    mSelectedMusicSortPositionInSortList = STATE_UNSELECTED;
+                if (mSelectedMusicSortPositionInSortList != STATE_UNSELECTED) {
+                    SortHolder sortHolder = (SortHolder) mRecyclerViewMusicSort.findViewHolderForAdapterPosition(mSelectedMusicSortPositionInSortList);
+                    if (sortHolder != null) {
+                        sortHolder.showUnClickedState();
+                        mSelectedMusicSortPositionInSortList = STATE_UNSELECTED;
+                    }
                 }
                 mRlPanel.setVisibility(View.GONE);
                 break;
             case R.id.iv_delete:
+                if (mSelectedMusicBean == null) return;
                 mMusicManager.deleteMusicFile(mSelectedMusicBean);
                 mMusicManager.stopPlayer();
                 break;
@@ -342,7 +345,9 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                     public void run() {
                         SortHolder holder = (SortHolder) mRecyclerViewMusicSort.findViewHolderForAdapterPosition(mSelectedMusicSortPositionInSortList);
                         // 置为选中状态
-                        holder.showClickedState();
+                        if (holder != null) {
+                            holder.showClickedState();
+                        }
                     }
                 }, TIME_PER_FRAME);
             }
@@ -436,6 +441,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      * @param musicBean 音频信息
      */
     private void refreshHolder(MusicBean musicBean, ItemHolder itemHolder) {
+        if (musicBean == null||itemHolder == null) return;
         switch (musicBean.getState()) {
             case MusicBean.STATE_UNDOWNLOADED:
                 itemHolder.showUndownloadedState();

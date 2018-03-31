@@ -105,6 +105,7 @@ public class NetUtil {
      * @return 是否下载成功
      */
     public static boolean downloadMusicFile(MusicBean musicBean, AtomicBoolean isPaused) {
+        if (musicBean == null) return false;
         String filename = getNetFileName(musicBean.getUrl());
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getBaseUrl(musicBean.getUrl()))
@@ -183,7 +184,7 @@ public class NetUtil {
      * @param rename 名
      * @return 成功失败
      */
-    private static boolean renameCacheFile(File file, String rename) {
+    private static boolean renameCacheFile(@NonNull File file, @NonNull String rename) {
         File renameFile = new File(rename);
         if (!renameFile.exists()) {
             file.renameTo(renameFile);

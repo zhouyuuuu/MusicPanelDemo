@@ -68,8 +68,8 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
             default:
                 break;
         }
-        holder.tvSongName.setText(musicBean.getName());
-        holder.tvAuthorName.setText(musicBean.getAuthorName());
+        holder.mTvSongName.setText(musicBean.getName());
+        holder.mTvAuthorName.setText(musicBean.getAuthorName());
         // Item点击事件的监听器在这里触发
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,21 +104,21 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
 
     public static class ItemHolder extends RecyclerView.ViewHolder {
 
-        private TextView tvSongName;
-        private TextView tvAuthorName;
-        private IndeterminateProgressBar indeterminateProgressBar;
-        private DownloadIconView downloadIconView;
-        private TextView tvEdit;
-        private DownloadPausedIconView downloadPausedIconView;
+        private TextView mTvSongName;
+        private TextView mTvAuthorName;
+        private IndeterminateProgressBar mIndeterminateProgressBar;
+        private DownloadIconView mDownloadIconView;
+        private TextView mTvEdit;
+        private DownloadPausedIconView mDownloadPausedIconView;
 
         ItemHolder(View itemView) {
             super(itemView);
-            tvSongName = itemView.findViewById(R.id.tv_song_name);
-            tvAuthorName = itemView.findViewById(R.id.tv_author_name);
-            indeterminateProgressBar = itemView.findViewById(R.id.indeterminate_progress_bar);
-            downloadIconView = itemView.findViewById(R.id.download_view);
-            tvEdit = itemView.findViewById(R.id.tv_edit);
-            downloadPausedIconView = itemView.findViewById(R.id.download_paused_view);
+            mTvSongName = itemView.findViewById(R.id.tv_song_name);
+            mTvAuthorName = itemView.findViewById(R.id.tv_author_name);
+            mIndeterminateProgressBar = itemView.findViewById(R.id.indeterminate_progress_bar);
+            mDownloadIconView = itemView.findViewById(R.id.download_view);
+            mTvEdit = itemView.findViewById(R.id.tv_edit);
+            mDownloadPausedIconView = itemView.findViewById(R.id.download_paused_view);
         }
 
         /**
@@ -126,14 +126,14 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
          */
         public void showPlayingState() {
             itemView.setBackgroundResource(R.mipmap.edit_music_item_selected_bg);
-            tvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_downloaded));
-            indeterminateProgressBar.setVisibility(View.GONE);
-            downloadIconView.setVisibility(View.GONE);
-            tvAuthorName.setVisibility(View.GONE);
-            tvSongName.setVisibility(View.GONE);
-            tvEdit.setVisibility(View.VISIBLE);
-            tvEdit.setText(MusicEditingPanelApplication.getApplication().getString(R.string.edit_play));
-            downloadPausedIconView.setVisibility(View.GONE);
+            mTvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_downloaded));
+            mIndeterminateProgressBar.setVisibility(View.GONE);
+            mDownloadIconView.setVisibility(View.GONE);
+            mTvAuthorName.setVisibility(View.GONE);
+            mTvSongName.setVisibility(View.GONE);
+            mTvEdit.setVisibility(View.VISIBLE);
+            mTvEdit.setText(MusicEditingPanelApplication.getApplication().getString(R.string.edit_play));
+            mDownloadPausedIconView.setVisibility(View.GONE);
         }
 
         /**
@@ -141,13 +141,13 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
          */
         public void showUndownloadedState() {
             itemView.setBackgroundResource(R.color.edit_music_item_bg);
-            tvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_undownloaded));
-            indeterminateProgressBar.setVisibility(View.GONE);
-            downloadIconView.setVisibility(View.VISIBLE);
-            tvAuthorName.setVisibility(View.VISIBLE);
-            tvSongName.setVisibility(View.VISIBLE);
-            tvEdit.setVisibility(View.GONE);
-            downloadPausedIconView.setVisibility(View.GONE);
+            mTvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_undownloaded));
+            mIndeterminateProgressBar.setVisibility(View.GONE);
+            mDownloadIconView.setVisibility(View.VISIBLE);
+            mTvAuthorName.setVisibility(View.VISIBLE);
+            mTvSongName.setVisibility(View.VISIBLE);
+            mTvEdit.setVisibility(View.GONE);
+            mDownloadPausedIconView.setVisibility(View.GONE);
         }
 
         /**
@@ -155,13 +155,13 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
          */
         public void showDownloadingState() {
             itemView.setBackgroundResource(R.color.edit_music_item_bg);
-            tvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_undownloaded));
-            indeterminateProgressBar.setVisibility(View.VISIBLE);
-            downloadIconView.setVisibility(View.GONE);
-            tvAuthorName.setVisibility(View.VISIBLE);
-            tvSongName.setVisibility(View.VISIBLE);
-            tvEdit.setVisibility(View.GONE);
-            downloadPausedIconView.setVisibility(View.GONE);
+            mTvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_undownloaded));
+            mIndeterminateProgressBar.setVisibility(View.VISIBLE);
+            mDownloadIconView.setVisibility(View.GONE);
+            mTvAuthorName.setVisibility(View.VISIBLE);
+            mTvSongName.setVisibility(View.VISIBLE);
+            mTvEdit.setVisibility(View.GONE);
+            mDownloadPausedIconView.setVisibility(View.GONE);
         }
 
         /**
@@ -169,13 +169,13 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
          */
         public void showDownloadedState() {
             itemView.setBackgroundResource(R.color.edit_music_item_bg);
-            tvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_downloaded));
-            indeterminateProgressBar.setVisibility(View.GONE);
-            downloadIconView.setVisibility(View.GONE);
-            tvAuthorName.setVisibility(View.VISIBLE);
-            tvSongName.setVisibility(View.VISIBLE);
-            tvEdit.setVisibility(View.GONE);
-            downloadPausedIconView.setVisibility(View.GONE);
+            mTvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_downloaded));
+            mIndeterminateProgressBar.setVisibility(View.GONE);
+            mDownloadIconView.setVisibility(View.GONE);
+            mTvAuthorName.setVisibility(View.VISIBLE);
+            mTvSongName.setVisibility(View.VISIBLE);
+            mTvEdit.setVisibility(View.GONE);
+            mDownloadPausedIconView.setVisibility(View.GONE);
         }
 
         /**
@@ -183,13 +183,13 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
          */
         public void showDownloadPausedState() {
             itemView.setBackgroundResource(R.color.edit_music_item_bg);
-            tvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_undownloaded));
-            indeterminateProgressBar.setVisibility(View.GONE);
-            downloadIconView.setVisibility(View.GONE);
-            tvAuthorName.setVisibility(View.VISIBLE);
-            tvSongName.setVisibility(View.VISIBLE);
-            tvEdit.setVisibility(View.GONE);
-            downloadPausedIconView.setVisibility(View.VISIBLE);
+            mTvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_undownloaded));
+            mIndeterminateProgressBar.setVisibility(View.GONE);
+            mDownloadIconView.setVisibility(View.GONE);
+            mTvAuthorName.setVisibility(View.VISIBLE);
+            mTvSongName.setVisibility(View.VISIBLE);
+            mTvEdit.setVisibility(View.GONE);
+            mDownloadPausedIconView.setVisibility(View.VISIBLE);
         }
 
         /**
@@ -197,14 +197,14 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
          */
         public void showPlayingPausedState() {
             itemView.setBackgroundResource(R.mipmap.edit_music_item_selected_bg);
-            tvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_downloaded));
-            indeterminateProgressBar.setVisibility(View.GONE);
-            downloadIconView.setVisibility(View.GONE);
-            tvAuthorName.setVisibility(View.GONE);
-            tvSongName.setVisibility(View.GONE);
-            tvEdit.setVisibility(View.VISIBLE);
-            tvEdit.setText(MusicEditingPanelApplication.getApplication().getString(R.string.edit_pause));
-            downloadPausedIconView.setVisibility(View.GONE);
+            mTvSongName.setTextColor(MusicEditingPanelApplication.getApplication().getResources().getColor(R.color.edit_music_name_song_text_downloaded));
+            mIndeterminateProgressBar.setVisibility(View.GONE);
+            mDownloadIconView.setVisibility(View.GONE);
+            mTvAuthorName.setVisibility(View.GONE);
+            mTvSongName.setVisibility(View.GONE);
+            mTvEdit.setVisibility(View.VISIBLE);
+            mTvEdit.setText(MusicEditingPanelApplication.getApplication().getString(R.string.edit_pause));
+            mDownloadPausedIconView.setVisibility(View.GONE);
         }
 
     }

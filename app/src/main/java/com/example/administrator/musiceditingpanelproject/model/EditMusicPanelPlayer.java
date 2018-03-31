@@ -40,6 +40,7 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
      */
     @Override
     public void playMusic(MusicBean musicBean) {
+        if (musicBean == null) return;
         String cachePath = StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), StoreUtil.getNetFileName(musicBean.getUrl()));
         mMediaPlayer.reset();
         try {

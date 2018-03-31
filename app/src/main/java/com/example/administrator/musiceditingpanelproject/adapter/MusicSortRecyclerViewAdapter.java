@@ -43,9 +43,9 @@ public class MusicSortRecyclerViewAdapter extends RecyclerView.Adapter<MusicSort
 
     @Override
     public void onBindViewHolder(@NonNull final SortHolder holder, int position) {
-        holder.textView.setText(mMusicGroups.get(position).getSortName());
+        holder.mTextView.setText(mMusicGroups.get(position).getSortName());
         // Item点击事件的监听器在这里触发
-        holder.textView.setOnClickListener(new View.OnClickListener() {
+        holder.mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mItemClickListener != null) {
@@ -77,23 +77,23 @@ public class MusicSortRecyclerViewAdapter extends RecyclerView.Adapter<MusicSort
     }
 
     public static class SortHolder extends RecyclerView.ViewHolder {
-        TextView textView;
+        TextView mTextView;
 
         SortHolder(View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.tv_sort);
+            mTextView = itemView.findViewById(R.id.tv_sort);
         }
 
         public void showUnClickedState() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                textView.setBackground(null);
+                mTextView.setBackground(null);
             } else {
-                textView.setBackgroundDrawable(null);
+                mTextView.setBackgroundDrawable(null);
             }
         }
 
         public void showClickedState() {
-            textView.setBackgroundResource(R.color.edit_music_panel_bg);
+            mTextView.setBackgroundResource(R.color.edit_music_panel_bg);
         }
     }
 }

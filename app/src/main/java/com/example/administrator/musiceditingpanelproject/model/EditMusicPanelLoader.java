@@ -56,7 +56,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
      *
      * @param musicGroups 音频信息分组列表
      */
-    private static void filterInvisibleMusicBean(ArrayList<MusicGroup> musicGroups) {
+    private static void filterInvisibleMusicBean(@NonNull ArrayList<MusicGroup> musicGroups) {
         for (MusicGroup musicGroup : musicGroups) {
             ArrayList<MusicBean> musicBeans = musicGroup.getMusicBeans();
             for (int i = musicBeans.size() - 1; i >= 0; i--) {
@@ -73,7 +73,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
      *
      * @param musicGroups 音频信息分组列表
      */
-    private static void checkMusicBeanState(ArrayList<MusicGroup> musicGroups) {
+    private static void checkMusicBeanState(@NonNull ArrayList<MusicGroup> musicGroups) {
         HashSet<String> mCacheFileNameSet = StoreUtil.getAllCacheFileName();
         if (mCacheFileNameSet == null) return;
         for (MusicGroup musicGroup : musicGroups) {
@@ -144,7 +144,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
      * @param musicBean  音频信息
      */
     @Override
-    public void loadMusicFileData(MusicBean musicBean) {
+    public void loadMusicFileData(@NonNull MusicBean musicBean) {
         // 新的任务
         LoadMusicFileRunnable loadMusicFileRunnable = new LoadMusicFileRunnable(PRIORITY_DEFAULT, mIMusicManagerWeakReference, musicBean, mDownloadingTaskMap);
         synchronized (mDownloadingTaskMap) {
@@ -163,7 +163,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
      * @param musicBean  音频信息
      */
     @Override
-    public void deleteMusicFile(MusicBean musicBean) {
+    public void deleteMusicFile(@NonNull MusicBean musicBean) {
         synchronized (mDeletingTaskSet) {
             // 已存在任务则返回，防重
             if (mDeletingTaskSet.contains(musicBean)) return;
@@ -175,7 +175,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
     }
 
     @Override
-    public void pauseLoading(MusicBean musicBean) {
+    public void pauseLoading(@NonNull MusicBean musicBean) {
         // 通过musicBean拿到任务
         LoadMusicFileRunnable loadMusicFileRunnable = mDownloadingTaskMap.get(musicBean);
         // 拿不到就返回了

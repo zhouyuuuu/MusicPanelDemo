@@ -37,7 +37,7 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
     private MusicItemClickListener mMusicItemClickListener;
 
 
-    public MusicPageViewPagerAdapter(ViewPager viewPager, MusicGroup musicGroup) {
+    public MusicPageViewPagerAdapter(@NonNull ViewPager viewPager,@NonNull MusicGroup musicGroup) {
         LayoutInflater mLayoutInflater = LayoutInflater.from(MusicEditingPanelApplication.getApplication());
         mViews = new ArrayList<>();
         mRecyclerViews = new ArrayList<>();
