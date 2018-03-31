@@ -12,7 +12,10 @@ import java.io.IOException;
 
 public class EditMusicPanelPlayer implements IMusicPlayer {
 
+    // 播放器
     private MediaPlayer mMediaPlayer;
+    // 播放标志
+    private boolean mIsPlaying = false;
 
     public EditMusicPanelPlayer() {
         this.mMediaPlayer = new MediaPlayer();
@@ -37,7 +40,7 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
      */
     @Override
     public void playMusic(MusicBean musicBean) {
-        String cachePath = StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), StoreUtil.getFileName(musicBean.getUrl()));
+        String cachePath = StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), StoreUtil.getNetFileName(musicBean.getUrl()));
         mMediaPlayer.reset();
         try {
             mMediaPlayer.setDataSource(cachePath);
@@ -46,6 +49,7 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
             return;
         }
         mMediaPlayer.prepareAsync();
+        mIsPlaying = true;
     }
 
     /**
@@ -53,7 +57,9 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
      */
     @Override
     public void pauseMusic() {
-        mMediaPlayer.pause();
+        if (mIsPlaying) {
+            mMediaPlayer.pause();
+        }
     }
 
     /**
@@ -61,7 +67,9 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
      */
     @Override
     public void restartMusic() {
-        mMediaPlayer.start();
+        if (mIsPlaying) {
+            mMediaPlayer.start();
+        }
     }
 
     /**
@@ -69,8 +77,11 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
      */
     @Override
     public void stopPlayer() {
-        mMediaPlayer.stop();
-        mMediaPlayer.reset();
-        mMediaPlayer.release();
+        if (mIsPlaying) {
+            mMediaPlayer.stop();
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mIsPlaying = false;
+        }
     }
 }

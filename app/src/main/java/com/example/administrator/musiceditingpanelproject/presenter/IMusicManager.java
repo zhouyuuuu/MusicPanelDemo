@@ -14,7 +14,7 @@ public interface IMusicManager {
     /**
      * 刷新音频展示面板，应该在这里做一些获取音乐列表数据的操作并回调面板刷新
      */
-    void refreshMusicEditPanel();
+    void loadMusicGroupListData();
 
     /**
      * 音频信息分组列表数据加载成功回调
@@ -33,28 +33,28 @@ public interface IMusicManager {
      *
      * @param musicBean  音频信息
      */
-    void downloadMusic(MusicBean musicBean);
+    void downloadMusicFile(MusicBean musicBean);
 
     /**
      * 下载音频文件成功回调
      *
      * @param musicBean  音频信息
      */
-    void musicFileDataLoadedCallback(MusicBean musicBean);
+    void musicFileLoadedCallback(MusicBean musicBean);
 
     /**
      * 下载音频文件失败回调
      *
      * @param musicBean  音频信息
      */
-    void musicFileDataLoadedFailedCallback(MusicBean musicBean);
+    void musicFileLoadedFailedCallback(MusicBean musicBean);
 
     /**
      * 暂停下载音频文件
      *
      * @param musicBean  音频信息
      */
-    void pauseDownloadMusic(MusicBean musicBean);
+    void pauseDownloadMusicFile(MusicBean musicBean);
 
     /**
      * 下载音频文件暂停回调
@@ -68,26 +68,26 @@ public interface IMusicManager {
      *
      * @param musicBean  音频信息
      */
-    void deleteMusic(MusicBean musicBean);
+    void deleteMusicFile(MusicBean musicBean);
 
     /**
      * 删除音频文件成功回调
      *
      * @param musicBean  音频信息
      */
-    void musicFileDataDeletedCallback(MusicBean musicBean);
+    void musicFileDeletedCallback(MusicBean musicBean);
 
     /**
      * 删除音频文件失败回调
      *
      * @param musicBean 音频信息
      */
-    void musicFileDataDeletedFailedCallback(MusicBean musicBean);
+    void musicFileDeletedFailedCallback(MusicBean musicBean);
 
     /**
      * 停止加载音乐
      */
-    void stopLoadingMusic();
+    void stopDownloadingMusicFile();
 
     /**
      * 播放音乐

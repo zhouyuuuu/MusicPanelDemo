@@ -27,8 +27,6 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
     public static final int ITEM_COUNT_PER_PAGE = 6;
     // Item列数
     private static final int SPAN_COUNT = 3;
-    // 音频信息分组
-    private MusicGroup mMusicGroup;
     // 总页数
     private int mPageCount;
     // 每页对应的View
@@ -43,7 +41,6 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
         LayoutInflater mLayoutInflater = LayoutInflater.from(MusicEditingPanelApplication.getApplication());
         mViews = new ArrayList<>();
         mRecyclerViews = new ArrayList<>();
-        this.mMusicGroup = musicGroup;
         // 拿到所有的musicBean
         ArrayList<MusicBean> allMusicBeans = musicGroup.getMusicBeans();
         // 计算总页数
@@ -58,7 +55,7 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
                 if (j >= allMusicBeans.size()) break;
                 musicBeans.add(allMusicBeans.get(j));
             }
-            MusicListRecyclerViewAdapter musicListRecyclerViewAdapter = new MusicListRecyclerViewAdapter(musicBeans, i);
+            MusicListRecyclerViewAdapter musicListRecyclerViewAdapter = new MusicListRecyclerViewAdapter(musicBeans);
             musicListRecyclerViewAdapter.setItemClickListener(this);
             recyclerView.setAdapter(musicListRecyclerViewAdapter);
             recyclerView.setLayoutManager(new GridLayoutManager(MusicEditingPanelApplication.getApplication(), SPAN_COUNT));
@@ -94,9 +91,9 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
      * 这边从每个RecyclerView那边回调，将回调内容交给实现了MusicItemClickListener的Activity处理
      */
     @Override
-    public void OnItemClick(int position, MusicListRecyclerViewAdapter.ItemHolder holder, MusicBean musicBean, int pageIndex) {
+    public void OnItemClick(MusicListRecyclerViewAdapter.ItemHolder holder, MusicBean musicBean) {
         if (mMusicItemClickListener != null) {
-            mMusicItemClickListener.onMusicItemClicked(position, holder, musicBean, pageIndex, mMusicGroup.getSortName());
+            mMusicItemClickListener.onMusicItemClicked(holder, musicBean);
         }
     }
 
@@ -123,7 +120,7 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
     }
 
     public interface MusicItemClickListener {
-        void onMusicItemClicked(int position, MusicListRecyclerViewAdapter.ItemHolder holder, MusicBean musicBean, int pageIndex, String sort);
+        void onMusicItemClicked(MusicListRecyclerViewAdapter.ItemHolder holder, MusicBean musicBean);
     }
 
 

@@ -81,4 +81,5 @@ public class DownloadIconView extends View {
         // 画右边斜线
         canvas.drawLine(width * 3 / 4 - STROKE_WIDTH_DEFAULT / 2, height / 2 + STROKE_WIDTH_DEFAULT / 2, width / 2, height * 3 / 4, mPaint);
     }
+
 }

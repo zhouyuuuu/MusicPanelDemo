@@ -2,7 +2,6 @@ package com.example.administrator.musiceditingpanelproject.util;
 
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.example.administrator.musiceditingpanelproject.application.MusicEditingPanelApplication;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
@@ -19,8 +18,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * 缓存工具类，用于缓存音乐列表、缓存音乐文件、读取音乐列表、整理缓存、删除缓存
@@ -39,6 +36,8 @@ public class StoreUtil {
     private static final String CACHE_LIST_FOLDER = "/MusicListCache";
     // 缓存音乐列表文件名
     private static final String CACHE_LIST_FILE = "/ListCache";
+    // 临时文件后缀
+    private static final String TEMP_FILE_SUFFIX = ".temp";
 
     /**
      * 整理缓存
@@ -54,15 +53,15 @@ public class StoreUtil {
      */
     public static void sortOutCache(ArrayList<MusicGroup> musicGroups) {
         HashSet<String> cacheFileNameSet = new HashSet<>(musicGroups.size());
-        // 遍历musicGroups中所有MusicBean将对应的version+"@#"+filename丢进HashSet中
+        // 遍历musicGroups中所有MusicBean将对应的version+"@#"+网络文件名丢进HashSet中，因为缓存文件都以这样的格式作为缓存文件名
         for (MusicGroup musicGroup : musicGroups) {
             ArrayList<MusicBean> musicBeans = musicGroup.getMusicBeans();
             for (MusicBean musicBean : musicBeans) {
-                cacheFileNameSet.add(getCacheFilename(musicBean.getVersion(), getFileName(musicBean.getUrl())));
-                cacheFileNameSet.add(getTempCacheFilename(musicBean.getVersion(), getFileName(musicBean.getUrl())));
+                cacheFileNameSet.add(getCacheFileName(musicBean.getVersion(), getNetFileName(musicBean.getUrl())));
+                cacheFileNameSet.add(getTempCacheFileName(musicBean.getVersion(), getNetFileName(musicBean.getUrl())));
             }
         }
-        File folder = new File(getCacheMusicFileFolder());
+        File folder = new File(getCacheMusicFileFolderDir());
         if (!folder.exists() && !folder.mkdir()) {
             return;
         }
@@ -70,7 +69,7 @@ public class StoreUtil {
         File[] files = folder.listFiles();
         for (File file : files) {
             if (!file.isFile()) continue;
-            // 在HashSet中找是否存在该文件名
+            // 在HashSet中找是否存在该文件名,不存在说明不是缓存文件或者是之前的缓存文件但是已经被淘汰，则删除
             if (!cacheFileNameSet.contains(file.getName())) {
                 file.delete();
             }
@@ -84,7 +83,7 @@ public class StoreUtil {
      * @param filename 原文件名
      * @return 是否成功
      */
-    public static boolean deleteCache(@NonNull String version, @NonNull String filename) {
+    public static boolean deleteCacheFile(@NonNull String version, @NonNull String filename) {
         File file = new File(getCacheFileAbsolutePath(version, filename));
         // 如果不存在文件，返回成功，如果存在，则返回是否删除成功
         return !file.exists() || file.delete();
@@ -107,10 +106,14 @@ public class StoreUtil {
      * 获得所有缓存文件名，用HashSet便于访问
      */
     public static HashSet<String> getAllCacheFileName() {
-        File folder = new File(getCacheMusicFileFolder());
+        // 缓存文件夹
+        File folder = new File(getCacheMusicFileFolderDir());
+        // 如果文件夹不存在或者这不是一个文件夹，则返回空
         if (!folder.exists() || !folder.isDirectory()) return null;
+        // 列出文件夹中所有文件
         String[] filenames = folder.list();
         HashSet<String> hashSet = new HashSet<>(filenames.length);
+        // 将所有文件名添加进hashSet后返回
         hashSet.addAll(Arrays.asList(filenames));
         return hashSet;
     }
@@ -120,7 +123,7 @@ public class StoreUtil {
      *
      * @param musicGroups 音频信息组列表
      */
-    public static void cacheMusicList(ArrayList<MusicGroup> musicGroups) {
+    public static void writeCacheMusicList(ArrayList<MusicGroup> musicGroups) {
         File folder = new File(getListCacheFolderDir());
         // 如果不存在也不能创建路径
         if (!folder.exists() && !folder.mkdir()) {
@@ -171,7 +174,7 @@ public class StoreUtil {
      * @return 是否成功
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<MusicGroup> readMusicList() {
+    public static ArrayList<MusicGroup> readCacheMusicList() {
         File file = new File(getListCacheFileAbsolutePath());
         // 如果文件不存在
         if (!file.exists()) {
@@ -201,7 +204,7 @@ public class StoreUtil {
      * @param url 网络url
      * @return 文件名
      */
-    public static String getFileName(String url) {
+    public static String getNetFileName(String url) {
         // “/”为分隔符
         String[] strings = url.split("/");
         if (strings.length == 0) {
@@ -214,27 +217,27 @@ public class StoreUtil {
     /**
      * 文件名转为加上版本号的缓存文件名
      */
-    public static String getCacheFilename(String version, String filename) {
+    public static String getCacheFileName(String version, String filename) {
         return version + DELIMITER + filename;
     }
 
-    public static String getTempCacheFilename(String version, String filename) {
-        return version + DELIMITER + filename + ".temp";
+    public static String getTempCacheFileName(String version, String filename) {
+        return version + DELIMITER + filename + TEMP_FILE_SUFFIX;
     }
 
     public static String getCacheFileAbsolutePath(String version, String filename) {
-        return getCacheMusicFileFolder() + "/" + getCacheFilename(version, filename);
+        return getCacheMusicFileFolderDir() + "/" + getCacheFileName(version, filename);
     }
 
-    static String getCacheFileAbsolutePathTemp(String version, String filename) {
-        return getCacheMusicFileFolder() + "/" + getTempCacheFilename(version, filename);
+    static String getTempCacheFileAbsolutePath(String version, String filename) {
+        return getCacheMusicFileFolderDir() + "/" + getTempCacheFileName(version, filename);
     }
 
     static String getCacheFolderDir() {
         return Environment.getExternalStorageDirectory() + CACHE_FOLDER;
     }
 
-    static String getCacheMusicFileFolder() {
+    static String getCacheMusicFileFolderDir() {
         return Environment.getExternalStorageDirectory() + CACHE_FOLDER + CACHE_MUSIC_FILE_FOLDER;
     }
 

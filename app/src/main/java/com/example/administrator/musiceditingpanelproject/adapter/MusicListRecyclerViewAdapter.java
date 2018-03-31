@@ -28,14 +28,11 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
     private LayoutInflater mLayoutInflater;
     // Item点击监听器
     private ItemClickListener mItemClickListener;
-    // 第几页的RecyclerView的页码
-    private int mPageIndex;
 
-    MusicListRecyclerViewAdapter(ArrayList<MusicBean> musicBeans, int pageIndex) {
+    MusicListRecyclerViewAdapter(ArrayList<MusicBean> musicBeans) {
         // 成员变量初始化
         this.mLayoutInflater = LayoutInflater.from(MusicEditingPanelApplication.getApplication());
         this.mMusicBeans = musicBeans;
-        mPageIndex = pageIndex;
     }
 
 
@@ -78,7 +75,7 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
             @Override
             public void onClick(View v) {
                 if (mItemClickListener != null) {
-                    mItemClickListener.OnItemClick(holder.getAdapterPosition(), holder, mMusicBeans.get(holder.getAdapterPosition()), mPageIndex);
+                    mItemClickListener.OnItemClick(holder, mMusicBeans.get(holder.getAdapterPosition()));
                 }
             }
         });
@@ -102,7 +99,7 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
      * Item点击监听器
      */
     public interface ItemClickListener {
-        void OnItemClick(int position, ItemHolder holder, MusicBean musicBean, int pageIndex);
+        void OnItemClick(ItemHolder holder, MusicBean musicBean);
     }
 
     public static class ItemHolder extends RecyclerView.ViewHolder {

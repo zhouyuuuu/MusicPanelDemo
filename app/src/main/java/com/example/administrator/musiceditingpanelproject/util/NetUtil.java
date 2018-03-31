@@ -74,7 +74,7 @@ public class NetUtil {
      * @param url 网络url
      * @return 文件名
      */
-    private static String getFileName(@NonNull String url) {
+    private static String getNetFileName(@NonNull String url) {
         // “/”为分隔符
         String[] strings = url.split("/");
         if (strings.length == 0) {
@@ -92,7 +92,7 @@ public class NetUtil {
      */
     private static String getBaseUrl(@NonNull String url) {
         StringBuilder stringBuilder = new StringBuilder(url);
-        String filename = getFileName(url);
+        String filename = getNetFileName(url);
         stringBuilder.delete(url.length() - filename.length(), url.length());
         return stringBuilder.toString();
     }
@@ -104,22 +104,22 @@ public class NetUtil {
      * @param musicBean 音频信息
      * @return 是否下载成功
      */
-    public static boolean loadMusicFile(MusicBean musicBean, AtomicBoolean isPaused) {
-        String filename = getFileName(musicBean.getUrl());
+    public static boolean downloadMusicFile(MusicBean musicBean, AtomicBoolean isPaused) {
+        String filename = getNetFileName(musicBean.getUrl());
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getBaseUrl(musicBean.getUrl()))
                 .build();
         MusicRequest musicRequest = retrofit.create(MusicRequest.class);
         // 先用临时文件名，来区分下载中文件和下载完成文件
-        String tempFilePath = StoreUtil.getCacheFileAbsolutePathTemp(musicBean.getVersion(), filename);
+        String tempFilePath = StoreUtil.getTempCacheFileAbsolutePath(musicBean.getVersion(), filename);
         File tempFile = new File(tempFilePath);
-        // 创建文件夹
+        // 若没有此文件夹，则创建文件夹
         File cacheFolderPath = new File(StoreUtil.getCacheFolderDir());
         if (!cacheFolderPath.exists()){
             cacheFolderPath.mkdir();
         }
-        // 创建文件夹
-        File musicFileCacheFolderPath = new File(StoreUtil.getCacheMusicFileFolder());
+        // 若没有此文件夹，则创建文件夹
+        File musicFileCacheFolderPath = new File(StoreUtil.getCacheMusicFileFolderDir());
         if (!musicFileCacheFolderPath.exists()){
             musicFileCacheFolderPath.mkdir();
         }
@@ -130,9 +130,11 @@ public class NetUtil {
             randomAccessFile = new RandomAccessFile(tempFile, "rw");
             // 从tempFile.length()位置开始写
             randomAccessFile.seek(tempFile.length());
+            // 这里是http协议头 range:bytes= xxx- , xxx为开始访问的位置
             String range = "bytes=" + tempFile.length() + "-";
             // 从range开始获取
             call = musicRequest.getMusicFileWithRange(range, filename);
+            // 开始下载前检查是否暂停
             if (isPaused.get()) return false;
             Response<ResponseBody> response = call.execute();
             if (response == null) return false;
@@ -148,6 +150,7 @@ public class NetUtil {
             InputStream inputStream = responseBody.byteStream();
             bufferedInputStream = new BufferedInputStream(inputStream);
             int len;
+            // 循环过程检测是否暂停，否则边下载边写入文件
             while (!isPaused.get() && (len = bufferedInputStream.read(buffer)) != -1) {
                 randomAccessFile.write(buffer, 0, len);
             }

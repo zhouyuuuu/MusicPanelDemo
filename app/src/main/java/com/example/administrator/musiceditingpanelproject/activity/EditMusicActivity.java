@@ -63,7 +63,8 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     // 分组列表适配器
     private MusicSortRecyclerViewAdapter mMusicSortRecyclerViewAdapter;
     // 音频管理者
-    private IMusicManager iMusicManager;
+    private IMusicManager mMusicManager;
+    // 重试按钮
     private TextView mTvRetry;
 
     @Override
@@ -72,26 +73,26 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.edit_music_activity);
         initView();
         initData();
-        iMusicManager.refreshMusicEditPanel();
+        mMusicManager.loadMusicGroupListData();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        iMusicManager.pauseMusic();
+        mMusicManager.pauseMusic();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        iMusicManager.restartMusic();
+        mMusicManager.restartMusic();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        iMusicManager.stopPlayer();
-        iMusicManager.stopLoadingMusic();
+        mMusicManager.stopPlayer();
+        mMusicManager.stopDownloadingMusicFile();
     }
 
     /**
@@ -111,7 +112,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      * 初始化数据
      */
     private void initData() {
-        iMusicManager = new EditMusicPanelManager(this);
+        mMusicManager = new EditMusicPanelManager(this);
         mMusicGroups = new ArrayList<>();
         mMusicPageAdapterHashMap = new HashMap<>();
         mTvClose.setOnClickListener(this);
@@ -143,12 +144,12 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 mRlPanel.setVisibility(View.GONE);
                 break;
             case R.id.iv_delete:
-                iMusicManager.deleteMusic(mSelectedMusicBean);
-                iMusicManager.stopPlayer();
+                mMusicManager.deleteMusicFile(mSelectedMusicBean);
+                mMusicManager.stopPlayer();
                 break;
             case R.id.tv_retry:
                 mTvRetry.setVisibility(View.GONE);
-                iMusicManager.refreshMusicEditPanel();
+                mMusicManager.loadMusicGroupListData();
                 break;
             default:
                 break;
@@ -158,41 +159,45 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     /**
      * 这里是音频信息的Item点击监听器回调
      *
-     * @param position 位置
      * @param holder   holder
      */
     @Override
-    public void onMusicItemClicked(final int position, final ItemHolder holder, final MusicBean musicBean, final int pageIndex, final String sort) {
+    public void onMusicItemClicked(final ItemHolder holder, final MusicBean musicBean) {
         mClickedMusicBeanInMusicGroup = musicBean;
         switch (musicBean.getState()) {
             case MusicBean.STATE_UNDOWNLOADED:
-                iMusicManager.downloadMusic(musicBean);
+                // 未下载就要下载
+                mMusicManager.downloadMusicFile(musicBean);
                 break;
             case MusicBean.STATE_DOWNLOADING:
-                iMusicManager.pauseDownloadMusic(musicBean);
+                // 下载中就暂停
+                mMusicManager.pauseDownloadMusicFile(musicBean);
                 break;
             case MusicBean.STATE_DOWNLOADED:
-                // 防止运行期间文件被删除
-                if (StoreUtil.findCacheFile(musicBean.getVersion(), StoreUtil.getFileName(musicBean.getUrl())) == null) {
-                    iMusicManager.downloadMusic(musicBean);
+                // 已下载就播放，但是为了防止运行期间文件被删除，检查一下文件是否存在，不存在就去下载，存在则播放
+                if (StoreUtil.findCacheFile(musicBean.getVersion(), StoreUtil.getNetFileName(musicBean.getUrl())) == null) {
+                    mMusicManager.downloadMusicFile(musicBean);
                     break;
                 }
                 setSelectedItemUnselected(MusicBean.STATE_DOWNLOADED);
                 holder.showPlayingState();
                 musicBean.setState(MusicBean.STATE_PLAYING);
                 mSelectedMusicBean = musicBean;
-                iMusicManager.playMusic(musicBean);
+                mMusicManager.playMusic(musicBean);
                 break;
             case MusicBean.STATE_PLAYING:
-                iMusicManager.pauseMusic();
+                // 播放中则暂停
+                mMusicManager.pauseMusic();
                 musicBean.setState(MusicBean.STATE_PLAYING_PAUSED);
                 holder.showPlayingPausedState();
                 break;
             case MusicBean.STATE_DOWNLOAD_PAUSED:
-                iMusicManager.downloadMusic(musicBean);
+                // 下载暂停中则继续下载
+                mMusicManager.downloadMusicFile(musicBean);
                 break;
             case MusicBean.STATE_PLAYING_PAUSED:
-                iMusicManager.restartMusic();
+                // 播放暂停则继续播放
+                mMusicManager.restartMusic();
                 musicBean.setState(MusicBean.STATE_PLAYING);
                 holder.showPlayingState();
                 break;
@@ -216,10 +221,10 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      * 这里是底部分类名列表的Item点击监听器回调
      *
      * @param position 位置
-     * @param holder   holder
+     * @param sortHolder   holder
      */
     @Override
-    public void OnItemClick(int position, SortHolder holder) {
+    public void OnItemClick(int position, SortHolder sortHolder) {
         // 如果mClickedMusicSortPositionInSortList不等于STATE_UNSELECTED说明有其他分类被选中
         if (mSelectedMusicSortPositionInSortList != STATE_UNSELECTED) {
             // 将其置为非选中状态
@@ -228,14 +233,14 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         // 将目前点击的position设置给mClickedMusicSortPositionInSortList
         mSelectedMusicSortPositionInSortList = position;
         // 置为选中状态
-        holder.showClickedState();
+        sortHolder.showClickedState();
         // 显示编辑面板
         mRlPanel.setVisibility(View.VISIBLE);
         // 分类对应的musicGroup
         MusicGroup musicGroup = mMusicGroups.get(position);
         // HashSet中找找有没有对应的ViewPagerAdapter
         MusicPageViewPagerAdapter musicPageViewPagerAdapter = mMusicPageAdapterHashMap.get(musicGroup.getSortName());
-        // 如果没有就新建一个Adapter丢进HashSet中，分类名为key
+        // 如果没有就新建一个Adapter丢进HashSet中，分类名为key，这边是一个分类对应一个Adapter，这样可以避免数据不同造成更新数据时校验数据的麻烦
         if (musicPageViewPagerAdapter == null) {
             musicPageViewPagerAdapter = new MusicPageViewPagerAdapter(mViewPagerMusicPage, musicGroup);
             musicPageViewPagerAdapter.setMusicItemClickListener(EditMusicActivity.this);
@@ -280,7 +285,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                             position = i % MusicPageViewPagerAdapter.ITEM_COUNT_PER_PAGE;
                             if (musicBean.getState() == MusicBean.STATE_PLAYING) {
                                 mSelectedMusicBean = musicBean;
-                                iMusicManager.playMusic(musicBean);
+                                mMusicManager.playMusic(musicBean);
                             }
                             ItemHolder holder = (ItemHolder) mMusicPageAdapterHashMap
                                     .get(sort)
@@ -430,25 +435,25 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      *
      * @param musicBean 音频信息
      */
-    private void refreshHolder(MusicBean musicBean, ItemHolder holder) {
+    private void refreshHolder(MusicBean musicBean, ItemHolder itemHolder) {
         switch (musicBean.getState()) {
             case MusicBean.STATE_UNDOWNLOADED:
-                holder.showUndownloadedState();
+                itemHolder.showUndownloadedState();
                 break;
             case MusicBean.STATE_DOWNLOADING:
-                holder.showDownloadingState();
+                itemHolder.showDownloadingState();
                 break;
             case MusicBean.STATE_DOWNLOADED:
-                holder.showDownloadedState();
+                itemHolder.showDownloadedState();
                 break;
             case MusicBean.STATE_PLAYING:
-                holder.showPlayingState();
+                itemHolder.showPlayingState();
                 break;
             case MusicBean.STATE_DOWNLOAD_PAUSED:
-                holder.showDownloadPausedState();
+                itemHolder.showDownloadPausedState();
                 break;
             case MusicBean.STATE_PLAYING_PAUSED:
-                holder.showPlayingPausedState();
+                itemHolder.showPlayingPausedState();
                 break;
             default:
                 break;

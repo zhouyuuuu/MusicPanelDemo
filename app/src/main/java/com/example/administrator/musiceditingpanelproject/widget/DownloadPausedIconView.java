@@ -23,8 +23,10 @@ public class DownloadPausedIconView extends View {
     private static final int COLOR_ICON = 0xff404040;
     // 画笔，作为成员变量避免多次创建影响性能
     private Paint mPaint;
-
+    // 三角形轨迹
     private Path mPath;
+    // 轨迹是否绘画过，防止重复构建三角形，没必要
+    private boolean mPathDrawing = false;
 
     public DownloadPausedIconView(Context context) {
         this(context, null);
@@ -46,7 +48,7 @@ public class DownloadPausedIconView extends View {
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         // 画笔颜色
         mPaint.setColor(COLOR_ICON);
-
+        // 三角形轨迹
         mPath = new Path();
     }
 
@@ -78,10 +80,13 @@ public class DownloadPausedIconView extends View {
         mPaint.setStyle(Paint.Style.STROKE);
         canvas.drawCircle(width / 2, height / 2, radio, mPaint);
         //根据Path,绘制三角形
-        mPath.moveTo(width * 5 / 16, height * 4 / 16);
-        mPath.lineTo(width * 5 / 16, height * 12 / 16);
-        mPath.lineTo(width * 13 / 16, height / 2);
-        mPath.close();
+        if (!mPathDrawing) {
+            mPath.moveTo(width * 5 / 16, height * 4 / 16);
+            mPath.lineTo(width * 5 / 16, height * 12 / 16);
+            mPath.lineTo(width * 13 / 16, height / 2);
+            mPath.close();
+            mPathDrawing = true;
+        }
         mPaint.setStyle(Paint.Style.FILL);
         canvas.drawPath(mPath, mPaint);
     }
