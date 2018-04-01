@@ -10,7 +10,16 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/todo" />
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_sort"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/edit_music_sort_rv_height"
+        android:layout_alignParentBottom="true"
+        android:background="@color/edit_music_sort_bg"
+        android:overScrollMode="never" />
+
     <ImageView
+        android:visibility="gone"
         android:id="@+id/iv_delete"
         android:layout_width="@dimen/edit_music_delete_btn_weight"
         android:layout_height="@dimen/edit_music_delete_btn_height"
@@ -21,16 +30,6 @@
         android:contentDescription="@string/todo"
         android:padding="@dimen/edit_music_delete_btn_padding"
         android:src="@mipmap/edit_music_btn_delete" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_sort"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/edit_music_sort_rv_height"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@id/iv_delete"
-        android:layout_toStartOf="@id/iv_delete"
-        android:background="@color/edit_music_sort_bg"
-        android:overScrollMode="never" />
 
     <RelativeLayout
         android:visibility="gone"

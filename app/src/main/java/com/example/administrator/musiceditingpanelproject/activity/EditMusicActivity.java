@@ -186,6 +186,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 holder.showPlayingState();
                 musicBean.setState(MusicBean.STATE_PLAYING);
                 mSelectedMusicBean = musicBean;
+                mIvDelete.setVisibility(View.VISIBLE);
                 mMusicManager.playMusic(musicBean);
                 break;
             case MusicBean.STATE_PLAYING:
@@ -217,6 +218,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
             mSelectedMusicBean.setState(state);
             musicBeanStateChangedCallback(mSelectedMusicBean);
             mSelectedMusicBean = null;
+            mIvDelete.setVisibility(View.GONE);
         }
     }
 
@@ -288,6 +290,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                             position = i % MusicPageViewPagerAdapter.ITEM_COUNT_PER_PAGE;
                             if (musicBean.getState() == MusicBean.STATE_PLAYING) {
                                 mSelectedMusicBean = musicBean;
+                                mIvDelete.setVisibility(View.VISIBLE);
                                 mMusicManager.playMusic(musicBean);
                             }
                             ItemHolder holder = (ItemHolder) mMusicPageAdapterHashMap
@@ -415,6 +418,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
             public void run() {
                 Toast.makeText(MusicEditingPanelApplication.getApplication(), "删除成功", Toast.LENGTH_SHORT).show();
                 mSelectedMusicBean = null;
+                mIvDelete.setVisibility(View.GONE);
             }
         });
     }
@@ -431,6 +435,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
             public void run() {
                 Toast.makeText(MusicEditingPanelApplication.getApplication(), "删除失败", Toast.LENGTH_SHORT).show();
                 mSelectedMusicBean = null;
+                mIvDelete.setVisibility(View.GONE);
             }
         });
     }
