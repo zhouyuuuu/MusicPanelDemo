@@ -204,6 +204,11 @@ public class EditMusicPanelManager implements IMusicManager {
     }
 
     @Override
+    public void resetPlayer() {
+        mMusicPlayer.resetPlayer();
+    }
+
+    @Override
     public void stopPlayer() {
         mMusicPlayer.stopPlayer();
     }

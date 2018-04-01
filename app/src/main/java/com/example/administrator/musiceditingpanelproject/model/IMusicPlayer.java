@@ -26,6 +26,11 @@ public interface IMusicPlayer {
     void restartMusic();
 
     /**
+     * 重置播放器
+     */
+    void resetPlayer();
+
+    /**
      * 停止播放器
      */
     void stopPlayer();

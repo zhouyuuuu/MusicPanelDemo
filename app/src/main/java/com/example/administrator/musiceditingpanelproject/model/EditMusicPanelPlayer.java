@@ -74,15 +74,27 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
     }
 
     /**
+     * 重置播放器
+     */
+    @Override
+    public void resetPlayer() {
+        if (mIsPlaying) {
+            mMediaPlayer.stop();
+        }
+        mMediaPlayer.reset();
+    }
+
+
+    /**
      * 停止播放器
      */
     @Override
     public void stopPlayer() {
         if (mIsPlaying) {
             mMediaPlayer.stop();
-            mMediaPlayer.reset();
-            mMediaPlayer.release();
             mIsPlaying = false;
         }
+        mMediaPlayer.reset();
+        mMediaPlayer.release();
     }
 }

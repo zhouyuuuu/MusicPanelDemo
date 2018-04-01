@@ -148,7 +148,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
             case R.id.iv_delete:
                 if (mSelectedMusicBean == null) return;
                 mMusicManager.deleteMusicFile(mSelectedMusicBean);
-                mMusicManager.stopPlayer();
+                mMusicManager.resetPlayer();
                 break;
             case R.id.tv_retry:
                 mTvRetry.setVisibility(View.GONE);
