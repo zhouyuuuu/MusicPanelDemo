@@ -293,11 +293,9 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                                 mIvDelete.setVisibility(View.VISIBLE);
                                 mMusicManager.playMusic(musicBean);
                             }
-                            ItemHolder holder = (ItemHolder) mMusicPageAdapterHashMap
+                            ItemHolder holder = mMusicPageAdapterHashMap
                                     .get(sort)
-                                    .getRecyclerViews()
-                                    .get(page)
-                                    .findViewHolderForAdapterPosition(position);
+                                    .getItemHolder(page,position);
                             if (holder != null) {
                                 refreshHolder(musicBean, holder);
                             }
