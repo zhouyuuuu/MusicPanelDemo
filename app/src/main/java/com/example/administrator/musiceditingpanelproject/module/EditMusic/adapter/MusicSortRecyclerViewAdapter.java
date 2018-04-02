@@ -1,4 +1,4 @@
-package com.example.administrator.musiceditingpanelproject.module.editmusic.adapter;
+package com.example.administrator.musiceditingpanelproject.module.EditMusic.adapter;
 
 import android.os.Build;
 import android.support.annotation.NonNull;

@@ -1,8 +1,8 @@
-package com.example.administrator.musiceditingpanelproject.module.editmusic.model;
+package com.example.administrator.musiceditingpanelproject.module.EditMusic.model;
 
 import android.media.MediaPlayer;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
-import com.example.administrator.musiceditingpanelproject.common.util.StoreUtil;
+import com.example.administrator.musiceditingpanelproject.module.EditMusic.util.StoreUtil;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package com.example.administrator.musiceditingpanelproject.module.editmusic.presenter;
+package com.example.administrator.musiceditingpanelproject.module.EditMusic.presenter;
 
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
