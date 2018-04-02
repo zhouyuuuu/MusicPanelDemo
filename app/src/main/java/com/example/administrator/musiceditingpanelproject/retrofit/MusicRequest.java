@@ -21,7 +21,7 @@ public interface MusicRequest {
      * @return ResponseBody
      */
     @Headers({"lang:Chinese", "platform:android", "version:1.13.0", "deviceid:imei"})
-    @GET("material?type=music")
+    @GET("materials?type=music")
     Call<ResponseBody> getMusicList();
 
     /**
