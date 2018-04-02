@@ -1,4 +1,4 @@
-package com.example.administrator.musiceditingpanelproject.module.EditMusic.activity;
+package com.example.administrator.musiceditingpanelproject.module.editmusic.activity;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -12,17 +12,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.administrator.musiceditingpanelproject.R;
-import com.example.administrator.musiceditingpanelproject.module.EditMusic.adapter.MusicListRecyclerViewAdapter.ItemHolder;
-import com.example.administrator.musiceditingpanelproject.module.EditMusic.adapter.MusicPageViewPagerAdapter;
-import com.example.administrator.musiceditingpanelproject.module.EditMusic.adapter.MusicSortRecyclerViewAdapter;
-import com.example.administrator.musiceditingpanelproject.module.EditMusic.adapter.MusicSortRecyclerViewAdapter.SortHolder;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.adapter.MusicListRecyclerViewAdapter.ItemHolder;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.adapter.MusicPageViewPagerAdapter;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.adapter.MusicSortRecyclerViewAdapter;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.adapter.MusicSortRecyclerViewAdapter.SortHolder;
 import com.example.administrator.musiceditingpanelproject.application.MusicEditingPanelApplication;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
-import com.example.administrator.musiceditingpanelproject.module.EditMusic.presenter.EditMusicPanelManager;
-import com.example.administrator.musiceditingpanelproject.module.EditMusic.presenter.IMusicManager;
-import com.example.administrator.musiceditingpanelproject.module.EditMusic.util.StoreUtil;
-import com.example.administrator.musiceditingpanelproject.module.EditMusic.panel.IEditMusicPanel;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.presenter.EditMusicPanelManager;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.presenter.IMusicManager;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.util.StoreUtil;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.panel.IEditMusicPanel;
 import com.example.administrator.musiceditingpanelproject.common.view.PageIndicator;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.example.administrator.musiceditingpanelproject.module.EditMusic.adapter;
+package com.example.administrator.musiceditingpanelproject.module.editmusic.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -132,7 +132,7 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
             mTvAuthorName.setVisibility(View.GONE);
             mTvSongName.setVisibility(View.GONE);
             mTvEdit.setVisibility(View.VISIBLE);
-            mTvEdit.setText(MusicEditingPanelApplication.getApplication().getString(R.string.edit_play));
+            mTvEdit.setText(MusicEditingPanelApplication.getApplication().getString(R.string.edit_pause));
             mDownloadPausedIconView.setVisibility(View.GONE);
         }
 
@@ -203,7 +203,7 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
             mTvAuthorName.setVisibility(View.GONE);
             mTvSongName.setVisibility(View.GONE);
             mTvEdit.setVisibility(View.VISIBLE);
-            mTvEdit.setText(MusicEditingPanelApplication.getApplication().getString(R.string.edit_pause));
+            mTvEdit.setText(MusicEditingPanelApplication.getApplication().getString(R.string.edit_play));
             mDownloadPausedIconView.setVisibility(View.GONE);
         }
 
