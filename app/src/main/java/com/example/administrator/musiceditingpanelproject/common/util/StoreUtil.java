@@ -1,4 +1,4 @@
-package com.example.administrator.musiceditingpanelproject.util;
+package com.example.administrator.musiceditingpanelproject.common.util;
 
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -19,25 +19,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_CACHE_FILE_NAME_DELIMITER;
+import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_CACHE_FOLDER;
+import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_CACHE_LIST_FILE;
+import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_CACHE_LIST_FOLDER;
+import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_CACHE_MUSIC_FILE_FOLDER;
+import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_TEMP_FILE_SUFFIX;
+
 /**
  * 缓存工具类，用于缓存音乐列表、缓存音乐文件、读取音乐列表、整理缓存、删除缓存
  * Edited by Administrator on 2018/3/25.
  */
 
 public class StoreUtil {
-
-    // 分隔符
-    private static final String DELIMITER = "@#";
-    // 缓存文件夹名
-    private static final String CACHE_FOLDER = "/MixVDownload";
-    // 缓存音乐文件文件夹名
-    private static final String CACHE_MUSIC_FILE_FOLDER = "/Music";
-    // 缓存音乐列表文件夹名
-    private static final String CACHE_LIST_FOLDER = "/MusicListCache";
-    // 缓存音乐列表文件名
-    private static final String CACHE_LIST_FILE = "/ListCache";
-    // 临时文件后缀
-    private static final String TEMP_FILE_SUFFIX = ".temp";
 
     /**
      * 整理缓存
@@ -218,11 +212,11 @@ public class StoreUtil {
      * 文件名转为加上版本号的缓存文件名
      */
     public static String getCacheFileName(String version, String filename) {
-        return version + DELIMITER + filename;
+        return version + EDIT_MUSIC_CACHE_FILE_NAME_DELIMITER + filename;
     }
 
     public static String getTempCacheFileName(String version, String filename) {
-        return version + DELIMITER + filename + TEMP_FILE_SUFFIX;
+        return version + EDIT_MUSIC_CACHE_FILE_NAME_DELIMITER + filename + EDIT_MUSIC_TEMP_FILE_SUFFIX;
     }
 
     public static String getCacheFileAbsolutePath(String version, String filename) {
@@ -234,18 +228,18 @@ public class StoreUtil {
     }
 
     static String getCacheFolderDir() {
-        return Environment.getExternalStorageDirectory() + CACHE_FOLDER;
+        return Environment.getExternalStorageDirectory() + EDIT_MUSIC_CACHE_FOLDER;
     }
 
     static String getCacheMusicFileFolderDir() {
-        return Environment.getExternalStorageDirectory() + CACHE_FOLDER + CACHE_MUSIC_FILE_FOLDER;
+        return Environment.getExternalStorageDirectory() + EDIT_MUSIC_CACHE_FOLDER + EDIT_MUSIC_CACHE_MUSIC_FILE_FOLDER;
     }
 
     private static String getListCacheFolderDir() {
-        return MusicEditingPanelApplication.getApplication().getExternalCacheDir() + CACHE_LIST_FOLDER;
+        return MusicEditingPanelApplication.getApplication().getExternalCacheDir() + EDIT_MUSIC_CACHE_LIST_FOLDER;
     }
 
     private static String getListCacheFileAbsolutePath() {
-        return getListCacheFolderDir() + CACHE_LIST_FILE;
+        return getListCacheFolderDir() + EDIT_MUSIC_CACHE_LIST_FILE;
     }
 }

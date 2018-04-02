@@ -1,4 +1,4 @@
-package com.example.administrator.musiceditingpanelproject.util;
+package com.example.administrator.musiceditingpanelproject.common.util;
 
 import com.example.administrator.musiceditingpanelproject.application.MusicEditingPanelApplication;
 

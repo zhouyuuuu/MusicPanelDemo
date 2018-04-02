@@ -1,4 +1,4 @@
-package com.example.administrator.musiceditingpanelproject.adapter;
+package com.example.administrator.musiceditingpanelproject.module.editmusic.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -10,9 +10,9 @@ import android.widget.TextView;
 import com.example.administrator.musiceditingpanelproject.R;
 import com.example.administrator.musiceditingpanelproject.application.MusicEditingPanelApplication;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
-import com.example.administrator.musiceditingpanelproject.widget.DownloadIconView;
-import com.example.administrator.musiceditingpanelproject.widget.DownloadPausedIconView;
-import com.example.administrator.musiceditingpanelproject.widget.IndeterminateProgressBar;
+import com.example.administrator.musiceditingpanelproject.common.view.DownloadIconView;
+import com.example.administrator.musiceditingpanelproject.common.view.DownloadPausedIconView;
+import com.example.administrator.musiceditingpanelproject.common.view.IndeterminateProgressBar;
 
 import java.util.ArrayList;
 

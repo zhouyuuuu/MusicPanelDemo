@@ -1,4 +1,4 @@
-package com.example.administrator.musiceditingpanelproject.util;
+package com.example.administrator.musiceditingpanelproject.common.util;
 
 import android.support.annotation.NonNull;
 
@@ -23,6 +23,9 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_HTTP_ERROR_CODE_RANGE_ILLEGAL;
+import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_URL_TEST;
+
 /**
  * 网络工具类，用于获取网络音频列表，获取音频文件byte数组
  * Edited by Administrator on 2018/3/24.
@@ -30,12 +33,7 @@ import retrofit2.Retrofit;
 
 public class NetUtil {
 
-    // 测试环境host
-    private static final String URL_TEST = "http://dev.mixvvideo.com/";
-    // 正式环境host
-    private static final String URL_OFFICIAL = "https://www.mixvvideo.com/";
-    // range超出返回错误代码
-    private static final int ERROR_CODE_RANGE_ILLEGAL = 416;
+
     // 缓存区大小
     private static final int BUFFER_SIZE = 1024;
 
@@ -47,7 +45,7 @@ public class NetUtil {
     public static ArrayList<MusicGroup> getMusicList() {
         ArrayList<MusicGroup> musicGroups = null;
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URL_TEST)
+                .baseUrl(EDIT_MUSIC_URL_TEST)
                 .build();
         MusicRequest musicRequest = retrofit.create(MusicRequest.class);
         Call<ResponseBody> call = musicRequest.getMusicList();
@@ -140,7 +138,7 @@ public class NetUtil {
             Response<ResponseBody> response = call.execute();
             if (response == null) return false;
             // 如果是416，则说明range越界了，原因是文件已经下载好了，只是没有改名误认为没下载好
-            if (response.code() == ERROR_CODE_RANGE_ILLEGAL) {
+            if (response.code() == EDIT_MUSIC_HTTP_ERROR_CODE_RANGE_ILLEGAL) {
                 // 改名
                 return renameCacheFile(tempFile, StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), filename));
             }

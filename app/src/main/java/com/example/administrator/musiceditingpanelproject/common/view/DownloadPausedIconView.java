@@ -1,20 +1,20 @@
-package com.example.administrator.musiceditingpanelproject.widget;
+package com.example.administrator.musiceditingpanelproject.common.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.example.administrator.musiceditingpanelproject.util.DimensionUtil;
+import com.example.administrator.musiceditingpanelproject.common.util.DimensionUtil;
 
 /**
- * 下载图标
- * Edited by Administrator on 2018/3/24.
+ * Edited by Administrator on 2018/3/30.
  */
 
-public class DownloadIconView extends View {
+public class DownloadPausedIconView extends View {
     // 默认控件大小为20dp
     private static final int SIZE_DEFAULT = (int) DimensionUtil.dip2px(20);
     // 线条宽度为2dp
@@ -23,29 +23,33 @@ public class DownloadIconView extends View {
     private static final int COLOR_ICON = 0xff404040;
     // 画笔，作为成员变量避免多次创建影响性能
     private Paint mPaint;
+    // 三角形轨迹
+    private Path mPath;
+    // 轨迹是否绘画过，防止重复构建三角形，没必要
+    private boolean mPathDrawing = false;
 
-    public DownloadIconView(Context context) {
+    public DownloadPausedIconView(Context context) {
         this(context, null);
     }
 
-    public DownloadIconView(Context context, @Nullable AttributeSet attrs) {
+    public DownloadPausedIconView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public DownloadIconView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public DownloadPausedIconView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         // 画笔
         mPaint = new Paint();
         // 抗锯齿
         mPaint.setAntiAlias(true);
-        // 中空模式
-        mPaint.setStyle(Paint.Style.STROKE);
         // 边缘宽度
         mPaint.setStrokeWidth(STROKE_WIDTH_DEFAULT);
         // 线条尾部形状
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         // 画笔颜色
         mPaint.setColor(COLOR_ICON);
+        // 三角形轨迹
+        mPath = new Path();
     }
 
     @Override
@@ -73,13 +77,17 @@ public class DownloadIconView extends View {
         int height = getHeight();
         int radio = width > height ? (height - STROKE_WIDTH_DEFAULT) / 2 : (width - STROKE_WIDTH_DEFAULT) / 2;
         // 画圆
+        mPaint.setStyle(Paint.Style.STROKE);
         canvas.drawCircle(width / 2, height / 2, radio, mPaint);
-        // 画中间线
-        canvas.drawLine(width / 2, height / 4, width / 2, height * 3 / 4, mPaint);
-        // 画左边斜线
-        canvas.drawLine(width / 4 + STROKE_WIDTH_DEFAULT / 2, height / 2 + STROKE_WIDTH_DEFAULT / 2, width / 2, height * 3 / 4, mPaint);
-        // 画右边斜线
-        canvas.drawLine(width * 3 / 4 - STROKE_WIDTH_DEFAULT / 2, height / 2 + STROKE_WIDTH_DEFAULT / 2, width / 2, height * 3 / 4, mPaint);
+        //根据Path,绘制三角形
+        if (!mPathDrawing) {
+            mPath.moveTo(width * 5 / 16, height * 4 / 16);
+            mPath.lineTo(width * 5 / 16, height * 12 / 16);
+            mPath.lineTo(width * 13 / 16, height / 2);
+            mPath.close();
+            mPathDrawing = true;
+        }
+        mPaint.setStyle(Paint.Style.FILL);
+        canvas.drawPath(mPath, mPaint);
     }
-
 }

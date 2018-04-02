@@ -1,4 +1,4 @@
-package com.example.administrator.musiceditingpanelproject.adapter;
+package com.example.administrator.musiceditingpanelproject.module.editmusic.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;

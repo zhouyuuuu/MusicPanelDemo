@@ -1,12 +1,12 @@
-package com.example.administrator.musiceditingpanelproject.presenter;
+package com.example.administrator.musiceditingpanelproject.module.editmusic.presenter;
 
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
-import com.example.administrator.musiceditingpanelproject.model.EditMusicPanelLoader;
-import com.example.administrator.musiceditingpanelproject.model.EditMusicPanelPlayer;
-import com.example.administrator.musiceditingpanelproject.model.IMusicLoader;
-import com.example.administrator.musiceditingpanelproject.model.IMusicPlayer;
-import com.example.administrator.musiceditingpanelproject.view.IEditMusicPanel;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.model.EditMusicPanelLoader;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.model.EditMusicPanelPlayer;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.model.IMusicLoader;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.model.IMusicPlayer;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.panel.IEditMusicPanel;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

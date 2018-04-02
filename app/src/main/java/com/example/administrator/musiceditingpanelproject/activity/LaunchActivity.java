@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.administrator.musiceditingpanelproject.R;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.activity.EditMusicActivity;
 
 /**
  * Edited by Administrator on 2018/3/28.

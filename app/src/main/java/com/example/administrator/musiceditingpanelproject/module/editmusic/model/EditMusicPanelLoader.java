@@ -1,13 +1,13 @@
-package com.example.administrator.musiceditingpanelproject.model;
+package com.example.administrator.musiceditingpanelproject.module.editmusic.model;
 
 import android.support.annotation.NonNull;
 
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
-import com.example.administrator.musiceditingpanelproject.presenter.IMusicManager;
-import com.example.administrator.musiceditingpanelproject.util.NetUtil;
-import com.example.administrator.musiceditingpanelproject.util.StoreUtil;
-import com.example.administrator.musiceditingpanelproject.util.VersionUtil;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.presenter.IMusicManager;
+import com.example.administrator.musiceditingpanelproject.common.util.NetUtil;
+import com.example.administrator.musiceditingpanelproject.common.util.StoreUtil;
+import com.example.administrator.musiceditingpanelproject.common.util.VersionUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
