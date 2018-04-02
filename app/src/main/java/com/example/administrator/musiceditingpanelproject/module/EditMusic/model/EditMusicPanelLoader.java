@@ -32,7 +32,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
     // 管理器的弱引用
     private WeakReference<IMusicManager> mIMusicManagerWeakReference;
     // 是否有已提交的列表任务
-    private volatile AtomicBoolean mIsLoadingMusicGroupList;
+    private final AtomicBoolean mIsLoadingMusicGroupList;
     // 已提交的文件任务
     private final HashMap<MusicBean,LoadMusicFileRunnable> mDownloadingTaskMap;
     // 已提交的删除任务
@@ -130,10 +130,12 @@ public class EditMusicPanelLoader implements IMusicLoader {
      */
     @Override
     public void loadMusicGroupListData() {
-        // 有正处理的请求，直接返回，防止重复任务
-        if (mIsLoadingMusicGroupList.get()) return;
-        // 标志设为正在请求列表信息
-        mIsLoadingMusicGroupList.compareAndSet(false,true);
+        synchronized (mIsLoadingMusicGroupList) {
+            // 有正处理的请求，直接返回，防止重复任务
+            if (mIsLoadingMusicGroupList.get()) return;
+            // 标志设为正在请求列表信息
+            mIsLoadingMusicGroupList.compareAndSet(false, true);
+        }
         // 提交线程池
         mThreadPoolExecutor.execute(new LoadMusicGroupListRunnable(PRIORITY_DEFAULT, mIMusicManagerWeakReference, mIsLoadingMusicGroupList));
     }
@@ -203,7 +205,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
     private static class LoadMusicGroupListRunnable extends BaseLoadRunnable {
 
         // 原子标志位
-        AtomicBoolean mIsLoadingMusicGroupList;
+        final AtomicBoolean mIsLoadingMusicGroupList;
 
         LoadMusicGroupListRunnable(int priority, WeakReference<IMusicManager> iMusicManagerWeakReference, AtomicBoolean isLoadingMusicGroupList) {
             super(priority, iMusicManagerWeakReference);
@@ -243,7 +245,9 @@ public class EditMusicPanelLoader implements IMusicLoader {
             // 清理掉不存在于列表中的音乐文件
             StoreUtil.sortOutCache(musicGroups);
             // 设置为没有列表请求
-            mIsLoadingMusicGroupList.compareAndSet(true,false);
+            synchronized (mIsLoadingMusicGroupList) {
+                mIsLoadingMusicGroupList.compareAndSet(true, false);
+            }
         }
     }
 

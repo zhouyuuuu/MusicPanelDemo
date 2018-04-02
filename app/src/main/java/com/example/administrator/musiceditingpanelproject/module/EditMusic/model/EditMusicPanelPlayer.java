@@ -80,6 +80,7 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
     public void resetPlayer() {
         if (mIsPlaying) {
             mMediaPlayer.stop();
+            mIsPlaying = false;
         }
         mMediaPlayer.reset();
     }
@@ -90,11 +91,7 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
      */
     @Override
     public void stopPlayer() {
-        if (mIsPlaying) {
-            mMediaPlayer.stop();
-            mIsPlaying = false;
-        }
-        mMediaPlayer.reset();
+        resetPlayer();
         mMediaPlayer.release();
     }
 }
