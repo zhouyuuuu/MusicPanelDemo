@@ -215,8 +215,8 @@ public class EditMusicPanelLoader implements IMusicLoader {
         @Override
         void call() {
             // 获取网络列表
-//            ArrayList<MusicGroup> musicGroups = NetUtil.getMusicList();
-            ArrayList<MusicGroup> musicGroups = createFalseData();
+            ArrayList<MusicGroup> musicGroups = NetUtil.getMusicList();
+//            ArrayList<MusicGroup> musicGroups = createFalseData();
             if (musicGroups == null) {
                 // 网络列表获取不到则读缓存
                 musicGroups = StoreUtil.readCacheMusicList();

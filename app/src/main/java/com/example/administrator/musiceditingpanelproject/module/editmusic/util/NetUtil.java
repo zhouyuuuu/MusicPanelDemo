@@ -24,6 +24,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_HTTP_ERROR_CODE_RANGE_ILLEGAL;
+import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_URL_OFFICIAL;
 import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_URL_TEST;
 
 /**
@@ -45,7 +46,7 @@ public class NetUtil {
     public static ArrayList<MusicGroup> getMusicList() {
         ArrayList<MusicGroup> musicGroups = null;
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(EDIT_MUSIC_URL_TEST)
+                .baseUrl(EDIT_MUSIC_URL_OFFICIAL)
                 .build();
         MusicRequest musicRequest = retrofit.create(MusicRequest.class);
         Call<ResponseBody> call = musicRequest.getMusicList();
@@ -59,7 +60,7 @@ public class NetUtil {
         ResponseBody responseBody = response.body();
         if (responseBody == null) return null;
         try {
-            musicGroups = parseResponseToMusicGroupsForTesting(responseBody.string());
+            musicGroups = parseResponseToMusicGroups(responseBody.string());
         } catch (IOException e) {
             e.printStackTrace();
         }

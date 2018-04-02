@@ -327,6 +327,10 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 // 显示编辑面板
                 mRlPanel.setVisibility(View.VISIBLE);
                 // 分类对应的musicGroup
+                if (musicGroups.size() == 0) {
+                    Toast.makeText(EditMusicActivity.this,"服务器暂时没有数据~",Toast.LENGTH_LONG).show();
+                    return;
+                }
                 MusicGroup musicGroup = mMusicGroups.get(0);
                 // HashSet中找找有没有对应的ViewPagerAdapter
                 MusicPageViewPagerAdapter musicPageViewPagerAdapter = mMusicPageAdapterHashMap.get(musicGroup.getSortName());
