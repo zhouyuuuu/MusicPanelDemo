@@ -33,9 +33,10 @@ import static com.example.administrator.musiceditingpanelproject.module.editmusi
 
 public class NetUtil {
 
+    // 服务器数据返回来的冒号
     private static final String ORIGINAL_COLON = "%3A";
+    // 需要替换的真实冒号
     private static final String TRUE_COLON = ":";
-
     // 缓存区大小
     private static final int BUFFER_SIZE = 1024;
 

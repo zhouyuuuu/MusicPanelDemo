@@ -36,7 +36,8 @@ public class VersionUtil {
      * @return 当前版本是否高于最低版本
      */
     private static boolean isHigherThanMinVersion(String[] versionNumbers, String[] minVersionNumbers) {
-        if (versionNumbers.length != minVersionNumbers.length) return false;
+        if (minVersionNumbers.length == 0) return true;
+        if (versionNumbers.length != minVersionNumbers.length) return true;
         // 从最前面的数字开始比较，如果高了则返回true，如果低了则放回false，如果相同，比较下一个数字，如果所有数字相同，返回true
         for (int i = 0; i < versionNumbers.length; i++) {
             int versionNumberInt = Integer.parseInt(versionNumbers[i]);
@@ -55,7 +56,8 @@ public class VersionUtil {
      * @return 当前版本是否低于最高版本
      */
     private static boolean isLowerThanMaxVersion(String[] versionNumbers, String[] maxVersionNumbers) {
-        if (versionNumbers.length != maxVersionNumbers.length) return false;
+        if (maxVersionNumbers.length == 0) return true;
+        if (versionNumbers.length != maxVersionNumbers.length) return true;
         // 从最前面的数字开始比较，如果低了则返回true，如果高了则放回false，如果相同，比较下一个数字，如果所有数字相同，返回true
         for (int i = 0; i < versionNumbers.length; i++) {
             int versionNumberInt = Integer.parseInt(versionNumbers[i]);
