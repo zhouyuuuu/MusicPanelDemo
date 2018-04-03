@@ -1,7 +1,9 @@
 package com.example.administrator.musiceditingpanelproject.module.editmusic.model;
 
 import android.media.MediaPlayer;
+
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
+import com.example.administrator.musiceditingpanelproject.common.util.LogUtil;
 import com.example.administrator.musiceditingpanelproject.module.editmusic.util.StoreUtil;
 
 import java.io.IOException;
@@ -12,23 +14,41 @@ import java.io.IOException;
 
 public class EditMusicPanelPlayer implements IMusicPlayer {
 
+    // 播放状态
+    private static final int STATE_PLAYING = 0;
+    // 暂停状态
+    private static final int STATE_PAUSED = 1;
+    // 停止状态
+    private static final int STATE_STOPPED = 2;
+    // 归零状态
+    private static final int STATE_IDLE = 3;
+    // 结束状态
+    private static final int STATE_END = 4;
+    // 准备完成状态
+    private static final int STATE_PREPARED = 5;
+    // 准备中状态
+    private static final int STATE_PREPARING = 6;
     // 播放器
     private MediaPlayer mMediaPlayer;
-    // 播放标志
-    private boolean mIsPlaying = false;
+    // 当前状态
+    private int mState;
 
     public EditMusicPanelPlayer() {
         this.mMediaPlayer = new MediaPlayer();
+        mState = STATE_IDLE;
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
+                mState = STATE_PREPARED;
                 mMediaPlayer.start();
+                mState = STATE_PLAYING;
             }
         });
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                mMediaPlayer.reset();
+                mMediaPlayer.start();
+                mState = STATE_PLAYING;
             }
         });
     }
@@ -40,17 +60,26 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
      */
     @Override
     public void playMusic(MusicBean musicBean) {
+        if (mState != STATE_IDLE) return;
         if (musicBean == null) return;
         String cachePath = StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), StoreUtil.getNetFileName(musicBean.getUrl()));
-        mMediaPlayer.reset();
         try {
             mMediaPlayer.setDataSource(cachePath);
         } catch (IOException e) {
+            LogUtil.e("文件读取出错");
+            e.printStackTrace();
+            return;
+        } catch (IllegalStateException e) {
+            LogUtil.e("非法状态，检查MediaPlayer是否在某个状态调用了不属于该状态的方法");
+            e.printStackTrace();
+            return;
+        } catch (IllegalArgumentException e) {
+            LogUtil.e("文件描述不可用");
             e.printStackTrace();
             return;
         }
         mMediaPlayer.prepareAsync();
-        mIsPlaying = true;
+        mState = STATE_PREPARING;
     }
 
     /**
@@ -58,8 +87,9 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
      */
     @Override
     public void pauseMusic() {
-        if (mIsPlaying) {
+        if (mState == STATE_PLAYING) {
             mMediaPlayer.pause();
+            mState = STATE_PAUSED;
         }
     }
 
@@ -68,8 +98,9 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
      */
     @Override
     public void restartMusic() {
-        if (mIsPlaying) {
+        if (mState == STATE_PAUSED) {
             mMediaPlayer.start();
+            mState = STATE_PLAYING;
         }
     }
 
@@ -78,11 +109,12 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
      */
     @Override
     public void resetPlayer() {
-        if (mIsPlaying) {
+        if (mState == STATE_PLAYING || mState == STATE_PAUSED) {
             mMediaPlayer.stop();
-            mIsPlaying = false;
+            mState = STATE_STOPPED;
         }
         mMediaPlayer.reset();
+        mState = STATE_IDLE;
     }
 
 
@@ -93,5 +125,6 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
     public void stopPlayer() {
         resetPlayer();
         mMediaPlayer.release();
+        mState = STATE_END;
     }
 }

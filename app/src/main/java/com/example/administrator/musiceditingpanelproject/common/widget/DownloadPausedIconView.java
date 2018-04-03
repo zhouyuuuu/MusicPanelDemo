@@ -79,12 +79,23 @@ public class DownloadPausedIconView extends View {
         // 画圆
         mPaint.setStyle(Paint.Style.STROKE);
         canvas.drawCircle(width / 2, height / 2, radio, mPaint);
-        //根据Path,绘制三角形
+        //根据Path,绘制三角形，如果绘画过，就不用再画了
         if (!mPathDrawing) {
-            mPath.moveTo(width * 5 / 16, height * 4 / 16);
-            mPath.lineTo(width * 5 / 16, height * 12 / 16);
-            mPath.lineTo(width * 13 / 16, height / 2);
+            // 左上角的点开始
+            int leftTopPointX = width * 5 / 16;
+            int leftTopPointY = height * 4 / 16;
+            mPath.moveTo(leftTopPointX, leftTopPointY);
+            // 连到左下角的点
+            int leftBottomPointX = width * 5 / 16;
+            int leftBottomPointY = height * 12 / 16;
+            mPath.lineTo(leftBottomPointX, leftBottomPointY);
+            // 连到右边的点
+            int rightMiddlePointX = width * 13 / 16;
+            int rightMiddlePointY = height / 2;
+            mPath.lineTo(rightMiddlePointX, rightMiddlePointY);
+            // 封闭组成一个三角形
             mPath.close();
+            // 轨迹已经绘画完成
             mPathDrawing = true;
         }
         mPaint.setStyle(Paint.Style.FILL);

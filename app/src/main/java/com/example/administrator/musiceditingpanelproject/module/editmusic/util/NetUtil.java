@@ -24,7 +24,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_HTTP_ERROR_CODE_RANGE_ILLEGAL;
-import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_URL_OFFICIAL;
 import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_URL_TEST;
 
 /**
@@ -34,6 +33,8 @@ import static com.example.administrator.musiceditingpanelproject.config.AppConfi
 
 public class NetUtil {
 
+    private static final String ORIGINAL_COLON = "%3A";
+    private static final String TRUE_COLON = ":";
 
     // 缓存区大小
     private static final int BUFFER_SIZE = 1024;
@@ -46,7 +47,7 @@ public class NetUtil {
     public static ArrayList<MusicGroup> getMusicList() {
         ArrayList<MusicGroup> musicGroups = null;
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(EDIT_MUSIC_URL_OFFICIAL)
+                .baseUrl(EDIT_MUSIC_URL_TEST)
                 .build();
         MusicRequest musicRequest = retrofit.create(MusicRequest.class);
         Call<ResponseBody> call = musicRequest.getMusicList();
@@ -93,7 +94,9 @@ public class NetUtil {
         StringBuilder stringBuilder = new StringBuilder(url);
         String filename = getNetFileName(url);
         stringBuilder.delete(url.length() - filename.length(), url.length());
-        return stringBuilder.toString();
+        String string = stringBuilder.toString();
+        String[] strings = string.split(ORIGINAL_COLON);
+        return strings[0] + TRUE_COLON + strings[1];
     }
 
     /**
@@ -103,7 +106,7 @@ public class NetUtil {
      * @param musicBean 音频信息
      * @return 是否下载成功
      */
-    public static boolean downloadMusicFile(MusicBean musicBean, AtomicBoolean isPaused) {
+    public static boolean downloadMusicFile(MusicBean musicBean, AtomicBoolean pauseFlag) {
         if (musicBean == null) return false;
         String filename = getNetFileName(musicBean.getUrl());
         Retrofit retrofit = new Retrofit.Builder()
@@ -115,12 +118,12 @@ public class NetUtil {
         File tempFile = new File(tempFilePath);
         // 若没有此文件夹，则创建文件夹
         File cacheFolderPath = new File(StoreUtil.getCacheFolderDir());
-        if (!cacheFolderPath.exists()){
+        if (!cacheFolderPath.exists()) {
             cacheFolderPath.mkdir();
         }
         // 若没有此文件夹，则创建文件夹
         File musicFileCacheFolderPath = new File(StoreUtil.getCacheMusicFileFolderDir());
-        if (!musicFileCacheFolderPath.exists()){
+        if (!musicFileCacheFolderPath.exists()) {
             musicFileCacheFolderPath.mkdir();
         }
         Call<ResponseBody> call;
@@ -135,7 +138,7 @@ public class NetUtil {
             // 从range开始获取
             call = musicRequest.getMusicFileWithRange(range, filename);
             // 开始下载前检查是否暂停
-            if (isPaused.get()) return false;
+            if (pauseFlag.get()) return false;
             Response<ResponseBody> response = call.execute();
             if (response == null) return false;
             // 如果是416，则说明range越界了，原因是文件已经下载好了，只是没有改名误认为没下载好
@@ -151,11 +154,11 @@ public class NetUtil {
             bufferedInputStream = new BufferedInputStream(inputStream);
             int len;
             // 循环过程检测是否暂停，否则边下载边写入文件
-            while (!isPaused.get() && (len = bufferedInputStream.read(buffer)) != -1) {
+            while (!pauseFlag.get() && (len = bufferedInputStream.read(buffer)) != -1) {
                 randomAccessFile.write(buffer, 0, len);
             }
             // 如果是暂停，返回false，如果不是暂停，判断是否重命名成功，成功返回true，否则false，改名用于区分下载中的文件和下载完成的文件
-            return !isPaused.get() && renameCacheFile(tempFile, StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), filename));
+            return !pauseFlag.get() && renameCacheFile(tempFile, StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), filename));
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -179,7 +182,8 @@ public class NetUtil {
 
     /**
      * 重命名文件
-     * @param file 文件
+     *
+     * @param file   文件
      * @param rename 名
      * @return 成功失败
      */
@@ -209,7 +213,7 @@ public class NetUtil {
             for (int i = 0; i < jsonArray.length(); i++) {
                 MusicGroup musicGroup = new MusicGroup();
                 jsonObject = jsonArray.getJSONObject(i);
-                musicGroup.setSortName(jsonObject.getString("groupType"));
+                musicGroup.setSortName(jsonObject.getString("groupName"));
                 JSONArray musicBeanJsonArray = jsonObject.getJSONArray("items");
                 ArrayList<MusicBean> musicBeans = new ArrayList<>();
                 MusicBean musicBean;
@@ -219,7 +223,7 @@ public class NetUtil {
                     musicBean.setUrl(musicBeanJsonObject.getString("zipUrl"));
                     musicBean.setMaxVisibleVersion(musicBeanJsonObject.getString("visibleMaxversion"));
                     musicBean.setMinVisibleVersion(musicBeanJsonObject.getString("visibleMinversion"));
-                    musicBean.setName(musicBeanJsonObject.getString("name"));
+                    musicBean.setName(musicBeanJsonObject.getString("materialName"));
                     musicBean.setId(musicBeanJsonObject.getString("customId"));
                     musicBean.setVersion(musicBeanJsonObject.getString("version"));
                     musicBeanJsonObject = musicBeanJsonObject.getJSONObject("ext");
@@ -235,45 +239,5 @@ public class NetUtil {
         }
         return musicGroups;
     }
-
-    /**
-     * 解析目前服务器返回的假数据
-     *
-     * @param response 服务器返回音频列表的Json的String
-     * @return 音频信息组列表
-     */
-    private static ArrayList<MusicGroup> parseResponseToMusicGroupsForTesting(String response) {
-        ArrayList<MusicGroup> musicGroups = new ArrayList<>();
-        JSONObject jsonObject;
-        try {
-            jsonObject = new JSONObject(response);
-            jsonObject = jsonObject.getJSONObject("data");
-            MusicGroup musicGroup = new MusicGroup();
-            musicGroup.setSortName(jsonObject.getString("groupType"));
-            JSONArray musicBeanJsonArray = jsonObject.getJSONArray("items");
-            ArrayList<MusicBean> musicBeans = new ArrayList<>();
-            MusicBean musicBean;
-            for (int j = 0; j < musicBeanJsonArray.length(); j++) {
-                JSONObject musicBeanJsonObject = musicBeanJsonArray.getJSONObject(j);
-                musicBean = new MusicBean();
-                musicBean.setUrl(musicBeanJsonObject.getString("zip_url"));
-                musicBean.setMaxVisibleVersion(musicBeanJsonObject.getString("visible_maxversion"));
-                musicBean.setMinVisibleVersion(musicBeanJsonObject.getString("visible_minversion"));
-                musicBean.setName(musicBeanJsonObject.getString("name"));
-                musicBean.setId(musicBeanJsonObject.getString("custom_id"));
-                musicBean.setVersion(musicBeanJsonObject.getString("version"));
-                musicBeanJsonObject = musicBeanJsonObject.getJSONObject("ext");
-                musicBean.setAuthorName(musicBeanJsonObject.getString("author"));
-                musicBean.setTime(musicBeanJsonObject.getString("totalTime"));
-                musicBeans.add(musicBean);
-            }
-            musicGroup.setMusicBeans(musicBeans);
-            musicGroups.add(musicGroup);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return musicGroups;
-    }
-
 
 }

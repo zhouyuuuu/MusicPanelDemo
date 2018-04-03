@@ -71,15 +71,29 @@ public class DownloadIconView extends View {
         super.onDraw(canvas);
         int width = getWidth();
         int height = getHeight();
-        int radio = width > height ? (height - STROKE_WIDTH_DEFAULT) / 2 : (width - STROKE_WIDTH_DEFAULT) / 2;
         // 画圆
-        canvas.drawCircle(width / 2, height / 2, radio, mPaint);
+        int centerX = width / 2;
+        int centerY = height / 2;
+        int radio = width > height ? (height - STROKE_WIDTH_DEFAULT) / 2 : (width - STROKE_WIDTH_DEFAULT) / 2;
+        canvas.drawCircle(centerX, centerY, radio, mPaint);
         // 画中间线
-        canvas.drawLine(width / 2, height / 4, width / 2, height * 3 / 4, mPaint);
+        int middleLineStartingPointX = width / 2;
+        int middleLineStartingPointY = height / 4;
+        int middleLineEndingPointX = width / 2;
+        int middleLineEndingPointY = height * 3 / 4;
+        canvas.drawLine(middleLineStartingPointX, middleLineStartingPointY, middleLineEndingPointX, middleLineEndingPointY, mPaint);
         // 画左边斜线
-        canvas.drawLine(width / 4 + STROKE_WIDTH_DEFAULT / 2, height / 2 + STROKE_WIDTH_DEFAULT / 2, width / 2, height * 3 / 4, mPaint);
+        int leftLineStartingPointX = width / 4 + STROKE_WIDTH_DEFAULT / 2;
+        int leftLineStartingPointY = height / 2 + STROKE_WIDTH_DEFAULT / 2;
+        int leftLineEndingPointX = width / 2;
+        int leftLineEndingPointY = height * 3 / 4;
+        canvas.drawLine(leftLineStartingPointX, leftLineStartingPointY, leftLineEndingPointX, leftLineEndingPointY, mPaint);
         // 画右边斜线
-        canvas.drawLine(width * 3 / 4 - STROKE_WIDTH_DEFAULT / 2, height / 2 + STROKE_WIDTH_DEFAULT / 2, width / 2, height * 3 / 4, mPaint);
+        int rightLineStartingPointX = width * 3 / 4 - STROKE_WIDTH_DEFAULT / 2;
+        int rightLineStartingPointY = height / 2 + STROKE_WIDTH_DEFAULT / 2;
+        int rightLineEndingPointX = width / 2;
+        int rightLineEndingPointY = height * 3 / 4;
+        canvas.drawLine(rightLineStartingPointX, rightLineStartingPointY, rightLineEndingPointX, rightLineEndingPointY, mPaint);
     }
 
 }

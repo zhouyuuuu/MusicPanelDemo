@@ -96,8 +96,10 @@ public class PageIndicator extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        // 起始点坐标
+        // 起始点坐标，为中点减去（totalPage-1）段间距的一半
         int startX = (getWidth() - (mTotalPages - 1) * POINT_SPACING) / 2;
+        // 垂直居中Y值
+        int middleY = getHeight() / 2;
         // 从起始点开始画mTotalPages个点
         for (int i = 1; i <= mTotalPages; i++) {
             if (i == mCurrentPageIndex) {
@@ -105,7 +107,8 @@ public class PageIndicator extends View {
             } else {
                 mPaint.setColor(COLOR_POINT_NON_CURRENT);
             }
-            canvas.drawPoint(startX + (i - 1) * POINT_SPACING, getHeight() / 2, mPaint);
+            // 如第二个点的X坐标为 ，startPoint + （2-1）段间距
+            canvas.drawPoint(startX + (i - 1) * POINT_SPACING, middleY, mPaint);
         }
     }
 

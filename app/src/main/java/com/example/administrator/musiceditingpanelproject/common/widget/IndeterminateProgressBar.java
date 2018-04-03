@@ -83,20 +83,27 @@ public class IndeterminateProgressBar extends View {
         super.onDraw(canvas);
         int width = getWidth();
         int height = getHeight();
-        // 画进度条灰色底
+        // 进度条灰色底
         mPaint.setColor(COLOR_BACKGROUND);
+        // 画圆
         // 取宽和高中比较短的那个的一半作为半径，要减去进度条的条宽度否则进度条过大，显示不全
         int radio = width > height ? (height - STROKE_WIDTH_DEFAULT) / 2 : (width - STROKE_WIDTH_DEFAULT) / 2;
-        // 画圆
-        canvas.drawCircle(width / 2, height / 2, radio, mPaint);
+        int centerX = width / 2;
+        int centerY = height / 2;
+        canvas.drawCircle(centerX, centerY, radio, mPaint);
         // 进度条的颜色
         mPaint.setColor(COLOR_PROGRESS);
         // 画扇形，LOLLIPOP以上版本调用该方法可以不用new一个RectF，性能比较好一点
+        // 这个rect的意思是限定扇形最大圆的正方形
+        int rectLeft = width / 2 - radio;
+        int rectTop = height / 2 - radio;
+        int rectRight = width / 2 + radio;
+        int rectBottom = height / 2 + radio;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            canvas.drawArc(width / 2 - radio, height / 2 - radio, width / 2 + radio, height / 2 + radio, mStartAngle, ANGLE_SWEEP, false, mPaint);
+            canvas.drawArc(rectLeft, rectTop, rectRight, rectBottom, mStartAngle, ANGLE_SWEEP, false, mPaint);
         } else {
             if (mRectF == null)
-                mRectF = new RectF(width / 2 - radio, height / 2 - radio, width / 2 + radio, height / 2 + radio);
+                mRectF = new RectF(rectLeft, rectTop, rectRight, rectBottom);
             canvas.drawArc(mRectF, mStartAngle, ANGLE_SWEEP, false, mPaint);
         }
         // 更新起始角度
