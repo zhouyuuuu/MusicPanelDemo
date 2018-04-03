@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_CACHE_FILE_NAME_DELIMITER;
-import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_CACHE_FOLDER;
-import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_CACHE_LIST_FILE;
-import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_CACHE_LIST_FOLDER;
-import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_CACHE_MUSIC_FILE_FOLDER;
-import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_TEMP_FILE_SUFFIX;
+import static com.example.administrator.musiceditingpanelproject.module.editmusic.config.MusicConfig.EDIT_MUSIC_CACHE_FILE_NAME_DELIMITER;
+import static com.example.administrator.musiceditingpanelproject.module.editmusic.config.MusicConfig.EDIT_MUSIC_CACHE_FOLDER;
+import static com.example.administrator.musiceditingpanelproject.module.editmusic.config.MusicConfig.EDIT_MUSIC_CACHE_LIST_FILE;
+import static com.example.administrator.musiceditingpanelproject.module.editmusic.config.MusicConfig.EDIT_MUSIC_CACHE_LIST_FOLDER;
+import static com.example.administrator.musiceditingpanelproject.module.editmusic.config.MusicConfig.EDIT_MUSIC_CACHE_MUSIC_FILE_FOLDER;
+import static com.example.administrator.musiceditingpanelproject.module.editmusic.config.MusicConfig.EDIT_MUSIC_TEMP_FILE_SUFFIX;
 
 /**
  * 缓存工具类，用于缓存音乐列表、缓存音乐文件、读取音乐列表、整理缓存、删除缓存

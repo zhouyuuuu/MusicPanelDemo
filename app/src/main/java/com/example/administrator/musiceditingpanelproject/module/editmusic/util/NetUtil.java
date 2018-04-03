@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
-import com.example.administrator.musiceditingpanelproject.retrofit.MusicRequest;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.retrofit.MusicRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,8 +23,8 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_HTTP_ERROR_CODE_RANGE_ILLEGAL;
-import static com.example.administrator.musiceditingpanelproject.config.AppConfig.EDIT_MUSIC_URL_TEST;
+import static com.example.administrator.musiceditingpanelproject.module.editmusic.config.MusicConfig.EDIT_MUSIC_HTTP_ERROR_CODE_RANGE_ILLEGAL;
+import static com.example.administrator.musiceditingpanelproject.module.editmusic.config.MusicConfig.EDIT_MUSIC_URL_TEST;
 
 /**
  * 网络工具类，用于获取网络音频列表，获取音频文件byte数组

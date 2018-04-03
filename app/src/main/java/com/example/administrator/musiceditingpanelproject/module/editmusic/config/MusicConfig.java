@@ -1,10 +1,10 @@
-package com.example.administrator.musiceditingpanelproject.config;
+package com.example.administrator.musiceditingpanelproject.module.editmusic.config;
 
 /**
  * Edited by Administrator on 2018/4/2.
  */
 
-public class AppConfig {
+public class MusicConfig {
     // 测试环境host
     public static final String EDIT_MUSIC_URL_TEST = "http://dev.mixvvideo.com/";
     // 正式环境host
