@@ -91,7 +91,7 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
      * 这边从每个RecyclerView那边回调，将回调内容交给实现了MusicItemClickListener的Activity处理
      */
     @Override
-    public void OnItemClick(MusicListRecyclerViewAdapter.ItemHolder holder, MusicBean musicBean) {
+    public void onItemClick(MusicListRecyclerViewAdapter.ItemHolder holder, MusicBean musicBean) {
         if (mMusicItemClickListener != null) {
             mMusicItemClickListener.onMusicItemClicked(holder, musicBean);
         }

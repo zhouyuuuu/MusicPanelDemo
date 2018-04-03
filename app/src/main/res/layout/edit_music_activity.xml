@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/rv_sort">
 
-        <com.example.administrator.musiceditingpanelproject.common.view.PageIndicator
+        <com.example.administrator.musiceditingpanelproject.common.widget.PageIndicator
             android:id="@+id/page_indicator"
             android:layout_width="match_parent"
             android:layout_height="@dimen/edit_music_page_indicator_height"

@@ -1,4 +1,4 @@
-package com.example.administrator.musiceditingpanelproject.common.view;
+package com.example.administrator.musiceditingpanelproject.common.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;

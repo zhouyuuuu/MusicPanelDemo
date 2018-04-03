@@ -49,7 +49,7 @@ public class MusicSortRecyclerViewAdapter extends RecyclerView.Adapter<MusicSort
             @Override
             public void onClick(View v) {
                 if (mItemClickListener != null) {
-                    mItemClickListener.OnItemClick(holder.getAdapterPosition(), holder);
+                    mItemClickListener.onItemClick(holder.getAdapterPosition(), holder);
                 }
             }
         });
@@ -73,7 +73,7 @@ public class MusicSortRecyclerViewAdapter extends RecyclerView.Adapter<MusicSort
      * Item点击监听器
      */
     public interface ItemClickListener {
-        void OnItemClick(int position, SortHolder holder);
+        void onItemClick(int position, SortHolder holder);
     }
 
     public static class SortHolder extends RecyclerView.ViewHolder {

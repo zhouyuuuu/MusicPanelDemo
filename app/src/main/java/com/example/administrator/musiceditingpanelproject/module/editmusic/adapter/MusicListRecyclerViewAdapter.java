@@ -10,9 +10,9 @@ import android.widget.TextView;
 import com.example.administrator.musiceditingpanelproject.R;
 import com.example.administrator.musiceditingpanelproject.application.MusicEditingPanelApplication;
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
-import com.example.administrator.musiceditingpanelproject.common.view.DownloadIconView;
-import com.example.administrator.musiceditingpanelproject.common.view.DownloadPausedIconView;
-import com.example.administrator.musiceditingpanelproject.common.view.IndeterminateProgressBar;
+import com.example.administrator.musiceditingpanelproject.common.widget.DownloadIconView;
+import com.example.administrator.musiceditingpanelproject.common.widget.DownloadPausedIconView;
+import com.example.administrator.musiceditingpanelproject.common.widget.IndeterminateProgressBar;
 
 import java.util.ArrayList;
 
@@ -75,7 +75,7 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
             @Override
             public void onClick(View v) {
                 if (mItemClickListener != null) {
-                    mItemClickListener.OnItemClick(holder, mMusicBeans.get(holder.getAdapterPosition()));
+                    mItemClickListener.onItemClick(holder, mMusicBeans.get(holder.getAdapterPosition()));
                 }
             }
         });
@@ -99,7 +99,7 @@ public class MusicListRecyclerViewAdapter extends RecyclerView.Adapter<MusicList
      * Item点击监听器
      */
     public interface ItemClickListener {
-        void OnItemClick(ItemHolder holder, MusicBean musicBean);
+        void onItemClick(ItemHolder holder, MusicBean musicBean);
     }
 
     public static class ItemHolder extends RecyclerView.ViewHolder {

@@ -6,7 +6,7 @@ import com.example.administrator.musiceditingpanelproject.module.editmusic.model
 import com.example.administrator.musiceditingpanelproject.module.editmusic.model.EditMusicPanelPlayer;
 import com.example.administrator.musiceditingpanelproject.module.editmusic.model.IMusicLoader;
 import com.example.administrator.musiceditingpanelproject.module.editmusic.model.IMusicPlayer;
-import com.example.administrator.musiceditingpanelproject.module.editmusic.panel.IEditMusicPanel;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.view.IEditMusicPanel;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

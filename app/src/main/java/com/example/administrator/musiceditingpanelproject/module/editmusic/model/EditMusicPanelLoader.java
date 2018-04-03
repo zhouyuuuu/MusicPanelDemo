@@ -1,5 +1,7 @@
 package com.example.administrator.musiceditingpanelproject.module.editmusic.model;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
@@ -215,8 +217,8 @@ public class EditMusicPanelLoader implements IMusicLoader {
         @Override
         void call() {
             // 获取网络列表
-            ArrayList<MusicGroup> musicGroups = NetUtil.getMusicList();
-//            ArrayList<MusicGroup> musicGroups = createFalseData();
+//            ArrayList<MusicGroup> musicGroups = NetUtil.getMusicList();
+            ArrayList<MusicGroup> musicGroups = createFalseData();
             if (musicGroups == null) {
                 // 网络列表获取不到则读缓存
                 musicGroups = StoreUtil.readCacheMusicList();
@@ -276,7 +278,9 @@ public class EditMusicPanelLoader implements IMusicLoader {
             if (exist) {
                 // 回调加载成功
                 final IMusicManager iMusicManager = iMusicManagerWeakReference.get();
-                iMusicManager.musicFileLoadedCallback(mMusicBean);
+                if (iMusicManager != null) {
+                    iMusicManager.musicFileLoadedCallback(mMusicBean);
+                }
                 // 取消注册
                 synchronized (mDownloadingTaskMap){
                     mDownloadingTaskMap.remove(mMusicBean);

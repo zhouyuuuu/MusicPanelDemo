@@ -22,8 +22,8 @@ import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
 import com.example.administrator.musiceditingpanelproject.module.editmusic.presenter.EditMusicPanelManager;
 import com.example.administrator.musiceditingpanelproject.module.editmusic.presenter.IMusicManager;
 import com.example.administrator.musiceditingpanelproject.module.editmusic.util.StoreUtil;
-import com.example.administrator.musiceditingpanelproject.module.editmusic.panel.IEditMusicPanel;
-import com.example.administrator.musiceditingpanelproject.common.view.PageIndicator;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.view.IEditMusicPanel;
+import com.example.administrator.musiceditingpanelproject.common.widget.PageIndicator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -229,7 +229,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      * @param sortHolder   holder
      */
     @Override
-    public void OnItemClick(int position, SortHolder sortHolder) {
+    public void onItemClick(int position, SortHolder sortHolder) {
         // 如果mClickedMusicSortPositionInSortList不等于STATE_UNSELECTED说明有其他分类被选中
         if (mSelectedMusicSortPositionInSortList != STATE_UNSELECTED) {
             // 将其置为非选中状态
