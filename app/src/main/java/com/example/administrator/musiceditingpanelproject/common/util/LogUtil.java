@@ -17,7 +17,7 @@ public class LogUtil {
         super();
     }
 
-    public static void e(String TAG, String description) {
+    private static void e(String TAG, String description) {
         if (BuildConfig.LOG) {
             Log.e(TAG, description);
         }

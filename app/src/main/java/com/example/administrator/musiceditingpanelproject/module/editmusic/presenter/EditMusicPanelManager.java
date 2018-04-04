@@ -8,7 +8,6 @@ import com.example.administrator.musiceditingpanelproject.module.editmusic.model
 import com.example.administrator.musiceditingpanelproject.module.editmusic.model.IMusicPlayer;
 import com.example.administrator.musiceditingpanelproject.module.editmusic.view.IEditMusicPanel;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 /**
@@ -19,10 +18,10 @@ public class EditMusicPanelManager implements IMusicManager {
 
     private IMusicLoader mMusicLoader;
     private IMusicPlayer mMusicPlayer;
-    private WeakReference<IEditMusicPanel> mEditMusicPanelWeakReference;
+    private IEditMusicPanel mEditMusicPanel;
 
     public EditMusicPanelManager(IEditMusicPanel iEditMusicPanel) {
-        this.mEditMusicPanelWeakReference = new WeakReference<>(iEditMusicPanel);
+        mEditMusicPanel = iEditMusicPanel;
         mMusicPlayer = new EditMusicPanelPlayer();
         mMusicLoader = EditMusicPanelLoader.getInstance();
         mMusicLoader.registerMusicManager(this);
@@ -43,9 +42,7 @@ public class EditMusicPanelManager implements IMusicManager {
      */
     @Override
     public void musicGroupListDataLoadedCallback(ArrayList<MusicGroup> musicGroups) {
-        IEditMusicPanel iEditMusicPanel = mEditMusicPanelWeakReference.get();
-        if (iEditMusicPanel == null) return;
-        iEditMusicPanel.musicGroupListLoadedCallback(musicGroups);
+        mEditMusicPanel.musicGroupListLoadedCallback(musicGroups);
     }
 
     /**
@@ -53,9 +50,7 @@ public class EditMusicPanelManager implements IMusicManager {
      */
     @Override
     public void musicGroupListDataLoadedFailedCallback() {
-        IEditMusicPanel iEditMusicPanel = mEditMusicPanelWeakReference.get();
-        if (iEditMusicPanel == null) return;
-        iEditMusicPanel.musicGroupListDataLoadedFailedCallback();
+        mEditMusicPanel.musicGroupListDataLoadedFailedCallback();
     }
 
     /**
@@ -67,9 +62,7 @@ public class EditMusicPanelManager implements IMusicManager {
     public void downloadMusicFile(MusicBean musicBean) {
         // 先让View设置为下载中
         musicBean.setState(MusicBean.STATE_DOWNLOADING);
-        IEditMusicPanel iEditMusicPanel = mEditMusicPanelWeakReference.get();
-        if (iEditMusicPanel == null) return;
-        iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
+        mEditMusicPanel.musicBeanStateChangedCallback(musicBean);
         // 让loader去下载
         mMusicLoader.loadMusicFileData(musicBean);
     }
@@ -83,11 +76,9 @@ public class EditMusicPanelManager implements IMusicManager {
     public void musicFileLoadedCallback(MusicBean musicBean) {
         // 设置为下载完成
         musicBean.setState(MusicBean.STATE_DOWNLOADED);
-        IEditMusicPanel iEditMusicPanel = mEditMusicPanelWeakReference.get();
-        if (iEditMusicPanel == null) return;
-        iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
+        mEditMusicPanel.musicBeanStateChangedCallback(musicBean);
         // 下载成功回调，让View去处理下载完成的Bean哪个要播放音乐
-        iEditMusicPanel.musicFileDataLoadedCallback(musicBean);
+        mEditMusicPanel.musicFileDataLoadedCallback(musicBean);
     }
 
     /**
@@ -99,11 +90,9 @@ public class EditMusicPanelManager implements IMusicManager {
     public void musicFileLoadedFailedCallback(MusicBean musicBean) {
         // 更新View为未下载
         musicBean.setState(MusicBean.STATE_UNDOWNLOADED);
-        IEditMusicPanel iEditMusicPanel = mEditMusicPanelWeakReference.get();
-        if (iEditMusicPanel == null) return;
-        iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
+        mEditMusicPanel.musicBeanStateChangedCallback(musicBean);
         // 通知有任务失败
-        iEditMusicPanel.musicFileDataLoadedFailedCallback(musicBean);
+        mEditMusicPanel.musicFileDataLoadedFailedCallback(musicBean);
     }
 
     /**
@@ -123,9 +112,7 @@ public class EditMusicPanelManager implements IMusicManager {
     public void musicFileLoadingPausedCallback(MusicBean musicBean) {
         // View设置为暂停
         musicBean.setState(MusicBean.STATE_DOWNLOAD_PAUSED);
-        IEditMusicPanel iEditMusicPanel = mEditMusicPanelWeakReference.get();
-        if (iEditMusicPanel == null) return;
-        iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
+        mEditMusicPanel.musicBeanStateChangedCallback(musicBean);
     }
 
     /**
@@ -147,11 +134,9 @@ public class EditMusicPanelManager implements IMusicManager {
     public void musicFileDeletedCallback(MusicBean musicBean) {
         // 设置为未下载状态
         musicBean.setState(MusicBean.STATE_UNDOWNLOADED);
-        IEditMusicPanel iEditMusicPanel = mEditMusicPanelWeakReference.get();
-        if (iEditMusicPanel == null) return;
-        iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
+        mEditMusicPanel.musicBeanStateChangedCallback(musicBean);
         // 删除成功
-        iEditMusicPanel.musicFileDataDeletedCallback(musicBean);
+        mEditMusicPanel.musicFileDataDeletedCallback(musicBean);
     }
 
     /**
@@ -163,11 +148,9 @@ public class EditMusicPanelManager implements IMusicManager {
     public void musicFileDeletedFailedCallback(MusicBean musicBean) {
         // 删除失败所以文件还在，设置为已下载状态
         musicBean.setState(MusicBean.STATE_DOWNLOADED);
-        IEditMusicPanel iEditMusicPanel = mEditMusicPanelWeakReference.get();
-        if (iEditMusicPanel == null) return;
-        iEditMusicPanel.musicBeanStateChangedCallback(musicBean);
+        mEditMusicPanel.musicBeanStateChangedCallback(musicBean);
         // 删除失败
-        iEditMusicPanel.musicFileDataDeletedFailedCallback(musicBean);
+        mEditMusicPanel.musicFileDataDeletedFailedCallback(musicBean);
     }
 
     /**
