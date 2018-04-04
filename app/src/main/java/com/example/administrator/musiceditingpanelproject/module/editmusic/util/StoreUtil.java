@@ -217,38 +217,85 @@ public class StoreUtil {
         return version + EDIT_MUSIC_CACHE_FILE_NAME_DELIMITER + filename;
     }
 
+    /**
+     * 下载中时，文件名转为加上版本号的缓存文件名加.downloading后缀
+     */
     public static String getDownloadingCacheFileName(String version, String filename) {
         return version + EDIT_MUSIC_CACHE_FILE_NAME_DELIMITER + filename + EDIT_MUSIC_DOWNLOADING_FILE_SUFFIX;
     }
 
+    /**
+     * 下载暂停时，文件名转为加上版本号的缓存文件名加.paused后缀
+     */
     public static String getPausedCacheFileName(String version, String filename) {
         return version + EDIT_MUSIC_CACHE_FILE_NAME_DELIMITER + filename + EDIT_MUSIC_PAUSED_FILE_SUFFIX;
     }
 
+    /**
+     * 下载完成的文件绝对路径
+     *
+     * @param version  版本号
+     * @param filename 文件名
+     * @return 绝对路径
+     */
     public static String getCacheFileAbsolutePath(String version, String filename) {
         return getCacheMusicFileFolderDir() + "/" + getCacheFileName(version, filename);
     }
 
+    /**
+     * 下载中的文件绝对路径
+     *
+     * @param version  版本号
+     * @param filename 文件名
+     * @return 绝对路径
+     */
     static String getDownloadingCacheFileAbsolutePath(String version, String filename) {
         return getCacheMusicFileFolderDir() + "/" + getDownloadingCacheFileName(version, filename);
     }
 
+    /**
+     * 下载暂停的文件绝对路径
+     *
+     * @param version  版本号
+     * @param filename 文件名
+     * @return 绝对路径
+     */
     static String getPausedCacheFileAbsolutePath(String version, String filename) {
         return getCacheMusicFileFolderDir() + "/" + getPausedCacheFileName(version, filename);
     }
 
+    /**
+     * 下载文件夹路径
+     *
+     * @return 绝对路径
+     */
     static String getCacheFolderDir() {
         return Environment.getExternalStorageDirectory() + EDIT_MUSIC_CACHE_FOLDER;
     }
 
+    /**
+     * 下载文件夹中的音乐文件夹路径
+     *
+     * @return 绝对路径
+     */
     static String getCacheMusicFileFolderDir() {
         return Environment.getExternalStorageDirectory() + EDIT_MUSIC_CACHE_FOLDER + EDIT_MUSIC_CACHE_MUSIC_FILE_FOLDER;
     }
 
+    /**
+     * 缓存文件夹路径
+     *
+     * @return 绝对路径
+     */
     private static String getListCacheFolderDir() {
         return MusicEditingPanelApplication.getApplication().getExternalCacheDir() + EDIT_MUSIC_CACHE_LIST_FOLDER;
     }
 
+    /**
+     * 缓存文件夹中的音乐列表缓存文件路径
+     *
+     * @return 绝对路径
+     */
     private static String getListCacheFileAbsolutePath() {
         return getListCacheFolderDir() + EDIT_MUSIC_CACHE_LIST_FILE;
     }

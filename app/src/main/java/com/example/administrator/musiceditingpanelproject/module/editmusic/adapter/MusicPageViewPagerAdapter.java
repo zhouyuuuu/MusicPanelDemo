@@ -37,7 +37,7 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
     private MusicItemClickListener mMusicItemClickListener;
 
 
-    public MusicPageViewPagerAdapter(@NonNull ViewPager viewPager,@NonNull MusicGroup musicGroup) {
+    public MusicPageViewPagerAdapter(@NonNull ViewPager viewPager, @NonNull MusicGroup musicGroup) {
         LayoutInflater mLayoutInflater = LayoutInflater.from(MusicEditingPanelApplication.getApplication());
         mViews = new ArrayList<>();
         mRecyclerViews = new ArrayList<>();
@@ -66,10 +66,11 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
 
     /**
      * 计算总共多少页
+     *
      * @param allItemCount Item总数
      * @return 页数
      */
-    private int calculatePageCount(int allItemCount){
+    private int calculatePageCount(int allItemCount) {
         int pageCount = allItemCount / ITEM_COUNT_PER_PAGE;
         if (allItemCount % ITEM_COUNT_PER_PAGE > 0) pageCount++;
         return pageCount;
@@ -87,7 +88,7 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
         if (pageIndex >= mRecyclerViews.size()) {
             return null;
         }
-        return (MusicListRecyclerViewAdapter.ItemHolder)mRecyclerViews.get(pageIndex).findViewHolderForAdapterPosition(position);
+        return (MusicListRecyclerViewAdapter.ItemHolder) mRecyclerViews.get(pageIndex).findViewHolderForAdapterPosition(position);
     }
 
     /**

@@ -31,49 +31,49 @@ public interface IMusicManager {
     /**
      * 下载音频文件
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     void downloadMusicFile(MusicBean musicBean);
 
     /**
      * 下载音频文件成功回调
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     void musicFileLoadedCallback(MusicBean musicBean);
 
     /**
      * 下载音频文件失败回调
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     void musicFileLoadedFailedCallback(MusicBean musicBean);
 
     /**
      * 暂停下载音频文件
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     void pauseDownloadMusicFile(MusicBean musicBean);
 
     /**
      * 下载音频文件暂停回调
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     void musicFileLoadingPausedCallback(MusicBean musicBean);
 
     /**
      * 删除音频文件
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     void deleteMusicFile(MusicBean musicBean);
 
     /**
      * 删除音频文件成功回调
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     void musicFileDeletedCallback(MusicBean musicBean);
 

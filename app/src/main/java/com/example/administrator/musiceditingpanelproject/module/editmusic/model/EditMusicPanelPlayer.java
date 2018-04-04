@@ -21,7 +21,6 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
     private static final String _3GP = "3gp";
     private static final String AMR = "amr";
     private static final String WAV = "wav";
-    private final HashSet<String> formats;
     // 播放状态
     private static final int STATE_PLAYING = 0;
     // 暂停状态
@@ -36,6 +35,7 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
     private static final int STATE_PREPARED = 5;
     // 准备中状态
     private static final int STATE_PREPARING = 6;
+    private final HashSet<String> formats;
     // 播放器
     private MediaPlayer mMediaPlayer;
     // 当前状态
@@ -43,6 +43,7 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
 
     public EditMusicPanelPlayer() {
         this.mMediaPlayer = new MediaPlayer();
+        // 支持的格式放在set中，播放时看文件格式是否存在于此set
         formats = new HashSet<>();
         formats.add(MP3);
         formats.add(WAV);
@@ -76,10 +77,14 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
     public void playMusic(MusicBean musicBean) {
         if (mState != STATE_IDLE) return;
         if (musicBean == null) return;
+        // 网络文件名
         String netFileName = StoreUtil.getNetFileName(musicBean.getUrl());
+        // 拿到格式
         String[] strings = netFileName.split("\\.");
-        String format = strings[strings.length-1];
+        String format = strings[strings.length - 1];
+        // 如果格式不符合，则return
         if (!formats.contains(format)) return;
+        // 拿到文件绝对路径
         String cachePath = StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), netFileName);
         try {
             mMediaPlayer.setDataSource(cachePath);
@@ -96,7 +101,9 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
             e.printStackTrace();
             return;
         }
+        // 异步加载
         mMediaPlayer.prepareAsync();
+        // 记录状态
         mState = STATE_PREPARING;
     }
 

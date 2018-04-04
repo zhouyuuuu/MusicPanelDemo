@@ -99,7 +99,7 @@ public class NetUtil {
         String[] strings = string.split(ORIGINAL_COLON);
         if (strings.length == 2) {
             return strings[0] + TRUE_COLON + strings[1];
-        }else {
+        } else {
             return string;
         }
     }
@@ -119,15 +119,15 @@ public class NetUtil {
                 .build();
         MusicRequest musicRequest = retrofit.create(MusicRequest.class);
         // 暂停文件路径
-        String pausedFilePath = StoreUtil.getPausedCacheFileAbsolutePath(musicBean.getVersion(),filename);
+        String pausedFilePath = StoreUtil.getPausedCacheFileAbsolutePath(musicBean.getVersion(), filename);
         // 被暂停的文件
         File tempFile = new File(pausedFilePath);
         // 下载中文件路径
         String downloadingFilePath = StoreUtil.getDownloadingCacheFileAbsolutePath(musicBean.getVersion(), filename);
         // 如果存在下载暂停的文件
-        if (tempFile.exists()){
+        if (tempFile.exists()) {
             // 改名为下载中文件
-            renameCacheFile(tempFile,downloadingFilePath);
+            renameCacheFile(tempFile, downloadingFilePath);
         }
         // 得到下载中文件
         tempFile = new File(downloadingFilePath);
@@ -173,7 +173,7 @@ public class NetUtil {
                 randomAccessFile.write(buffer, 0, len);
             }
             // 暂停了重新改一下文件名，改为.paused
-            if (pauseFlag.get()){
+            if (pauseFlag.get()) {
                 renameCacheFile(tempFile, StoreUtil.getPausedCacheFileAbsolutePath(musicBean.getVersion(), filename));
             }
             // 如果是暂停，返回false，如果不是暂停，判断是否重命名成功，成功返回true，否则false，改名用于区分下载中的文件和下载完成的文件

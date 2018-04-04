@@ -92,6 +92,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     protected void onDestroy() {
         super.onDestroy();
         mMusicManager.stopPlayer();
+        // 回调View销毁，manager会去取消在Loader中的注册
         mMusicManager.panelOnDestroy();
     }
 
@@ -136,6 +137,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_close:
+                // 隐藏编辑面板，取消掉分类列表的选中状态
                 if (mSelectedMusicSortPositionInSortList != STATE_UNSELECTED) {
                     SortHolder sortHolder = (SortHolder) mRecyclerViewMusicSort.findViewHolderForAdapterPosition(mSelectedMusicSortPositionInSortList);
                     if (sortHolder != null) {
@@ -146,11 +148,13 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 mRlPanel.setVisibility(View.GONE);
                 break;
             case R.id.iv_delete:
+                // 删除音乐文件，停止音乐播放
                 if (mSelectedMusicBean == null) return;
                 mMusicManager.deleteMusicFile(mSelectedMusicBean);
                 mMusicManager.resetPlayer();
                 break;
             case R.id.tv_retry:
+                // 重新发送列表请求
                 mTvRetry.setVisibility(View.GONE);
                 mMusicManager.loadMusicGroupListData();
                 break;
@@ -349,8 +353,8 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 }
             }
         }, TIME_PER_FRAME);
-        for (MusicGroup mg: mMusicGroups) {
-            for (MusicBean musicBean: mg.getMusicBeans()){
+        for (MusicGroup mg : mMusicGroups) {
+            for (MusicBean musicBean : mg.getMusicBeans()) {
                 if (musicBean.getState() == MusicBean.STATE_DOWNLOADING) {
                     mMusicManager.downloadMusicFile(musicBean);
                 }

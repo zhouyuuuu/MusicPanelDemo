@@ -118,13 +118,16 @@ public class MusicBean implements Serializable {
         return url.hashCode();
     }
 
+    /**
+     * 我们认为name和url相同的musicBean就是相等的musicBean，因为其下载的音乐文件是同一个
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) return false;
         if (obj instanceof MusicBean) {
             String anotherUrl = ((MusicBean) obj).getUrl();
             String anotherName = ((MusicBean) obj).getName();
-            return url.equals(anotherUrl)&&name.equals(anotherName);
+            return url.equals(anotherUrl) && name.equals(anotherName);
         }
         return false;
     }

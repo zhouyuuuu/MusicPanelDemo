@@ -56,7 +56,7 @@ public class EditMusicPanelManager implements IMusicManager {
     /**
      * 下载音频文件
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     @Override
     public void downloadMusicFile(MusicBean musicBean) {
@@ -70,7 +70,7 @@ public class EditMusicPanelManager implements IMusicManager {
     /**
      * 下载音频文件成功回调，判断是否url与View有绑定关系，没有则说明View被别的url重用了，则不通知面板进行更新
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     @Override
     public void musicFileLoadedCallback(MusicBean musicBean) {
@@ -84,7 +84,7 @@ public class EditMusicPanelManager implements IMusicManager {
     /**
      * 下载音频文件失败回调
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     @Override
     public void musicFileLoadedFailedCallback(MusicBean musicBean) {
@@ -97,7 +97,8 @@ public class EditMusicPanelManager implements IMusicManager {
 
     /**
      * 暂停下载
-     * @param musicBean  音频信息
+     *
+     * @param musicBean 音频信息
      */
     @Override
     public void pauseDownloadMusicFile(MusicBean musicBean) {
@@ -106,7 +107,8 @@ public class EditMusicPanelManager implements IMusicManager {
 
     /**
      * 暂停的回调
-     * @param musicBean  音频信息
+     *
+     * @param musicBean 音频信息
      */
     @Override
     public void musicFileLoadingPausedCallback(MusicBean musicBean) {
@@ -118,7 +120,7 @@ public class EditMusicPanelManager implements IMusicManager {
     /**
      * 删除音频文件
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     @Override
     public void deleteMusicFile(MusicBean musicBean) {
@@ -128,7 +130,7 @@ public class EditMusicPanelManager implements IMusicManager {
     /**
      * 删除音频文件成功回调
      *
-     * @param musicBean  音频信息
+     * @param musicBean 音频信息
      */
     @Override
     public void musicFileDeletedCallback(MusicBean musicBean) {
@@ -187,11 +189,17 @@ public class EditMusicPanelManager implements IMusicManager {
         mMusicPlayer.restartMusic();
     }
 
+    /**
+     * 重置播放器
+     */
     @Override
     public void resetPlayer() {
         mMusicPlayer.resetPlayer();
     }
 
+    /**
+     * 停止播放器
+     */
     @Override
     public void stopPlayer() {
         mMusicPlayer.stopPlayer();

@@ -27,9 +27,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EditMusicPanelLoader implements IMusicLoader {
 
-    private volatile static EditMusicPanelLoader editMusicPanelLoader = null;
     // 默认线程等级
     private static final int PRIORITY_DEFAULT = 1;
+    private volatile static EditMusicPanelLoader editMusicPanelLoader = null;
     // 线程池
     private final ThreadPoolExecutor mThreadPoolExecutor;
     // 是否有已提交的列表任务
@@ -43,27 +43,6 @@ public class EditMusicPanelLoader implements IMusicLoader {
     // 观察者们
     private final ArrayList<IMusicManager> mMusicManagers;
 
-    public static EditMusicPanelLoader getInstance(){
-        if (editMusicPanelLoader == null) {
-            synchronized (EditMusicPanelLoader.class) {
-                if (editMusicPanelLoader == null){
-                    editMusicPanelLoader = new EditMusicPanelLoader();
-                }
-            }
-        }
-        return editMusicPanelLoader;
-    }
-
-    @Override
-    public void registerMusicManager(IMusicManager iMusicManager){
-        mMusicManagers.add(iMusicManager);
-    }
-
-    @Override
-    public void unregisterMusicManager(IMusicManager iMusicManager){
-        mMusicManagers.remove(iMusicManager);
-    }
-
     private EditMusicPanelLoader() {
         int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
         int NUMBER_OF_MAX = 2 * NUMBER_OF_CORES;
@@ -76,6 +55,17 @@ public class EditMusicPanelLoader implements IMusicLoader {
         mDeletingTaskMap = new HashMap<>();
         mMainHandler = new Handler(Looper.getMainLooper());
         mMusicManagers = new ArrayList<>();
+    }
+
+    public static EditMusicPanelLoader getInstance() {
+        if (editMusicPanelLoader == null) {
+            synchronized (EditMusicPanelLoader.class) {
+                if (editMusicPanelLoader == null) {
+                    editMusicPanelLoader = new EditMusicPanelLoader();
+                }
+            }
+        }
+        return editMusicPanelLoader;
     }
 
     /**
@@ -93,6 +83,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
                     musicBeans.remove(i);
                 }
             }
+            // 如果过滤后的分组没有musicBean了，则移除该分组
             if (musicBeans.size() == 0) {
                 removes.add(musicGroup);
             }
@@ -110,11 +101,12 @@ public class EditMusicPanelLoader implements IMusicLoader {
         if (mCacheFileNameSet == null) return;
         for (MusicGroup musicGroup : musicGroups) {
             for (MusicBean musicBean : musicGroup.getMusicBeans()) {
+                // 如果存在名为 版本+“@#”+网络文件名 的文件，则说明文件该网络文件下载完毕，以此类推
                 if (mCacheFileNameSet.contains(StoreUtil.getCacheFileName(musicBean.getVersion(), StoreUtil.getNetFileName(musicBean.getUrl())))) {
                     musicBean.setState(MusicBean.STATE_DOWNLOADED);
                 } else if (mCacheFileNameSet.contains(StoreUtil.getDownloadingCacheFileName(musicBean.getVersion(), StoreUtil.getNetFileName(musicBean.getUrl())))) {
                     musicBean.setState(MusicBean.STATE_DOWNLOADING);
-                } else if (mCacheFileNameSet.contains(StoreUtil.getPausedCacheFileName(musicBean.getVersion(), StoreUtil.getNetFileName(musicBean.getUrl())))){
+                } else if (mCacheFileNameSet.contains(StoreUtil.getPausedCacheFileName(musicBean.getVersion(), StoreUtil.getNetFileName(musicBean.getUrl())))) {
                     musicBean.setState(MusicBean.STATE_DOWNLOAD_PAUSED);
                 } else {
                     musicBean.setState(MusicBean.STATE_UNDOWNLOADED);
@@ -123,17 +115,29 @@ public class EditMusicPanelLoader implements IMusicLoader {
         }
     }
 
+    @Override
+    public void registerMusicManager(IMusicManager iMusicManager) {
+        mMusicManagers.add(iMusicManager);
+    }
+
+    @Override
+    public void unregisterMusicManager(IMusicManager iMusicManager) {
+        mMusicManagers.remove(iMusicManager);
+    }
+
     /**
      * 提交线程加载音频分组列表数据
      */
     @Override
     public void loadMusicGroupListData() {
-        // 有正处理的请求，直接返回，防止重复任务
-        if (!mLoadingListTaskSet.isEmpty()) return;
         // new请求列表任务
         LoadMusicGroupListRunnable loadMusicGroupListRunnable = new LoadMusicGroupListRunnable(PRIORITY_DEFAULT, mMusicManagers, mLoadingListTaskSet, mMainHandler);
-        // 标志设为正在请求列表信息
-        mLoadingListTaskSet.add(loadMusicGroupListRunnable);
+        // 有正处理的请求，直接返回，防止重复任务
+        synchronized (mLoadingListTaskSet) {
+            if (!mLoadingListTaskSet.isEmpty()) return;
+            // 标志设为正在请求列表信息
+            mLoadingListTaskSet.add(loadMusicGroupListRunnable);
+        }
         // 提交线程池
         mThreadPoolExecutor.execute(loadMusicGroupListRunnable);
     }
@@ -177,8 +181,11 @@ public class EditMusicPanelLoader implements IMusicLoader {
 
     @Override
     public void pauseLoading(@NonNull MusicBean musicBean) {
-        // 通过musicBean拿到任务
-        LoadMusicFileRunnable loadMusicFileRunnable = mDownloadingTaskMap.get(musicBean);
+        LoadMusicFileRunnable loadMusicFileRunnable;
+        synchronized (mDownloadingTaskMap) {
+            // 通过musicBean拿到任务
+            loadMusicFileRunnable = mDownloadingTaskMap.get(musicBean);
+        }
         // 拿不到就返回了
         if (loadMusicFileRunnable == null) return;
         // 暂停
@@ -202,7 +209,6 @@ public class EditMusicPanelLoader implements IMusicLoader {
         void call() {
             // 获取网络列表
             ArrayList<MusicGroup> musicGroups = NetUtil.getMusicList();
-//            ArrayList<MusicGroup> musicGroups = createFalseData();
             if (musicGroups == null) {
                 // 网络列表获取不到则读缓存
                 musicGroups = StoreUtil.readCacheMusicList();
@@ -211,7 +217,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
                         @Override
                         public void run() {
                             // 加载不到列表信息，回调加载失败
-                            for (IMusicManager iMusicManager: mMusicManagers) {
+                            for (IMusicManager iMusicManager : mMusicManagers) {
                                 iMusicManager.musicGroupListDataLoadedFailedCallback();
                             }
                         }
@@ -232,7 +238,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
                 @Override
                 public void run() {
                     // 回调加载成功
-                    for (IMusicManager iMusicManager: mMusicManagers) {
+                    for (IMusicManager iMusicManager : mMusicManagers) {
                         iMusicManager.musicGroupListDataLoadedCallback(finalMusicGroups);
                     }
                 }
@@ -255,12 +261,11 @@ public class EditMusicPanelLoader implements IMusicLoader {
 
         // 注册池，记录进行中的下载任务
         private final HashMap<MusicBean, LoadMusicFileRunnable> mDownloadingTaskMap;
+        long time;
         // 音乐信息
         private MusicBean mMusicBean;
         // 原子可见标志位
         private volatile AtomicBoolean mPauseFlag;
-
-        long time;
 
         LoadMusicFileRunnable(int priority, ArrayList<IMusicManager> musicManagers, MusicBean musicBean, HashMap<MusicBean, LoadMusicFileRunnable> downloadingTaskMap, Handler handler) {
             super(priority, musicManagers, handler);
@@ -278,7 +283,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
                     @Override
                     public void run() {
                         // 回调加载成功
-                        for (IMusicManager iMusicManager: mMusicManagers) {
+                        for (IMusicManager iMusicManager : mMusicManagers) {
                             iMusicManager.musicFileLoadedCallback(mMusicBean);
                         }
                     }
@@ -300,7 +305,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
                     @Override
                     public void run() {
                         // 回调下载失败
-                        for (IMusicManager iMusicManager: mMusicManagers) {
+                        for (IMusicManager iMusicManager : mMusicManagers) {
                             if (isPaused) {
                                 // 如果是被暂停了，回调暂停
                                 iMusicManager.musicFileLoadingPausedCallback(mMusicBean);
@@ -316,7 +321,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
                     @Override
                     public void run() {
                         // 回调下载成功
-                        for (IMusicManager iMusicManager: mMusicManagers) {
+                        for (IMusicManager iMusicManager : mMusicManagers) {
                             iMusicManager.musicFileLoadedCallback(mMusicBean);
                         }
                     }
@@ -360,7 +365,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
                     @Override
                     public void run() {
                         // 回调删除成功
-                        for (IMusicManager iMusicManager: mMusicManagers) {
+                        for (IMusicManager iMusicManager : mMusicManagers) {
                             iMusicManager.musicFileDeletedCallback(mMusicBean);
                         }
                     }
@@ -370,7 +375,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
                     @Override
                     public void run() {
                         // 回掉删除失败
-                        for (IMusicManager iMusicManager: mMusicManagers) {
+                        for (IMusicManager iMusicManager : mMusicManagers) {
                             iMusicManager.musicFileDeletedFailedCallback(mMusicBean);
                         }
                     }
@@ -390,10 +395,10 @@ public class EditMusicPanelLoader implements IMusicLoader {
 
         // 主线程Handler
         final Handler mMainHandler;
-        // 优先级
-        private final int priority;
         // 观察者们
         final ArrayList<IMusicManager> mMusicManagers;
+        // 优先级
+        private final int priority;
 
         BaseLoadRunnable(int priority, ArrayList<IMusicManager> musicManagers, Handler handler) {
             this.priority = priority;

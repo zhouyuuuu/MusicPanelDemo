@@ -37,12 +37,14 @@ public interface IMusicLoader {
 
     /**
      * 注册观察者
+     *
      * @param iMusicManager 管理器
      */
     void registerMusicManager(IMusicManager iMusicManager);
 
     /**
      * 取消注册观察者
+     *
      * @param iMusicManager 管理器
      */
     void unregisterMusicManager(IMusicManager iMusicManager);
