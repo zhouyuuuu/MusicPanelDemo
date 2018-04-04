@@ -7,6 +7,7 @@ import com.example.administrator.musiceditingpanelproject.common.util.LogUtil;
 import com.example.administrator.musiceditingpanelproject.module.editmusic.util.StoreUtil;
 
 import java.io.IOException;
+import java.util.HashSet;
 
 /**
  * Edited by Administrator on 2018/3/27.
@@ -14,6 +15,13 @@ import java.io.IOException;
 
 public class EditMusicPanelPlayer implements IMusicPlayer {
 
+    // 文件格式
+    private static final String MP3 = "mp3";
+    private static final String M4A = "m4a";
+    private static final String _3GP = "3gp";
+    private static final String AMR = "amr";
+    private static final String WAV = "wav";
+    private final HashSet<String> formats;
     // 播放状态
     private static final int STATE_PLAYING = 0;
     // 暂停状态
@@ -35,6 +43,12 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
 
     public EditMusicPanelPlayer() {
         this.mMediaPlayer = new MediaPlayer();
+        formats = new HashSet<>();
+        formats.add(MP3);
+        formats.add(WAV);
+        formats.add(_3GP);
+        formats.add(AMR);
+        formats.add(M4A);
         mState = STATE_IDLE;
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -62,7 +76,11 @@ public class EditMusicPanelPlayer implements IMusicPlayer {
     public void playMusic(MusicBean musicBean) {
         if (mState != STATE_IDLE) return;
         if (musicBean == null) return;
-        String cachePath = StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), StoreUtil.getNetFileName(musicBean.getUrl()));
+        String netFileName = StoreUtil.getNetFileName(musicBean.getUrl());
+        String[] strings = netFileName.split("\\.");
+        String format = strings[strings.length-1];
+        if (!formats.contains(format)) return;
+        String cachePath = StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), netFileName);
         try {
             mMediaPlayer.setDataSource(cachePath);
         } catch (IOException e) {
