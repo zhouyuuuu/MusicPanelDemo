@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
+
 /**
  * Edited by Administrator on 2018/3/24.
  */
@@ -13,6 +16,8 @@ import android.content.pm.PackageManager;
 public class MusicEditingPanelApplication extends Application {
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
+    private RefWatcher refWatcher;
+
 
     /**
      * 获得App的Context
@@ -39,9 +44,15 @@ public class MusicEditingPanelApplication extends Application {
         }
     }
 
+    public static RefWatcher getRefWatcher() {
+        MusicEditingPanelApplication application = (MusicEditingPanelApplication) getApplication();
+        return application.refWatcher;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         mContext = this;
+        refWatcher = LeakCanary.install(this);
     }
 }

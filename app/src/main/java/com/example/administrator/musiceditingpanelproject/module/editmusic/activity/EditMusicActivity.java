@@ -24,6 +24,7 @@ import com.example.administrator.musiceditingpanelproject.module.editmusic.prese
 import com.example.administrator.musiceditingpanelproject.module.editmusic.presenter.IMusicManager;
 import com.example.administrator.musiceditingpanelproject.module.editmusic.util.StoreUtil;
 import com.example.administrator.musiceditingpanelproject.module.editmusic.view.IEditMusicPanel;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,10 +91,12 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         mMusicManager.stopPlayer();
         // 回调View销毁，manager会去取消在Loader中的注册
         mMusicManager.panelOnDestroy();
+        super.onDestroy();
+        RefWatcher refWatcher = MusicEditingPanelApplication.getRefWatcher();
+        refWatcher.watch(this);
     }
 
     /**

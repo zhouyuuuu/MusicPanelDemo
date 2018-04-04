@@ -28,6 +28,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
 
     // 默认线程等级
     private static final int PRIORITY_DEFAULT = 1;
+    // 唯一实例
     private volatile static EditMusicPanelLoader editMusicPanelLoader = null;
     // 线程池
     private final ThreadPoolExecutor mThreadPoolExecutor;
