@@ -24,7 +24,8 @@ public class EditMusicPanelManager implements IMusicManager {
     public EditMusicPanelManager(IEditMusicPanel iEditMusicPanel) {
         this.mEditMusicPanelWeakReference = new WeakReference<>(iEditMusicPanel);
         mMusicPlayer = new EditMusicPanelPlayer();
-        mMusicLoader = new EditMusicPanelLoader(this);
+        mMusicLoader = EditMusicPanelLoader.getInstance();
+        mMusicLoader.registerMusicManager(this);
     }
 
     /**
@@ -173,8 +174,8 @@ public class EditMusicPanelManager implements IMusicManager {
      * 暂停加载音乐
      */
     @Override
-    public void stopDownloadingMusicFile() {
-        mMusicLoader.stopLoading();
+    public void panelOnDestroy() {
+        mMusicLoader.unregisterMusicManager(this);
     }
 
     /**

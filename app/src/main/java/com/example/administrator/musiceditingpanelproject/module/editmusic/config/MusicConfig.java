@@ -21,7 +21,9 @@ public class MusicConfig {
     public static final String EDIT_MUSIC_CACHE_LIST_FOLDER = "/MusicListCache";
     // 缓存音乐列表文件名
     public static final String EDIT_MUSIC_CACHE_LIST_FILE = "/ListCache";
-    // 临时文件后缀
-    public static final String EDIT_MUSIC_TEMP_FILE_SUFFIX = ".temp";
+    // 下载中文件后缀
+    public static final String EDIT_MUSIC_DOWNLOADING_FILE_SUFFIX = ".downloading";
+    // 下载暂停文件后缀
+    public static final String EDIT_MUSIC_PAUSED_FILE_SUFFIX = ".paused";
 
 }

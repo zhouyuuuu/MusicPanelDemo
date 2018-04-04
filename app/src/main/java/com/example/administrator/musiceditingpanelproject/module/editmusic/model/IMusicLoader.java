@@ -1,6 +1,7 @@
 package com.example.administrator.musiceditingpanelproject.module.editmusic.model;
 
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
+import com.example.administrator.musiceditingpanelproject.module.editmusic.presenter.IMusicManager;
 
 /**
  * 音乐加载器接口
@@ -35,7 +36,14 @@ public interface IMusicLoader {
     void pauseLoading(MusicBean musicBean);
 
     /**
-     * 停止加载
+     * 注册观察者
+     * @param iMusicManager 管理器
      */
-    void stopLoading();
+    void registerMusicManager(IMusicManager iMusicManager);
+
+    /**
+     * 取消注册观察者
+     * @param iMusicManager 管理器
+     */
+    void unregisterMusicManager(IMusicManager iMusicManager);
 }

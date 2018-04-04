@@ -97,7 +97,11 @@ public class NetUtil {
         stringBuilder.delete(url.length() - filename.length(), url.length());
         String string = stringBuilder.toString();
         String[] strings = string.split(ORIGINAL_COLON);
-        return strings[0] + TRUE_COLON + strings[1];
+        if (strings.length == 2) {
+            return strings[0] + TRUE_COLON + strings[1];
+        }else {
+            return string;
+        }
     }
 
     /**
@@ -114,9 +118,19 @@ public class NetUtil {
                 .baseUrl(getBaseUrl(musicBean.getUrl()))
                 .build();
         MusicRequest musicRequest = retrofit.create(MusicRequest.class);
-        // 先用临时文件名，来区分下载中文件和下载完成文件
-        String tempFilePath = StoreUtil.getTempCacheFileAbsolutePath(musicBean.getVersion(), filename);
-        File tempFile = new File(tempFilePath);
+        // 暂停文件路径
+        String pausedFilePath = StoreUtil.getPausedCacheFileAbsolutePath(musicBean.getVersion(),filename);
+        // 被暂停的文件
+        File tempFile = new File(pausedFilePath);
+        // 下载中文件路径
+        String downloadingFilePath = StoreUtil.getDownloadingCacheFileAbsolutePath(musicBean.getVersion(), filename);
+        // 如果存在下载暂停的文件
+        if (tempFile.exists()){
+            // 改名为下载中文件
+            renameCacheFile(tempFile,downloadingFilePath);
+        }
+        // 得到下载中文件
+        tempFile = new File(downloadingFilePath);
         // 若没有此文件夹，则创建文件夹
         File cacheFolderPath = new File(StoreUtil.getCacheFolderDir());
         if (!cacheFolderPath.exists()) {
@@ -157,6 +171,10 @@ public class NetUtil {
             // 循环过程检测是否暂停，否则边下载边写入文件
             while (!pauseFlag.get() && (len = bufferedInputStream.read(buffer)) != -1) {
                 randomAccessFile.write(buffer, 0, len);
+            }
+            // 暂停了重新改一下文件名，改为.paused
+            if (pauseFlag.get()){
+                renameCacheFile(tempFile, StoreUtil.getPausedCacheFileAbsolutePath(musicBean.getVersion(), filename));
             }
             // 如果是暂停，返回false，如果不是暂停，判断是否重命名成功，成功返回true，否则false，改名用于区分下载中的文件和下载完成的文件
             return !pauseFlag.get() && renameCacheFile(tempFile, StoreUtil.getCacheFileAbsolutePath(musicBean.getVersion(), filename));

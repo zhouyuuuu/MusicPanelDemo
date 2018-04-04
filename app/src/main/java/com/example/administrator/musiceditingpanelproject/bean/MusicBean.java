@@ -109,4 +109,23 @@ public class MusicBean implements Serializable {
     public void setMaxVisibleVersion(String maxVisibleVersion) {
         this.maxVisibleVersion = maxVisibleVersion;
     }
+
+    @Override
+    public int hashCode() {
+        if (url == null) {
+            return super.hashCode();
+        }
+        return url.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj instanceof MusicBean) {
+            String anotherUrl = ((MusicBean) obj).getUrl();
+            String anotherName = ((MusicBean) obj).getName();
+            return url.equals(anotherUrl)&&name.equals(anotherName);
+        }
+        return false;
+    }
 }

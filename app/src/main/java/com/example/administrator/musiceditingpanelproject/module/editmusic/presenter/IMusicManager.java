@@ -85,9 +85,9 @@ public interface IMusicManager {
     void musicFileDeletedFailedCallback(MusicBean musicBean);
 
     /**
-     * 停止加载音乐
+     * panel销毁回调
      */
-    void stopDownloadingMusicFile();
+    void panelOnDestroy();
 
     /**
      * 播放音乐

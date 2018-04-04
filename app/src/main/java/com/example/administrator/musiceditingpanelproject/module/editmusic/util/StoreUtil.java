@@ -24,7 +24,8 @@ import static com.example.administrator.musiceditingpanelproject.module.editmusi
 import static com.example.administrator.musiceditingpanelproject.module.editmusic.config.MusicConfig.EDIT_MUSIC_CACHE_LIST_FILE;
 import static com.example.administrator.musiceditingpanelproject.module.editmusic.config.MusicConfig.EDIT_MUSIC_CACHE_LIST_FOLDER;
 import static com.example.administrator.musiceditingpanelproject.module.editmusic.config.MusicConfig.EDIT_MUSIC_CACHE_MUSIC_FILE_FOLDER;
-import static com.example.administrator.musiceditingpanelproject.module.editmusic.config.MusicConfig.EDIT_MUSIC_TEMP_FILE_SUFFIX;
+import static com.example.administrator.musiceditingpanelproject.module.editmusic.config.MusicConfig.EDIT_MUSIC_DOWNLOADING_FILE_SUFFIX;
+import static com.example.administrator.musiceditingpanelproject.module.editmusic.config.MusicConfig.EDIT_MUSIC_PAUSED_FILE_SUFFIX;
 
 /**
  * 缓存工具类，用于缓存音乐列表、缓存音乐文件、读取音乐列表、整理缓存、删除缓存
@@ -52,7 +53,8 @@ public class StoreUtil {
             ArrayList<MusicBean> musicBeans = musicGroup.getMusicBeans();
             for (MusicBean musicBean : musicBeans) {
                 cacheFileNameSet.add(getCacheFileName(musicBean.getVersion(), getNetFileName(musicBean.getUrl())));
-                cacheFileNameSet.add(getTempCacheFileName(musicBean.getVersion(), getNetFileName(musicBean.getUrl())));
+                cacheFileNameSet.add(getDownloadingCacheFileName(musicBean.getVersion(), getNetFileName(musicBean.getUrl())));
+                cacheFileNameSet.add(getPausedCacheFileName(musicBean.getVersion(), getNetFileName(musicBean.getUrl())));
             }
         }
         File folder = new File(getCacheMusicFileFolderDir());
@@ -215,16 +217,24 @@ public class StoreUtil {
         return version + EDIT_MUSIC_CACHE_FILE_NAME_DELIMITER + filename;
     }
 
-    public static String getTempCacheFileName(String version, String filename) {
-        return version + EDIT_MUSIC_CACHE_FILE_NAME_DELIMITER + filename + EDIT_MUSIC_TEMP_FILE_SUFFIX;
+    public static String getDownloadingCacheFileName(String version, String filename) {
+        return version + EDIT_MUSIC_CACHE_FILE_NAME_DELIMITER + filename + EDIT_MUSIC_DOWNLOADING_FILE_SUFFIX;
+    }
+
+    public static String getPausedCacheFileName(String version, String filename) {
+        return version + EDIT_MUSIC_CACHE_FILE_NAME_DELIMITER + filename + EDIT_MUSIC_PAUSED_FILE_SUFFIX;
     }
 
     public static String getCacheFileAbsolutePath(String version, String filename) {
         return getCacheMusicFileFolderDir() + "/" + getCacheFileName(version, filename);
     }
 
-    static String getTempCacheFileAbsolutePath(String version, String filename) {
-        return getCacheMusicFileFolderDir() + "/" + getTempCacheFileName(version, filename);
+    static String getDownloadingCacheFileAbsolutePath(String version, String filename) {
+        return getCacheMusicFileFolderDir() + "/" + getDownloadingCacheFileName(version, filename);
+    }
+
+    static String getPausedCacheFileAbsolutePath(String version, String filename) {
+        return getCacheMusicFileFolderDir() + "/" + getPausedCacheFileName(version, filename);
     }
 
     static String getCacheFolderDir() {

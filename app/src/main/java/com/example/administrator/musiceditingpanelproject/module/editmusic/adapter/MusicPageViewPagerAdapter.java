@@ -84,6 +84,9 @@ public class MusicPageViewPagerAdapter extends PagerAdapter implements MusicList
     }
 
     public MusicListRecyclerViewAdapter.ItemHolder getItemHolder(int pageIndex, int position) {
+        if (pageIndex >= mRecyclerViews.size()) {
+            return null;
+        }
         return (MusicListRecyclerViewAdapter.ItemHolder)mRecyclerViews.get(pageIndex).findViewHolderForAdapterPosition(position);
     }
 

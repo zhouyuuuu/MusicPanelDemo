@@ -57,7 +57,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     // 下面分类名被选中的分类在RecyclerView中的position，如果是-1，就是没有分类被选中，保存该变量方便取消其被选中状态
     private int mSelectedMusicSortPositionInSortList = STATE_UNSELECTED;
     // 编辑板中最近一次被点击的Item的MusicBean
-    private MusicBean mClickedMusicBeanInMusicGroup = null;
+    private MusicBean mLastClickedMusicBean = null;
     // 编辑板中最近一次被选中的Item的MusicBean
     private MusicBean mSelectedMusicBean = null;
     // 分组列表适配器
@@ -92,7 +92,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
     protected void onDestroy() {
         super.onDestroy();
         mMusicManager.stopPlayer();
-        mMusicManager.stopDownloadingMusicFile();
+        mMusicManager.panelOnDestroy();
     }
 
     /**
@@ -166,7 +166,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      */
     @Override
     public void onMusicItemClicked(final ItemHolder holder, final MusicBean musicBean) {
-        mClickedMusicBeanInMusicGroup = musicBean;
+        mLastClickedMusicBean = musicBean;
         switch (musicBean.getState()) {
             case MusicBean.STATE_UNDOWNLOADED:
                 // 未下载就要下载
@@ -282,7 +282,8 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         for (MusicGroup musicGroup : mMusicGroups) {
             ArrayList<MusicBean> musicBeans = musicGroup.getMusicBeans();
             for (int i = 0; i < musicBeans.size(); i++) {
-                if (musicBeans.get(i) == musicBean) {
+                if (musicBeans.get(i).equals(musicBean)) {
+                    musicBeans.get(i).setState(musicBean.getState());
                     sort = musicGroup.getSortName();
                     page = i / MusicPageViewPagerAdapter.ITEM_COUNT_PER_PAGE;
                     position = i % MusicPageViewPagerAdapter.ITEM_COUNT_PER_PAGE;
@@ -292,13 +293,12 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                         mMusicManager.resetPlayer();
                         mMusicManager.playMusic(musicBean);
                     }
-                    ItemHolder holder = mMusicPageAdapterHashMap
-                            .get(sort)
-                            .getItemHolder(page, position);
+                    MusicPageViewPagerAdapter pageViewPagerAdapter = mMusicPageAdapterHashMap.get(sort);
+                    if (pageViewPagerAdapter == null) return;
+                    ItemHolder holder = pageViewPagerAdapter.getItemHolder(page, position);
                     if (holder != null) {
                         refreshHolder(musicBean, holder);
                     }
-                    return;
                 }
             }
         }
@@ -321,7 +321,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
         // 显示编辑面板
         mRlPanel.setVisibility(View.VISIBLE);
         // 分类对应的musicGroup
-        if (musicGroups.size() == 0) {
+        if (mMusicGroups.size() == 0) {
             Toast.makeText(EditMusicActivity.this, "服务器暂时没有数据~", Toast.LENGTH_LONG).show();
             return;
         }
@@ -349,6 +349,13 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
                 }
             }
         }, TIME_PER_FRAME);
+        for (MusicGroup mg: mMusicGroups) {
+            for (MusicBean musicBean: mg.getMusicBeans()){
+                if (musicBean.getState() == MusicBean.STATE_DOWNLOADING) {
+                    mMusicManager.downloadMusicFile(musicBean);
+                }
+            }
+        }
     }
 
     /**
@@ -366,7 +373,7 @@ public class EditMusicActivity extends AppCompatActivity implements View.OnClick
      */
     @Override
     public void musicFileDataLoadedCallback(final MusicBean musicBean) {
-        if (musicBean == mClickedMusicBeanInMusicGroup) {
+        if (musicBean.equals(mLastClickedMusicBean)) {
             // 之前选中的项状态设置为已下载
             setSelectedItemUnselected(MusicBean.STATE_DOWNLOADED);
             // 当前musicBean设置为编辑状态
