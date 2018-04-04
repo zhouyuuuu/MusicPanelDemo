@@ -6,16 +6,15 @@ import android.support.annotation.NonNull;
 
 import com.example.administrator.musiceditingpanelproject.bean.MusicBean;
 import com.example.administrator.musiceditingpanelproject.bean.MusicGroup;
-import com.example.administrator.musiceditingpanelproject.common.util.LogUtil;
 import com.example.administrator.musiceditingpanelproject.common.util.VersionUtil;
 import com.example.administrator.musiceditingpanelproject.module.editmusic.presenter.IMusicManager;
 import com.example.administrator.musiceditingpanelproject.module.editmusic.util.NetUtil;
 import com.example.administrator.musiceditingpanelproject.module.editmusic.util.StoreUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -35,9 +34,9 @@ public class EditMusicPanelLoader implements IMusicLoader {
     // 是否有已提交的列表任务
     private final HashSet<LoadMusicGroupListRunnable> mLoadingListTaskSet;
     // 已提交的文件任务
-    private final HashMap<MusicBean, LoadMusicFileRunnable> mDownloadingTaskMap;
+    private final ConcurrentHashMap<MusicBean, LoadMusicFileRunnable> mDownloadingTaskMap;
     // 已提交的删除任务
-    private final HashMap<MusicBean, DeleteMusicFileRunnable> mDeletingTaskMap;
+    private final ConcurrentHashMap<MusicBean, DeleteMusicFileRunnable> mDeletingTaskMap;
     // 主线程Handler，用来回调
     private final Handler mMainHandler;
     // 观察者们
@@ -51,8 +50,8 @@ public class EditMusicPanelLoader implements IMusicLoader {
         BlockingQueue<Runnable> taskQueue = new LinkedBlockingQueue<>();
         mThreadPoolExecutor = new ThreadPoolExecutor(NUMBER_OF_CORES, NUMBER_OF_MAX, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT, taskQueue);
         mLoadingListTaskSet = new HashSet<>(1);
-        mDownloadingTaskMap = new HashMap<>();
-        mDeletingTaskMap = new HashMap<>();
+        mDownloadingTaskMap = new ConcurrentHashMap<>();
+        mDeletingTaskMap = new ConcurrentHashMap<>();
         mMainHandler = new Handler(Looper.getMainLooper());
         mMusicManagers = new ArrayList<>();
     }
@@ -151,12 +150,10 @@ public class EditMusicPanelLoader implements IMusicLoader {
     public void loadMusicFileData(@NonNull MusicBean musicBean) {
         // 新的任务
         LoadMusicFileRunnable loadMusicFileRunnable = new LoadMusicFileRunnable(PRIORITY_DEFAULT, mMusicManagers, musicBean, mDownloadingTaskMap, mMainHandler);
-        synchronized (mDownloadingTaskMap) {
-            // 已存在任务则返回，防重
-            if (mDownloadingTaskMap.containsKey(musicBean)) return;
-            // 注册任务
-            mDownloadingTaskMap.put(musicBean, loadMusicFileRunnable);
-        }
+        // 已存在任务则返回，防重
+        if (mDownloadingTaskMap.containsKey(musicBean)) return;
+        // 注册任务
+        mDownloadingTaskMap.put(musicBean, loadMusicFileRunnable);
         // 提交线程池
         mThreadPoolExecutor.execute(loadMusicFileRunnable);
     }
@@ -169,23 +166,18 @@ public class EditMusicPanelLoader implements IMusicLoader {
     @Override
     public void deleteMusicFile(@NonNull MusicBean musicBean) {
         DeleteMusicFileRunnable deleteMusicFileRunnable = new DeleteMusicFileRunnable(PRIORITY_DEFAULT, mMusicManagers, musicBean, mDeletingTaskMap, mMainHandler);
-        synchronized (mDeletingTaskMap) {
-            // 已存在任务则返回，防重
-            if (mDeletingTaskMap.containsKey(musicBean)) return;
-            // 注册任务
-            mDeletingTaskMap.put(musicBean, deleteMusicFileRunnable);
-        }
+        // 已存在任务则返回，防重
+        if (mDeletingTaskMap.containsKey(musicBean)) return;
+        // 注册任务
+        mDeletingTaskMap.put(musicBean, deleteMusicFileRunnable);
         // 提交线程池
         mThreadPoolExecutor.execute(deleteMusicFileRunnable);
     }
 
     @Override
     public void pauseLoading(@NonNull MusicBean musicBean) {
-        LoadMusicFileRunnable loadMusicFileRunnable;
-        synchronized (mDownloadingTaskMap) {
-            // 通过musicBean拿到任务
-            loadMusicFileRunnable = mDownloadingTaskMap.get(musicBean);
-        }
+        // 通过musicBean拿到任务
+        LoadMusicFileRunnable loadMusicFileRunnable = mDownloadingTaskMap.get(musicBean);
         // 拿不到就返回了
         if (loadMusicFileRunnable == null) return;
         // 暂停
@@ -260,14 +252,13 @@ public class EditMusicPanelLoader implements IMusicLoader {
     private static class LoadMusicFileRunnable extends BaseLoadRunnable {
 
         // 注册池，记录进行中的下载任务
-        private final HashMap<MusicBean, LoadMusicFileRunnable> mDownloadingTaskMap;
-        long time;
+        private final ConcurrentHashMap<MusicBean, LoadMusicFileRunnable> mDownloadingTaskMap;
         // 音乐信息
         private MusicBean mMusicBean;
         // 原子可见标志位
         private volatile AtomicBoolean mPauseFlag;
 
-        LoadMusicFileRunnable(int priority, ArrayList<IMusicManager> musicManagers, MusicBean musicBean, HashMap<MusicBean, LoadMusicFileRunnable> downloadingTaskMap, Handler handler) {
+        LoadMusicFileRunnable(int priority, ArrayList<IMusicManager> musicManagers, MusicBean musicBean, ConcurrentHashMap<MusicBean, LoadMusicFileRunnable> downloadingTaskMap, Handler handler) {
             super(priority, musicManagers, handler);
             this.mMusicBean = musicBean;
             this.mDownloadingTaskMap = downloadingTaskMap;
@@ -289,15 +280,12 @@ public class EditMusicPanelLoader implements IMusicLoader {
                     }
                 });
                 // 取消注册
-                synchronized (mDownloadingTaskMap) {
-                    mDownloadingTaskMap.remove(mMusicBean);
-                }
+                mDownloadingTaskMap.remove(mMusicBean);
                 return;
             }
 
             // 加载网络文件数据
             boolean isSuccessful = NetUtil.downloadMusicFile(mMusicBean, mPauseFlag);
-            LogUtil.e(System.currentTimeMillis() - time + "");
             // 如果数据为空，或者存储文件失败
             if (!isSuccessful) {
                 final boolean isPaused = mPauseFlag.get();
@@ -328,15 +316,12 @@ public class EditMusicPanelLoader implements IMusicLoader {
                 });
             }
             // 取消注册
-            synchronized (mDownloadingTaskMap) {
-                mDownloadingTaskMap.remove(mMusicBean);
-            }
+            mDownloadingTaskMap.remove(mMusicBean);
         }
 
         // 设置线程暂停
         private void setPaused() {
             this.mPauseFlag.compareAndSet(false, true);
-            time = System.currentTimeMillis();
         }
     }
 
@@ -348,9 +333,9 @@ public class EditMusicPanelLoader implements IMusicLoader {
         // 音乐信息
         final MusicBean mMusicBean;
         // 正在删除中的音乐
-        final HashMap<MusicBean, DeleteMusicFileRunnable> mDeletingMusicBeanMap;
+        final ConcurrentHashMap<MusicBean, DeleteMusicFileRunnable> mDeletingMusicBeanMap;
 
-        DeleteMusicFileRunnable(int priority, ArrayList<IMusicManager> musicManagers, MusicBean musicBean, HashMap<MusicBean, DeleteMusicFileRunnable> deletingMusicBeanMap, Handler handler) {
+        DeleteMusicFileRunnable(int priority, ArrayList<IMusicManager> musicManagers, MusicBean musicBean, ConcurrentHashMap<MusicBean, DeleteMusicFileRunnable> deletingMusicBeanMap, Handler handler) {
             super(priority, musicManagers, handler);
             this.mMusicBean = musicBean;
             this.mDeletingMusicBeanMap = deletingMusicBeanMap;
@@ -382,9 +367,7 @@ public class EditMusicPanelLoader implements IMusicLoader {
                 });
             }
             // 取消注册
-            synchronized (mDeletingMusicBeanMap) {
-                mDeletingMusicBeanMap.remove(mMusicBean);
-            }
+            mDeletingMusicBeanMap.remove(mMusicBean);
         }
     }
 
